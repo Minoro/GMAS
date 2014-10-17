@@ -2,6 +2,8 @@ package jtree;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -9,6 +11,7 @@ import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.TreePath;
 
 import org.w3c.dom.Document;
 
@@ -45,7 +48,18 @@ public class XMLTreePanel extends JPanel {
                 }
             }
         });
-
+        tree.addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent e) {
+                int selRow = tree.getRowForLocation(e.getX(), e.getY());
+                TreePath selPath = tree.getPathForLocation(e.getX(), e.getY());
+                if (selRow != -1) {
+                    if (e.getClickCount() == 2) {
+                        XMLTreeNode no = (XMLTreeNode) selPath.getLastPathComponent();
+                        System.out.println("Double Click em " + no.toString() + "!");
+                    }
+                }
+            }
+        });
     }
 
     /* methods that delegate to the custom model */
