@@ -29,16 +29,19 @@ public class XMLTreeModel implements TreeModel {
         }
     }
 
+    @Override
     public void addTreeModelListener(TreeModelListener listener) {
         if (!listeners.contains(listener)) {
             listeners.add(listener);
         }
     }
 
+    @Override
     public void removeTreeModelListener(TreeModelListener listener) {
         listeners.remove(listener);
     }
 
+    @Override
     public Object getChild(Object parent, int index) {
         if (parent instanceof XMLTreeNode) {
             Vector<Element> elements = getChildElements(((XMLTreeNode) parent).getElement());
@@ -48,6 +51,7 @@ public class XMLTreeModel implements TreeModel {
         }
     }
 
+    @Override
     public int getChildCount(Object parent) {
         if (parent instanceof XMLTreeNode) {
             Vector<Element> elements = getChildElements(((XMLTreeNode) parent).getElement());
@@ -56,6 +60,7 @@ public class XMLTreeModel implements TreeModel {
         return 0;
     }
 
+    @Override
     public int getIndexOfChild(Object parent, Object child) {
         if (parent instanceof XMLTreeNode && child instanceof XMLTreeNode) {
             Element pElement = ((XMLTreeNode) parent).getElement();
@@ -69,6 +74,7 @@ public class XMLTreeModel implements TreeModel {
         return -1;
     }
 
+    @Override
     public Object getRoot() {
         if (document == null) {
             return null;
@@ -81,6 +87,7 @@ public class XMLTreeModel implements TreeModel {
         }
     }
 
+    @Override
     public boolean isLeaf(Object node) {
         if (node instanceof XMLTreeNode) {
             Element element = ((XMLTreeNode) node).getElement();
@@ -91,6 +98,7 @@ public class XMLTreeModel implements TreeModel {
         }
     }
 
+    @Override
     public void valueForPathChanged(TreePath path, Object newValue) {
         throw new UnsupportedOperationException();
     }

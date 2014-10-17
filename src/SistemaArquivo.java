@@ -1,3 +1,4 @@
+import model.Arquivo;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 

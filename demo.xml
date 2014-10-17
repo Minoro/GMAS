@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <raiz>Saulo
     <pasta
-        criado="10-09-2014">Pasta 1</pasta>
+        dataCriacao = "kladhjfldsjf">Pasta 1</pasta>
     <pasta
-        criado ="29-12-2013">Pasta 2
+        dataCriacao = "29-12-2013">Pasta 2
         <arquivo>senha.txt</arquivo>
         <arquivo>login.txt</arquivo>
     </pasta>
