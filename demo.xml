@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<raiz>Saulo
+    <pasta
+        dataCriacao = "kladhjfldsjf">Pasta 1</pasta>
+    <pasta
+        dataCriacao = "29-12-2013">Pasta 2
+        <arquivo>senha.txt</arquivo>
+        <arquivo>login.txt</arquivo>
+    </pasta>
+    <pasta
+        dataCriacao = "kladhjfldsjf">Pasta 3</pasta>
+</raiz>

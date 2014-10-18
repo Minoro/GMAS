@@ -1,4 +1,8 @@
+<<<<<<< HEAD:src/uel/so/sistema_arquivos/servidor/SistemaArquivoInterface.java
 package uel.so.sistema_arquivos.servidor;
+=======
+import model.Arquivo;
+>>>>>>> 043899c9dc3ea723d98c5e5884b755b8c94587b4:src/SistemaArquivoInterface.java
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
