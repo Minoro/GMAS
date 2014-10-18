@@ -1,3 +1,4 @@
+package uel.so.sistema_arquivos.servidor;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 

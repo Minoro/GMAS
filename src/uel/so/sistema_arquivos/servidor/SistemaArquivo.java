@@ -1,5 +1,6 @@
+package uel.so.sistema_arquivos.servidor;
 import java.rmi.RemoteException;
-import java.rmi.server.UnicastRemoteObject;
+import java.rmi.server.UnicastRemoteObject;	
 
 
 public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquivoInterface {
