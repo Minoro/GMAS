@@ -1,4 +1,4 @@
-package uel.so.sistema_arquivos.servidor;
+package servidor;
 import java.util.Calendar;
 import java.util.Date;
 
