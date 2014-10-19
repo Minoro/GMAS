@@ -1,14 +1,7 @@
-<<<<<<< HEAD:src/servidor/SistemaArquivo.java
 package servidor;
 
 import model.Arquivo;
-=======
-//<<<<<<< HEAD:src/uel/so/sistema_arquivos/servidor/SistemaArquivo.java
-package uel.so.sistema_arquivos.servidor;
-//=======
 import model.Arquivo;
-//>>>>>>> 043899c9dc3ea723d98c5e5884b755b8c94587b4:src/SistemaArquivo.java
->>>>>>> f75662e9c66e6990676e5b942a84196e6a0f443f:src/uel/so/sistema_arquivos/servidor/SistemaArquivo.java
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;	
 
