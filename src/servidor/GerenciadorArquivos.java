@@ -7,8 +7,9 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.UUID;
+
+import model.Arquivo;
 
 
 /**
@@ -24,7 +25,6 @@ public class GerenciadorArquivos {
 	 * 			caso contrário retorna uma string vazia
 	 */
 	public static String criarArquivo(){
-		
 		String randomName;
 		UUID uuid = UUID.randomUUID();
 
@@ -50,8 +50,7 @@ public class GerenciadorArquivos {
 	 * @return boolean - retorna true caso seja possível apagar o arquivo,
 	 * 					falso caso não seja possível
 	 */
-	public static boolean apagarArquivo(String nome){
-		
+	public static boolean apagarArquivo(String nome){	
 		File file = new File(System.getProperty("user.dir")+"/raiz/"+nome);
 		
 		return file.delete();
@@ -66,9 +65,7 @@ public class GerenciadorArquivos {
 	 * @return boolean - retorna true caso seja possível salvar o arquivo ou 
 	 * 			false caso contrário
 	 */
-	public static boolean salvarArquivo(Arquivo arquivo, String nome){
-		
-		
+	public static boolean salvarArquivo(Arquivo arquivo, String nome){		
 		try {
 			File file = new File(System.getProperty("user.dir")+"/raiz/"+nome);
 			FileWriter fw;
@@ -82,7 +79,6 @@ public class GerenciadorArquivos {
 			e.printStackTrace();
 			return false;
 		}
-		
 		
 		return true;
 	}
