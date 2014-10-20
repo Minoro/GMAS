@@ -6,8 +6,8 @@ import java.io.File;
 import javax.swing.JFrame;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-
 import org.w3c.dom.Document;
+import utils.PainelDeControle;
 
 public class DemoMain extends JFrame {
 
@@ -16,6 +16,8 @@ public class DemoMain extends JFrame {
     }
 
     public DemoMain() {
+        PainelDeControle.middleware.pedirXML();
+
         Document document = null;
         try {
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -26,7 +28,7 @@ public class DemoMain extends JFrame {
             e.printStackTrace();
             System.exit(1);
         }
-        
+
         XMLTreePanel panel = new XMLTreePanel();
         XMLInfoPanel info = new XMLInfoPanel();
         panel.setDocument(document);

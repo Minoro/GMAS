@@ -40,6 +40,7 @@ public class XMLTreePanel extends JPanel {
         add(text, "South");
 
         tree.addTreeSelectionListener(new TreeSelectionListener() {
+            @Override
             public void valueChanged(TreeSelectionEvent e) {
                 Object lpc = e.getPath().getLastPathComponent();
                 if (lpc instanceof XMLTreeNode) {
@@ -49,6 +50,7 @@ public class XMLTreePanel extends JPanel {
             }
         });
         tree.addMouseListener(new MouseAdapter() {
+            @Override
             public void mousePressed(MouseEvent e) {
                 int selRow = tree.getRowForLocation(e.getX(), e.getY());
                 TreePath selPath = tree.getPathForLocation(e.getX(), e.getY());

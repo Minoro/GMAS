@@ -42,10 +42,10 @@ public class XMLInfoPanel extends JPanel {
         for (String string : atributos) {
             String propriedade = string.replaceAll("([A-Z])", " $1").toUpperCase();
             String valor = no.getAttribute(string);
-            if(valor.equals("")){
-                valor = "-";
+            if (valor.equals("")) {
+                valor = "";
             }
-            
+
             map_jtf.get(string).setText(propriedade + ": " + valor);
         }
     }

@@ -1,6 +1,5 @@
 package model;
 
-
 import java.util.Calendar;
 import java.util.Date;
 
@@ -21,9 +20,9 @@ public class Arquivo {
     private Date dataUltimaModificacao;
     private String conteudo;
 
-    
-    public Arquivo(){}//construtor vazio
-    
+    public Arquivo() {
+    }//construtor vazio
+
     /**
      * Instancia um arquivo vazio
      *
@@ -45,61 +44,61 @@ public class Arquivo {
         this.tamanho = this.conteudo.length();
         this.dataUltimaModificacao = Calendar.getInstance().getTime();
     }
-    
+
     @Override
-	public String toString(){
-		String string = nome+"\n"+tamanho+"\n"+proprietario+"\n"+dataCriacao.getTime()+"\n"+dataUltimaModificacao.getTime()+"\n"+conteudo;
-		
-		return string;
-	}
+    public String toString() {
+        String string = nome + "\n" + tamanho + "\n" + proprietario + "\n" + dataCriacao.getTime() + "\n" + dataUltimaModificacao.getTime() + "\n" + conteudo;
 
-	public String getNome() {
-		return nome;
-	}
+        return string;
+    }
 
-	public void setNome(String nome) {
-		this.nome = nome;
-	}
+    public String getNome() {
+        return nome;
+    }
 
-	public float getTamanho() {
-		return tamanho;
-	}
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
 
-	public void setTamanho(float tamanho) {
-		this.tamanho = tamanho;
-	}
+    public float getTamanho() {
+        return tamanho;
+    }
 
-	public String getProprietario() {
-		return proprietario;
-	}
+    public void setTamanho(float tamanho) {
+        this.tamanho = tamanho;
+    }
 
-	public void setProprietario(String proprietario) {
-		this.proprietario = proprietario;
-	}
+    public String getProprietario() {
+        return proprietario;
+    }
 
-	public Date getDataCriacao() {
-		return dataCriacao;
-	}
+    public void setProprietario(String proprietario) {
+        this.proprietario = proprietario;
+    }
 
-	public void setDataCriacao(Date dataCriacao) {
-		this.dataCriacao = dataCriacao;
-	}
+    public Date getDataCriacao() {
+        return dataCriacao;
+    }
 
-	public Date getDataUltimaModificacao() {
-		return dataUltimaModificacao;
-	}
+    public void setDataCriacao(Date dataCriacao) {
+        this.dataCriacao = dataCriacao;
+    }
 
-	public void setDataUltimaModificacao(Date dataUltimaModificacao) {
-		this.dataUltimaModificacao = dataUltimaModificacao;
-	}
+    public Date getDataUltimaModificacao() {
+        return dataUltimaModificacao;
+    }
 
-	public String getConteudo() {
-		return conteudo;
-	}
+    public void setDataUltimaModificacao(Date dataUltimaModificacao) {
+        this.dataUltimaModificacao = dataUltimaModificacao;
+    }
 
-	public void setConteudo(String conteudo) {
-		this.conteudo = conteudo;
-		this.tamanho = conteudo.length();
-	}
+    public String getConteudo() {
+        return conteudo;
+    }
+
+    public void setConteudo(String conteudo) {
+        this.conteudo = conteudo;
+        this.tamanho = conteudo.length();
+    }
 
 }
