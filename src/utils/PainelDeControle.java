@@ -1,5 +1,6 @@
 package utils;
 
+import java.io.File;
 import middleware.Middleware;
 
 /**
@@ -17,5 +18,8 @@ public class PainelDeControle {
     public static final int TAMANHO_BUFFER = 500;
     public static final int PORTA_MULTICAST = 5678;
     public static final String IP_MULTICAST = "228.5.6.7";
+    public static final String SEPARADOR = File.separator;
+    public static final String RAIZ = "raiz";
+    public static final String HOME = System.getProperty("user.dir");
     public static Middleware middleware;
 }
