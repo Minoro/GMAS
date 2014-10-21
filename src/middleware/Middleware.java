@@ -42,6 +42,7 @@ public class Middleware {
      */
     //Adicionar arquivo de persistencia de servidores.
     public Middleware(String multicastGroup, String nomeUsuario, Boolean novoUsuario) throws IOException {
+        PainelDeControle.username = nomeUsuario;
         servidoresArquivo = new LinkedList<>();
         this.nomeUsuario = nomeUsuario;
         mergeUsuario(multicastGroup, novoUsuario);

@@ -22,4 +22,5 @@ public class PainelDeControle {
     public static final String RAIZ = "raiz";
     public static final String HOME = System.getProperty("user.dir");
     public static Middleware middleware;
+    public static String username;
 }
