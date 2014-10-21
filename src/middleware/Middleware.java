@@ -3,6 +3,7 @@ package middleware;
 import java.io.File;
 import java.io.IOException;
 import java.net.DatagramPacket;
+import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
 import java.net.UnknownHostException;
@@ -12,7 +13,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.w3c.dom.Document;
 
-import utils.Mensagem;
+import utils.PainelDeControle;
 
 /**
  * Classe que realiza a comunicação entre a aplicação do cliente e os servidores
@@ -49,28 +50,28 @@ public class Middleware {
 
     private void mergeUsuario(String multicastGroup, Boolean novoUsuario) throws UnknownHostException, IOException {
         InetAddress group = InetAddress.getByName(multicastGroup);
-        try (MulticastSocket mSckt = new MulticastSocket(5678)) {
+        try (MulticastSocket mSckt = new MulticastSocket(); DatagramSocket server = new DatagramSocket(PainelDeControle.PORTA_MULTICAST)) {
             String mensagem = "";
             if (novoUsuario) {
-                mensagem += Mensagem.NOVO_USUARIO;
+                mensagem += PainelDeControle.NOVO_USUARIO;
             } else {
-                mensagem += Mensagem.USUARIO_EXISTENTE + "-" + nomeUsuario;
+                mensagem += PainelDeControle.USUARIO_EXISTENTE + "-" + nomeUsuario;
             }
             byte[] m = mensagem.getBytes();
-            DatagramPacket messageOut = new DatagramPacket(m, m.length, group, 6789);
+            DatagramPacket messageOut = new DatagramPacket(m, m.length, group, PainelDeControle.PORTA_MULTICAST);
             mSckt.send(messageOut);
+
             //recebe a confirmação dos 2 primeiros servidores de arquivo
             for (int i = 0; i < 2; i++) {
-                while (true) {
-                    byte[] buffer = new byte[5];
-                    DatagramPacket messageIn = new DatagramPacket(buffer, buffer.length);
-                    mSckt.receive(messageIn);
-                    if (messageIn.getLength() > 0) {
-                        //recupera endereco do servidor
-                        servidoresArquivo.add(messageIn.getAddress());
-                        break;
-                    }
-                }
+//                while (true) {
+                byte[] resposta = new byte[PainelDeControle.TAMANHO_BUFFER];
+                DatagramPacket receivePacket = new DatagramPacket(resposta, resposta.length);
+                server.receive(receivePacket);
+                //confirmação do servidor
+                servidoresArquivo.add(receivePacket.getAddress());
+                System.out.println("Novo server adicionado! " + receivePacket.getAddress().getHostAddress());
+                System.out.println("Mensagem: " + new String(receivePacket.getData()));
+//                }
             }
         }
     }

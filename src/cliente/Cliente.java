@@ -23,6 +23,7 @@ public class Cliente extends javax.swing.JFrame {
      */
     public Cliente() {
         initComponents();
+        multicast.setText(PainelDeControle.IP_MULTICAST);
     }
 
     /**
