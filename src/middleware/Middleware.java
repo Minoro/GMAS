@@ -42,6 +42,7 @@ public class Middleware {
      */
     //Adicionar arquivo de persistencia de servidores.
     public Middleware(String multicastGroup, String nomeUsuario, Boolean novoUsuario) throws IOException {
+        PainelDeControle.username = nomeUsuario;
         servidoresArquivo = new LinkedList<>();
         this.nomeUsuario = nomeUsuario;
         mergeUsuario(multicastGroup, novoUsuario);
@@ -62,7 +63,7 @@ public class Middleware {
             mSckt.send(messageOut);
 
             //recebe a confirmação dos 2 primeiros servidores de arquivo
-            for (int i = 0; i < 2; i++) {
+//            for (int i = 0; i < 2; i++) {
 //                while (true) {
                 byte[] resposta = new byte[PainelDeControle.TAMANHO_BUFFER];
                 DatagramPacket receivePacket = new DatagramPacket(resposta, resposta.length);
@@ -72,12 +73,12 @@ public class Middleware {
                 System.out.println("Novo server adicionado! " + receivePacket.getAddress().getHostAddress());
                 System.out.println("Mensagem: " + new String(receivePacket.getData()));
 //                }
-            }
+//            }
         }
     }
 
     public String montaURL_RMI(String ip){
-        String url = "rmi://" + ip + ":/samuray";
+        String url = "rmi://" + ip + ":/teste";
         return url;
     }
     

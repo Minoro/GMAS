@@ -1,6 +1,8 @@
 package servidor;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -31,6 +33,11 @@ import utils.PainelDeControle;
 public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquivoInterface {
 
     public static void main(String[] args) {
+        System.setSecurityManager(new RMISecurityManager());
+        for (String string : args) {
+            System.out.println("param: "+ string);
+        }
+        System.exit(1);
         try {
            System.out.println("Servidor iniciado");
            
@@ -40,7 +47,6 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
            
            SistemaArquivo sistemaArquivo =  new SistemaArquivo();
            Naming.rebind("rmi://:/teste", sistemaArquivo);
-       
         } catch (IOException ex) {
             Logger.getLogger(SistemaArquivo.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -117,9 +123,15 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
         String caminho = PainelDeControle.HOME + PainelDeControle.SEPARADOR + PainelDeControle.RAIZ + PainelDeControle.SEPARADOR + nomeUsuario + ".xml";
         System.out.println("Caminho do XML => " + caminho);
         File file = new File(caminho);
-        if (!file.exists()) {
+        if (!file.exists()) { //cria e inicializa o arquivo xml
             try {
                 file.createNewFile();
+                FileWriter fw;
+                fw = new FileWriter(file.getAbsoluteFile());
+                BufferedWriter bw = new BufferedWriter(fw);
+                bw.write("<raiz>"+nomeUsuario+"</raiz>");//salva as informações no arquivo no disco
+                bw.close();
+                
             } catch (IOException ex) {
                 Logger.getLogger(SistemaArquivo.class.getName()).log(Level.SEVERE, null, ex);
             }
