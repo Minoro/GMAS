@@ -3,6 +3,7 @@ package servidor;
 import model.Arquivo;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import org.w3c.dom.Document;
 
 /**
  * Interface para operações basicas sobre arquivos
@@ -130,15 +131,7 @@ public interface SistemaArquivoInterface extends Remote {
      * @throws RemoteException
      */
     void setAtributes(String caminho, Arquivo arquivo) throws RemoteException;
-
-    /**
-     * Autentica o usuário no servidor, retornando true caso o usuário seja
-     * autenticado corretamente ou false caso não seja possivel autenticar o
-     * usuário
-     *
-     * @param nome String - nome do usuário a ser autenticado
-     * @throws RemoteException
-     */
-    boolean autenticarUsuario(String nome) throws RemoteException;
+    
+    Document pedirXML(String nomeUsuario);
 
 }

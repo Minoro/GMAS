@@ -1,5 +1,6 @@
 package servidor;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -10,6 +11,12 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import utils.PainelDeControle;
 
 public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquivoInterface {
@@ -62,6 +69,8 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
 
                     } else if (mensagem.equals(PainelDeControle.USUARIO_EXISTENTE)) {
                         System.out.println("Usuário já existente! " + ipUsuario.getHostAddress());
+                        System.out.println("FALTA IMPLEMENTAR");
+                        throw new NotImplementedException();
 
                     }
                 } catch (IOException e) {
@@ -77,6 +86,32 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
     public boolean criarArquivo(String caminho) throws RemoteException {
         // TODO Auto-generated method stub
         return false;
+    }
+
+    @Override
+    public Document pedirXML(String nomeUsuario) {
+        Document retorno;
+        String caminho = PainelDeControle.HOME + PainelDeControle.SEPARADOR + PainelDeControle.RAIZ + PainelDeControle.SEPARADOR + nomeUsuario + ".xml";
+        System.out.println("Caminho do XML => " + caminho);
+        File file = new File(caminho);
+        if (!file.exists()) {
+            try {
+                file.createNewFile();
+            } catch (IOException ex) {
+                Logger.getLogger(SistemaArquivo.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        try {
+            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder;
+            builder = dbFactory.newDocumentBuilder();
+            retorno = builder.parse(file);
+            retorno.normalize();
+            return retorno;
+        } catch (ParserConfigurationException | SAXException | IOException ex) {
+            Logger.getLogger(SistemaArquivo.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
     }
 
     @Override
@@ -137,12 +172,6 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
             throws RemoteException {
         // TODO Auto-generated method stub
 
-    }
-
-    @Override
-    public boolean autenticarUsuario(String nome) throws RemoteException {
-        // TODO Auto-generated method stub
-        return false;
     }
 
 }

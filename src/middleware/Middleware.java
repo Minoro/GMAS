@@ -76,6 +76,11 @@ public class Middleware {
         }
     }
 
+    public String montaURL_RMI(String ip){
+        String url = "rmi://" + ip + ":/samuray";
+        return url;
+    }
+    
     public Document pedirXML() {
         Document document = null;
         try {
