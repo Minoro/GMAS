@@ -6,24 +6,41 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
-import model.Arquivo;
+import java.rmi.Naming;
+import java.rmi.RMISecurityManager;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.security.CodeSource;
+import java.security.PermissionCollection;
+import java.security.Permissions;
+import java.security.Policy;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+
+import model.Arquivo;
+
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
+
 import utils.PainelDeControle;
 
 public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquivoInterface {
 
     public static void main(String[] args) {
         try {
-            System.out.println("Servidor iniciado");
-            new SistemaArquivo();
+           System.out.println("Servidor iniciado");
+           
+           Policy.setPolicy(new MyPolicy());           
+           System.setSecurityManager(new RMISecurityManager());
+           
+           
+           SistemaArquivo sistemaArquivo =  new SistemaArquivo();
+           Naming.rebind("rmi://:/teste", sistemaArquivo);
+       
         } catch (IOException ex) {
             Logger.getLogger(SistemaArquivo.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -77,6 +94,15 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
             }
         }
 
+    }
+    
+    public static class MyPolicy extends Policy {
+     	@Override
+        public PermissionCollection getPermissions(CodeSource codesource) {
+            Permissions p = new Permissions();
+            p.add(new java.security.AllPermission());          
+            return p;
+        }
     }
 
     @Override
