@@ -48,11 +48,12 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
                 try {
                     s.receive(messageIn);
                     String mensagem = new String(messageIn.getData());
+                    mensagem = mensagem.substring(0, mensagem.indexOf("\0"));
                     System.out.println("Mensagem recebida: " + mensagem);
 
                     InetAddress ipUsuario = messageIn.getAddress();
                     if (mensagem.equals(PainelDeControle.NOVO_USUARIO)) {
-                        String respostaNovoUsuario = "" + PainelDeControle.RESPOSTA_NOVO_USUARIO;
+                        String respostaNovoUsuario = PainelDeControle.RESPOSTA_NOVO_USUARIO;
                         byte[] responder = respostaNovoUsuario.getBytes();
                         DatagramPacket dp = new DatagramPacket(responder, responder.length, ipUsuario, PainelDeControle.PORTA_MULTICAST);
                         DatagramSocket ds = new DatagramSocket();

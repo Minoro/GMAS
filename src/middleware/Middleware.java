@@ -51,11 +51,11 @@ public class Middleware {
     private void mergeUsuario(String multicastGroup, Boolean novoUsuario) throws UnknownHostException, IOException {
         InetAddress group = InetAddress.getByName(multicastGroup);
         try (MulticastSocket mSckt = new MulticastSocket(); DatagramSocket server = new DatagramSocket(PainelDeControle.PORTA_MULTICAST)) {
-            String mensagem = "";
+            String mensagem;
             if (novoUsuario) {
-                mensagem += PainelDeControle.NOVO_USUARIO;
+                mensagem = PainelDeControle.NOVO_USUARIO;
             } else {
-                mensagem += PainelDeControle.USUARIO_EXISTENTE + "-" + nomeUsuario;
+                mensagem = PainelDeControle.USUARIO_EXISTENTE + "-" + nomeUsuario;
             }
             byte[] m = mensagem.getBytes();
             DatagramPacket messageOut = new DatagramPacket(m, m.length, group, PainelDeControle.PORTA_MULTICAST);
