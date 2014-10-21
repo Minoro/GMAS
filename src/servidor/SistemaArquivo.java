@@ -1,21 +1,30 @@
 package servidor;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
+
 import model.Arquivo;
+
+import java.rmi.AlreadyBoundException;
+import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
+
 import utils.PainelDeControle;
 
 public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquivoInterface {
@@ -23,10 +32,16 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
     public static void main(String[] args) {
         try {
             System.out.println("Servidor iniciado");
-            new SistemaArquivo();
+            SistemaArquivo sistemaArquivo = new SistemaArquivo();
+            
+            Naming.bind("rmi://:/teste", sistemaArquivo);
+            
         } catch (IOException ex) {
             Logger.getLogger(SistemaArquivo.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        } catch (AlreadyBoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
 
     protected SistemaArquivo() throws RemoteException, IOException {
@@ -91,9 +106,15 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
         String caminho = PainelDeControle.HOME + PainelDeControle.SEPARADOR + PainelDeControle.RAIZ + PainelDeControle.SEPARADOR + nomeUsuario + ".xml";
         System.out.println("Caminho do XML => " + caminho);
         File file = new File(caminho);
-        if (!file.exists()) {
+        if (!file.exists()) { //cria e inicializa o arquivo xml
             try {
                 file.createNewFile();
+                FileWriter fw;
+                fw = new FileWriter(file.getAbsoluteFile());
+                BufferedWriter bw = new BufferedWriter(fw);
+                bw.write("<raiz>"+nomeUsuario+"</raiz>");//salva as informações no arquivo no disco
+                bw.close();
+                
             } catch (IOException ex) {
                 Logger.getLogger(SistemaArquivo.class.getName()).log(Level.SEVERE, null, ex);
             }
