@@ -6,6 +6,8 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
+import java.rmi.Naming;
+import java.rmi.RMISecurityManager;
 import model.Arquivo;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -21,12 +23,21 @@ import utils.PainelDeControle;
 public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquivoInterface {
 
     public static void main(String[] args) {
-        try {
-            System.out.println("Servidor iniciado");
-            new SistemaArquivo();
-        } catch (IOException ex) {
-            Logger.getLogger(SistemaArquivo.class.getName()).log(Level.SEVERE, null, ex);
+        System.setSecurityManager(new RMISecurityManager());
+        for (String string : args) {
+            System.out.println("param: "+ string);
         }
+        System.exit(1);
+        try {
+            String name = "rmi://localhost:/teste";
+            SistemaArquivo server = new SistemaArquivo();
+            Naming.rebind(name, server);
+
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            System.exit(-1);
+        }
+        System.out.println("Servidor iniciado");
     }
 
     protected SistemaArquivo() throws RemoteException, IOException {
