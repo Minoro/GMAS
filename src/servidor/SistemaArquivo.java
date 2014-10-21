@@ -8,11 +8,9 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
-
-import model.Arquivo;
-
 import java.rmi.AlreadyBoundException;
 import java.rmi.Naming;
+import java.rmi.RMISecurityManager;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.logging.Level;
@@ -22,6 +20,8 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import model.Arquivo;
+
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -30,7 +30,13 @@ import utils.PainelDeControle;
 public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquivoInterface {
 
     public static void main(String[] args) {
+        System.setSecurityManager(new RMISecurityManager());
+        for (String string : args) {
+            System.out.println("param: "+ string);
+        }
+        System.exit(1);
         try {
+
             System.out.println("Servidor iniciado");
             SistemaArquivo sistemaArquivo = new SistemaArquivo();
             
@@ -42,6 +48,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+
     }
 
     protected SistemaArquivo() throws RemoteException, IOException {

@@ -19,32 +19,19 @@ import utils.PainelDeControle;
 public class DemoMain extends JFrame {
 
     SistemaArquivoInterface server;
+
     public static void main(String[] args) {
         new DemoMain();
     }
 
     public DemoMain() {
+        Document document = null;
         try {
             server = (SistemaArquivoInterface) Naming.lookup(PainelDeControle.middleware.montaURL_RMI("192.168.1.104"));
+            document =server.pedirXML("vellone");
         } catch (NotBoundException | MalformedURLException | RemoteException ex) {
             Logger.getLogger(DemoMain.class.getName()).log(Level.SEVERE, null, ex);
         }
-        PainelDeControle.middleware.pedirXML();
-        Document document = null;
-
-        try {
-            document = server.pedirXML("vellone");
-        } catch (RemoteException ex) {
-            Logger.getLogger(DemoMain.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
-        if(document == null){
-            System.out.println("tá null!");
-        }else{
-            System.out.println("! tá null!");
-        }
-        
-        System.exit(1);
 
         XMLTreePanel panel = new XMLTreePanel();
         XMLInfoPanel info = new XMLInfoPanel();
