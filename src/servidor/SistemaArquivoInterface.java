@@ -132,6 +132,5 @@ public interface SistemaArquivoInterface extends Remote {
      */
     void setAtributes(String caminho, Arquivo arquivo) throws RemoteException;
     
-    Document pedirXML(String nomeUsuario);
-
+    Document pedirXML(String nomeUsuario) throws RemoteException;
 }

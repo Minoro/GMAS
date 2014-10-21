@@ -16,7 +16,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import utils.PainelDeControle;
 
 public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquivoInterface {
@@ -70,8 +69,6 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
                     } else if (mensagem.equals(PainelDeControle.USUARIO_EXISTENTE)) {
                         System.out.println("Usuário já existente! " + ipUsuario.getHostAddress());
                         System.out.println("FALTA IMPLEMENTAR");
-                        throw new NotImplementedException();
-
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
