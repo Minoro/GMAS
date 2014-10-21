@@ -33,11 +33,6 @@ import utils.PainelDeControle;
 public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquivoInterface {
 
     public static void main(String[] args) {
-        System.setSecurityManager(new RMISecurityManager());
-        for (String string : args) {
-            System.out.println("param: "+ string);
-        }
-        System.exit(1);
         try {
            System.out.println("Servidor iniciado");
            
