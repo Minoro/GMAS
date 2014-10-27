@@ -2,6 +2,7 @@ package utils;
 
 import java.io.File;
 import middleware.Middleware;
+import org.w3c.dom.Document;
 
 /**
  * Classe para a definição de valores utilizados no sistema todo
@@ -23,4 +24,7 @@ public class PainelDeControle {
     public static final String HOME = System.getProperty("user.dir");
     public static Middleware middleware;
     public static String username;
+    public static String TAG_ARQUIVO = "arquivo";
+    public static String TAG_PASTA = "pasta";
+    public static Document xml;
 }

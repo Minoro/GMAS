@@ -43,6 +43,7 @@ public class XMLInfoPanel extends JPanel {
             String propriedade = string.replaceAll("([A-Z])", " $1").toUpperCase();
             String valor = no.getAttribute(string);
             if (valor.equals("")) {
+                //String para quando o valor do atributo está vazio
                 valor = "";
             }
 

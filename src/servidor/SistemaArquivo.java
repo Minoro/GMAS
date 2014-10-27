@@ -22,10 +22,16 @@ import java.util.logging.Logger;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 
 import model.Arquivo;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import utils.PainelDeControle;
@@ -34,14 +40,13 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
 
     public static void main(String[] args) {
         try {
-           System.out.println("Servidor iniciado");
-           
-           Policy.setPolicy(new MyPolicy());           
-           System.setSecurityManager(new RMISecurityManager());
-           
-           
-           SistemaArquivo sistemaArquivo =  new SistemaArquivo();
-           Naming.rebind("rmi://:/teste", sistemaArquivo);
+            System.out.println("Servidor iniciado");
+
+            Policy.setPolicy(new MyPolicy());
+            System.setSecurityManager(new RMISecurityManager());
+
+            SistemaArquivo sistemaArquivo = new SistemaArquivo();
+            Naming.rebind("rmi://:/teste", sistemaArquivo);
         } catch (IOException ex) {
             Logger.getLogger(SistemaArquivo.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -96,12 +101,13 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
         }
 
     }
-    
+
     public static class MyPolicy extends Policy {
-     	@Override
+
+        @Override
         public PermissionCollection getPermissions(CodeSource codesource) {
             Permissions p = new Permissions();
-            p.add(new java.security.AllPermission());          
+            p.add(new java.security.AllPermission());
             return p;
         }
     }
@@ -124,9 +130,9 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
                 FileWriter fw;
                 fw = new FileWriter(file.getAbsoluteFile());
                 BufferedWriter bw = new BufferedWriter(fw);
-                bw.write("<raiz>"+nomeUsuario+"</raiz>");//salva as informações no arquivo no disco
+                bw.write("<raiz>" + nomeUsuario + "</raiz>");//salva as informações no arquivo no disco
                 bw.close();
-                
+
             } catch (IOException ex) {
                 Logger.getLogger(SistemaArquivo.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -202,6 +208,38 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
             throws RemoteException {
         // TODO Auto-generated method stub
 
+    }
+
+    /**
+     * Verifica a existência de um ARQUIVO no XML
+     *
+     * @param caminho String - caminho do arquivo a ser checado, com a extensão
+     * no fim. Exemplo: "Pasta 1/Pasta 2/Pasta 3/ultima/senha_facebook.txt"
+     * @return boolean - true caso exista o arquivo, falso caso não exista
+     * @throws XPathExpressionException
+     */
+    public boolean existeArquivo(String caminho) throws XPathExpressionException {
+        String[] list = caminho.split("/");
+        String expressao = "/raiz/";
+
+        for (int i = 0; i < list.length; i++) {
+            String string = list[i];
+            if (i != list.length - 1) {
+                expressao += "pasta[text()='" + string + "']/";
+            } else {
+                expressao += "arquivo[text()='" + string + "']";
+            }
+        }
+        System.out.println("Expressao para checar existencia de arquivo: " + expressao);
+
+        XPath xpath = XPathFactory.newInstance().newXPath();
+        XPathExpression expr = xpath.compile(expressao);
+        Object exprResult = expr.evaluate(PainelDeControle.xml, XPathConstants.NODESET);
+        NodeList node = (NodeList) exprResult;
+        if (node.getLength() == 0) {
+            return true;
+        }
+        return false;
     }
 
 }

@@ -27,6 +27,6 @@ public class XMLTreeNode {
     }
 
     public String getNodeName() {
-        return "Tipo de Elemento: " + element.getNodeName();
+        return element.getNodeName();
     }
 }
