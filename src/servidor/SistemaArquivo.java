@@ -38,6 +38,8 @@ import utils.PainelDeControle;
 
 public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquivoInterface {
 
+	private  GerenciadorArquivos gerenciadorArquivos;
+	
     public static void main(String[] args) {
         try {
             System.out.println("Servidor iniciado");
@@ -55,9 +57,12 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
     protected SistemaArquivo() throws RemoteException, IOException {
         super();
         // TODO Auto-generated constructor stub
+        gerenciadorArquivos = new GerenciadorArquivos();
+        
         new Thread(new MensagemBoasVindas()).start();
     }
 
+    
     private class MensagemBoasVindas implements Runnable {
 
         private MulticastSocket s;
@@ -102,6 +107,10 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
 
     }
 
+    /**
+     * Classe para politica de segurança do RMI, evitando arquivos externos
+     *
+     */
     public static class MyPolicy extends Policy {
 
         @Override
@@ -114,8 +123,16 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
 
     @Override
     public boolean criarArquivo(String caminho) throws RemoteException {
-        // TODO Auto-generated method stub
-        return false;
+        
+        String pastas[] = caminho.split("/");//separa o caminho passado em pastas
+        String nomeArquivo = pastas[pastas.length-1];//separa o nome do arquivo (ultimo item do caminho)
+        
+        String nomeArquivoServidor = gerenciadorArquivos.criarArquivo();//cria arquivo e salva o nome que esta no servidor
+        //TODO
+        //faz o parsing do XML inserindo o caminho e o nome do arquivo
+        //verifica se o caminho existe no XML, se não existir retorna falso
+        
+        return true;
     }
 
     @Override
@@ -152,62 +169,154 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
 
     @Override
     public boolean deletarArquivo(String caminho) throws RemoteException {
-        // TODO Auto-generated method stub
-        return false;
+    	if(!existeArquivo(caminho)){
+    		return false;
+    	}    
+    	
+        //TODO
+        //se não existir caminho ou arquivo no XML retorna falso
+    	//pega o nome do arquivo no servidor
+        
+        gerenciadorArquivos.apagarArquivo(nomeArquivo);
+        //apaga do xml
+        
+        return true;
     }
 
     @Override
     public boolean renomearArquivo(String caminhoOrigem, String caminhoDestino)
             throws RemoteException {
-        // TODO Auto-generated method stub
-        return false;
+    	
+    	try {
+			if(!existeArquivo(caminhoOrigem)){
+				return false;
+			}
+		} catch (XPathExpressionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}    
+    	
+    	//TODO
+    	//Alterar XML
+    	
+        return true;
     }
 
     @Override
     public boolean moverArquivo(String caminhoOrigem, String caminhoDestino)
             throws RemoteException {
-        // TODO Auto-generated method stub
+    	try {
+			if(!existeArquivo(caminhoOrigem)){
+				return false;
+			}
+		} catch (XPathExpressionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}    
+    	// TODO
+    	//alterar XML
+    	
         return false;
     }
 
     @Override
     public boolean copiarArquivo(String caminhoOrigem, String caminhoDestino)
             throws RemoteException {
-        // TODO Auto-generated method stub
+    	
+    	try {
+			if(!existeArquivo(caminhoOrigem)){
+				return false;
+			}
+		} catch (XPathExpressionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}    
+    	
+        // TODO 
+    	// alterar XML
+    	
         return false;
     }
 
     @Override
     public String lerArquivo(String caminho) throws RemoteException {
-        // TODO Auto-generated method stub
-        return null;
+    	if(!existeArquivo(caminho)){
+    		return null;
+    	}    
+        //TODO
+        //se não existir caminho ou arquivo no XML retorna falso
+    	//pega o nome do arquivo no servidor
+        
+        Arquivo arquivo = gerenciadorArquivos.abrirArquivo(nomeArquivo);
+        String conteudo  = arquivo.getConteudo();
+        
+        return conteudo;
     }
 
     @Override
     public boolean escreverArquivo(String caminho, String texto)
             throws RemoteException {
-        // TODO Auto-generated method stub
-        return false;
+        
+    	if(!existeArquivo(caminho)){
+    		return false;
+    	}    
+        //TODO
+        //se não existir caminho ou arquivo no XML retorna falso
+    	//pega o nome do arquivo no servidor
+        Arquivo arquivo = gerenciadorArquivos.abrirArquivo(nomeArquivo);
+        
+        arquivo.setConteudo(texto);//passa informação para o arquivo
+        
+        //alterar nome para nome aleatório
+        return gerenciadorArquivos.salvarArquivo(arquivo, nomeArquivo);
+        
     }
 
     @Override
     public boolean escreverArquivo(String caminho, String texto, int posicao)
             throws RemoteException {
-        // TODO Auto-generated method stub
+        
+    	if(!existeArquivo(caminho)){
+    		return false;
+    	}
+    	
+        //TODO
+        //se não existir caminho ou arquivo no XML retorna falso
+    	//pega o nome do arquivo no servidor
+        
+        Arquivo arquivo = gerenciadorArquivos.abrirArquivo(nomeArquivo);
+        String conteudo = arquivo.getConteudo();
+        
+        String inicioTexto = conteudo.substring(0, posicao);
+        String fimTexto = conteudo.substring(posicao);
+        
+        arquivo.setConteudo(inicioTexto+texto+fimTexto);
+        
+    	gerenciadorArquivos.salvarArquivo(arquivo, nomeArquivo);
         return false;
     }
 
     @Override
     public Arquivo getAtributes(String caminho) throws RemoteException {
-        // TODO Auto-generated method stub
+    	if(!existeArquivo(caminho)){
+    		return false;
+    	}
+    	
+    	//TODO
+    	//Pega o nome do arquivo no XML
+    	
+    	Arquivo arquivo = gerenciadorArquivos.abrirArquivo(nome);
         return null;
     }
 
     @Override
     public void setAtributes(String caminho, Arquivo arquivo)
             throws RemoteException {
-        // TODO Auto-generated method stub
-
+    	
+    	Arquivo arquivoServidor = gerenciadorArquivos.abrirArquivo(nome);
+    	arquivoServidor = arquivo;
+    	gerenciadorArquivos.salvarArquivo(arquivoServidor, nome);
+    	
     }
 
     /**
