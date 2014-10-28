@@ -3,6 +3,9 @@ package servidor;
 import model.Arquivo;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.xpath.XPathExpressionException;
 import org.w3c.dom.Document;
 
 /**
@@ -20,9 +23,10 @@ public interface SistemaArquivoInterface extends Remote {
      * @return boolean - true caso seja possivel criar o arquivo ou false caso
      * já exista um arquivo com o nome
      * @throws RemoteException
+     * @throws javax.xml.xpath.XPathExpressionException
      *
      */
-    boolean criarArquivo(String caminho) throws RemoteException;
+    boolean criarArquivo(String caminho) throws RemoteException, XPathExpressionException;
 
     /**
      * Deleta um arquivo passando o caminho do arquivo, separado por barra, onde
@@ -33,8 +37,9 @@ public interface SistemaArquivoInterface extends Remote {
      * @return boolean - true caso seja possivel deletar o arquivo ou false caso
      * não seja possível
      * @throws RemoteException
+     * @throws javax.xml.xpath.XPathExpressionException
      */
-    boolean deletarArquivo(String caminho) throws RemoteException;
+    boolean deletarArquivo(String caminho) throws RemoteException, XPathExpressionException;
 
     /**
      * Renomeia um arquivo passando o caminho de origem do arquivo, separado por
@@ -49,8 +54,9 @@ public interface SistemaArquivoInterface extends Remote {
      * @return boolean - true caso seja possivel renomear o arquivo ou false
      * caso não seja possível
      * @throws RemoteException
+     * @throws javax.xml.xpath.XPathExpressionException
      */
-    boolean renomearArquivo(String caminhoOrigem, String caminhoDestino) throws RemoteException;
+    boolean renomearArquivo(String caminhoOrigem, String caminhoDestino) throws RemoteException, XPathExpressionException;
 
     /**
      * Move um arquivo, dado um caminho de origem, onde o ultimo nome após a "/"
@@ -62,8 +68,9 @@ public interface SistemaArquivoInterface extends Remote {
      * @return boolean - true caso seja possivel mover o arquivo ou false caso
      * não seja possível
      * @throws RemoteException
+     * @throws javax.xml.xpath.XPathExpressionException
      */
-    boolean moverArquivo(String caminhoOrigem, String caminhoDestino) throws RemoteException;
+    boolean moverArquivo(String caminhoOrigem, String caminhoDestino) throws RemoteException, XPathExpressionException;
 
     /**
      * Copia um arquivo, dado um caminho de origem, onde o ultimo nome após a
@@ -75,8 +82,9 @@ public interface SistemaArquivoInterface extends Remote {
      * @return boolean - true caso seja possivel mover o arquivo ou false caso
      * não seja possível
      * @throws RemoteException
+     * @throws javax.xml.xpath.XPathExpressionException
      */
-    boolean copiarArquivo(String caminhoOrigem, String caminhoDestino) throws RemoteException;
+    boolean copiarArquivo(String caminhoOrigem, String caminhoDestino) throws RemoteException, XPathExpressionException;
 
     /**
      * Lê o conteudo do arquivo ao final do caminho
@@ -84,8 +92,9 @@ public interface SistemaArquivoInterface extends Remote {
      * @param caminho String - caminho para o arquivo
      * @return String - retorna o conteudo do arquivo em forma de texto
      * @throws RemoteException
+     * @throws javax.xml.xpath.XPathExpressionException
      */
-    String lerArquivo(String caminho) throws RemoteException;
+    String lerArquivo(String caminho) throws RemoteException, XPathExpressionException;
 
     /**
      * Escreve no final do arquivo indicado ao final do caminho
@@ -95,8 +104,9 @@ public interface SistemaArquivoInterface extends Remote {
      * @return boolean - retorna true caso o arquivo seja alterado com sucesso,
      * caso contrário retorna falso
      * @throws RemoteException
+     * @throws javax.xml.xpath.XPathExpressionException
      */
-    boolean escreverArquivo(String caminho, String texto) throws RemoteException;
+    boolean escreverArquivo(String caminho, String texto) throws RemoteException, XPathExpressionException;
 
     /**
      * Escreve na posição indicada no arquivo ao final do caminho
@@ -107,8 +117,9 @@ public interface SistemaArquivoInterface extends Remote {
      * @return boolean - retorna true caso o arquivo seja alterado com sucesso,
      * caso contrário retorna falso
      * @throws RemoteException
+     * @throws javax.xml.xpath.XPathExpressionException
      */
-    boolean escreverArquivo(String caminho, String texto, int posicao) throws RemoteException;
+    boolean escreverArquivo(String caminho, String texto, int posicao) throws RemoteException, XPathExpressionException;
 
     /**
      * Retorna um objeto com as informações referentes ao arquivo no final do
@@ -119,8 +130,9 @@ public interface SistemaArquivoInterface extends Remote {
      * @return Arquivo - retorna um objeto com as informações referentes ao
      * arquivo
      * @throws RemoteException
+     * @throws javax.xml.xpath.XPathExpressionException
      */
-    Arquivo getAtributes(String caminho) throws RemoteException;
+    Arquivo getAtributes(String caminho) throws RemoteException, XPathExpressionException;
 
     /**
      * Altera os atributos referentes ao arquivo
@@ -129,8 +141,20 @@ public interface SistemaArquivoInterface extends Remote {
      * informações
      * @param arquivo Arquivo - Objeto com as informações a serem atualizadas
      * @throws RemoteException
+     * @throws javax.xml.xpath.XPathExpressionException
      */
-    void setAtributes(String caminho, Arquivo arquivo) throws RemoteException;
-    
-    Document pedirXML(String nomeUsuario) throws RemoteException;
+    void setAtributes(String caminho, Arquivo arquivo) throws RemoteException, XPathExpressionException;
+
+    /**
+     * Salva o xml do parâmetro no arquivo físico
+     *
+     * @param nomeUsuario String - nome do usuário para ser salvo o arquivo XML
+     * @param xml Document - Objeto representando o arquivo xml
+     * @return boolean - true caso salve o arquivo, false caso haja algum erro
+     * @throws RemoteException
+     * @throws TransformerConfigurationException
+     */
+    public boolean salvaXML(Document xml, String nomeUsuario) throws RemoteException, TransformerConfigurationException, TransformerException;
+
+    Document pedirXML(String nomeUsuario) throws RemoteException, XPathExpressionException;
 }

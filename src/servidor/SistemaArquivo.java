@@ -22,12 +22,17 @@ import java.util.logging.Logger;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
-
 import model.Arquivo;
 
 import org.w3c.dom.Document;
@@ -38,8 +43,8 @@ import utils.PainelDeControle;
 
 public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquivoInterface {
 
-	private  GerenciadorArquivos gerenciadorArquivos;
-	
+    private GerenciadorArquivos gerenciadorArquivos;
+
     public static void main(String[] args) {
         try {
             System.out.println("Servidor iniciado");
@@ -58,11 +63,10 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
         super();
         // TODO Auto-generated constructor stub
         gerenciadorArquivos = new GerenciadorArquivos();
-        
+
         new Thread(new MensagemBoasVindas()).start();
     }
 
-    
     private class MensagemBoasVindas implements Runnable {
 
         private MulticastSocket s;
@@ -122,23 +126,28 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
     }
 
     @Override
-    public boolean criarArquivo(String caminho) throws RemoteException {
-        
+    public boolean criarArquivo(String caminho)
+            throws RemoteException, XPathExpressionException {
+
+        if (existeArquivo(caminho)) {
+            return false;
+        }
+
         String pastas[] = caminho.split("/");//separa o caminho passado em pastas
-        String nomeArquivo = pastas[pastas.length-1];//separa o nome do arquivo (ultimo item do caminho)
-        
+        String nomeArquivo = pastas[pastas.length - 1];//separa o nome do arquivo (ultimo item do caminho)
+
         String nomeArquivoServidor = gerenciadorArquivos.criarArquivo();//cria arquivo e salva o nome que esta no servidor
         //TODO
         //faz o parsing do XML inserindo o caminho e o nome do arquivo
         //verifica se o caminho existe no XML, se não existir retorna falso
-        
+
         return true;
     }
 
     @Override
     public Document pedirXML(String nomeUsuario) {
         Document retorno;
-        String caminho = PainelDeControle.HOME + PainelDeControle.SEPARADOR + PainelDeControle.RAIZ + PainelDeControle.SEPARADOR + nomeUsuario + ".xml";
+        String caminho = PainelDeControle.CAMINHO_XML;
         System.out.println("Caminho do XML => " + caminho);
         File file = new File(caminho);
         if (!file.exists()) { //cria e inicializa o arquivo xml
@@ -168,155 +177,152 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
     }
 
     @Override
-    public boolean deletarArquivo(String caminho) throws RemoteException {
-    	if(!existeArquivo(caminho)){
-    		return false;
-    	}    
-    	
+    public boolean deletarArquivo(String caminho)
+            throws RemoteException, XPathExpressionException {
+        if (!existeArquivo(caminho)) {
+            return false;
+        }
+
         //TODO
         //se não existir caminho ou arquivo no XML retorna falso
-    	//pega o nome do arquivo no servidor
-        
+        //pega o nome do arquivo no servidor
         gerenciadorArquivos.apagarArquivo(nomeArquivo);
         //apaga do xml
-        
+
         return true;
     }
 
     @Override
     public boolean renomearArquivo(String caminhoOrigem, String caminhoDestino)
-            throws RemoteException {
-    	
-    	try {
-			if(!existeArquivo(caminhoOrigem)){
-				return false;
-			}
-		} catch (XPathExpressionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}    
-    	
-    	//TODO
-    	//Alterar XML
-    	
+            throws RemoteException, XPathExpressionException {
+
+        try {
+            if (!existeArquivo(caminhoOrigem)) {
+                return false;
+            }
+        } catch (XPathExpressionException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        //TODO
+        //Alterar XML
         return true;
     }
 
     @Override
     public boolean moverArquivo(String caminhoOrigem, String caminhoDestino)
-            throws RemoteException {
-    	try {
-			if(!existeArquivo(caminhoOrigem)){
-				return false;
-			}
-		} catch (XPathExpressionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}    
-    	// TODO
-    	//alterar XML
-    	
+            throws RemoteException, XPathExpressionException {
+        try {
+            if (!existeArquivo(caminhoOrigem)) {
+                return false;
+            }
+        } catch (XPathExpressionException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        // TODO
+        //alterar XML
+
         return false;
     }
 
     @Override
     public boolean copiarArquivo(String caminhoOrigem, String caminhoDestino)
-            throws RemoteException {
-    	
-    	try {
-			if(!existeArquivo(caminhoOrigem)){
-				return false;
-			}
-		} catch (XPathExpressionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}    
-    	
+            throws RemoteException, XPathExpressionException {
+        try {
+            if (!existeArquivo(caminhoOrigem)) {
+                return false;
+            }
+        } catch (XPathExpressionException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
         // TODO 
-    	// alterar XML
-    	
+        // alterar XML
         return false;
     }
 
     @Override
-    public String lerArquivo(String caminho) throws RemoteException {
-    	if(!existeArquivo(caminho)){
-    		return null;
-    	}    
+    public String lerArquivo(String caminho)
+            throws RemoteException, XPathExpressionException {
+        if (!existeArquivo(caminho)) {
+            return null;
+        }
+
         //TODO
         //se não existir caminho ou arquivo no XML retorna falso
-    	//pega o nome do arquivo no servidor
-        
+        //pega o nome do arquivo no servidor
         Arquivo arquivo = gerenciadorArquivos.abrirArquivo(nomeArquivo);
-        String conteudo  = arquivo.getConteudo();
-        
+        String conteudo = arquivo.getConteudo();
+
         return conteudo;
     }
 
     @Override
     public boolean escreverArquivo(String caminho, String texto)
-            throws RemoteException {
-        
-    	if(!existeArquivo(caminho)){
-    		return false;
-    	}    
+            throws RemoteException, XPathExpressionException {
+
+        if (!existeArquivo(caminho)) {
+            return false;
+        }
         //TODO
         //se não existir caminho ou arquivo no XML retorna falso
-    	//pega o nome do arquivo no servidor
+        //pega o nome do arquivo no servidor
         Arquivo arquivo = gerenciadorArquivos.abrirArquivo(nomeArquivo);
-        
+
         arquivo.setConteudo(texto);//passa informação para o arquivo
-        
+
         //alterar nome para nome aleatório
         return gerenciadorArquivos.salvarArquivo(arquivo, nomeArquivo);
-        
+
     }
 
     @Override
     public boolean escreverArquivo(String caminho, String texto, int posicao)
-            throws RemoteException {
-        
-    	if(!existeArquivo(caminho)){
-    		return false;
-    	}
-    	
+            throws RemoteException, XPathExpressionException {
+
+        if (!existeArquivo(caminho)) {
+            return false;
+        }
+
         //TODO
         //se não existir caminho ou arquivo no XML retorna falso
-    	//pega o nome do arquivo no servidor
-        
+        //pega o nome do arquivo no servidor
         Arquivo arquivo = gerenciadorArquivos.abrirArquivo(nomeArquivo);
         String conteudo = arquivo.getConteudo();
-        
+
         String inicioTexto = conteudo.substring(0, posicao);
         String fimTexto = conteudo.substring(posicao);
-        
-        arquivo.setConteudo(inicioTexto+texto+fimTexto);
-        
-    	gerenciadorArquivos.salvarArquivo(arquivo, nomeArquivo);
+
+        arquivo.setConteudo(inicioTexto + texto + fimTexto);
+
+        gerenciadorArquivos.salvarArquivo(arquivo, nomeArquivo);
         return false;
     }
 
     @Override
-    public Arquivo getAtributes(String caminho) throws RemoteException {
-    	if(!existeArquivo(caminho)){
-    		return false;
-    	}
-    	
-    	//TODO
-    	//Pega o nome do arquivo no XML
-    	
-    	Arquivo arquivo = gerenciadorArquivos.abrirArquivo(nome);
+    public Arquivo getAtributes(String caminho)
+            throws RemoteException, XPathExpressionException {
+        if (!existeArquivo(caminho)) {
+            return null;
+        }
+
+        //TODO
+        //Pega o nome do arquivo no XML
+        Arquivo arquivo = gerenciadorArquivos.abrirArquivo(nome);
         return null;
     }
 
     @Override
     public void setAtributes(String caminho, Arquivo arquivo)
-            throws RemoteException {
-    	
-    	Arquivo arquivoServidor = gerenciadorArquivos.abrirArquivo(nome);
-    	arquivoServidor = arquivo;
-    	gerenciadorArquivos.salvarArquivo(arquivoServidor, nome);
-    	
+            throws RemoteException, XPathExpressionException {
+
+        Arquivo arquivoServidor = gerenciadorArquivos.abrirArquivo(nome);
+        arquivoServidor = arquivo;
+        gerenciadorArquivos.salvarArquivo(arquivoServidor, nome);
+
     }
 
     /**
@@ -327,7 +333,28 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
      * @return boolean - true caso exista o arquivo, falso caso não exista
      * @throws XPathExpressionException
      */
-    public boolean existeArquivo(String caminho) throws XPathExpressionException {
+    public boolean existeArquivo(String caminho)
+            throws XPathExpressionException {
+        String expressao = montaExpressao(caminho);
+
+        XPath xpath = XPathFactory.newInstance().newXPath();
+        XPathExpression expr = xpath.compile(expressao);
+        Object exprResult = expr.evaluate(PainelDeControle.xml, XPathConstants.NODESET);
+        NodeList node = (NodeList) exprResult;
+        if (node.getLength() != 0) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Monta uma expressão para o XPath compilar
+     *
+     * @param caminho String - caminho a ser gerado a expressao
+     * @return String - retorna uma String representando a expressão do caminho
+     * do parâmetro
+     */
+    public String montaExpressao(String caminho) {
         String[] list = caminho.split("/");
         String expressao = "/raiz/";
 
@@ -340,15 +367,19 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
             }
         }
         System.out.println("Expressao para checar existencia de arquivo: " + expressao);
+        return expressao;
+    }
 
-        XPath xpath = XPathFactory.newInstance().newXPath();
-        XPathExpression expr = xpath.compile(expressao);
-        Object exprResult = expr.evaluate(PainelDeControle.xml, XPathConstants.NODESET);
-        NodeList node = (NodeList) exprResult;
-        if (node.getLength() == 0) {
-            return true;
-        }
-        return false;
+    @Override
+    public boolean salvaXML(Document xml, String nomeUsuario)
+            throws RemoteException, TransformerConfigurationException, TransformerException {
+        TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        Transformer transformer = transformerFactory.newTransformer();
+        DOMSource source = new DOMSource(xml);
+        String caminho = PainelDeControle.CAMINHO_XML;
+        StreamResult result = new StreamResult(new File(caminho));
+        transformer.transform(source, result);
+        return true;
     }
 
 }
