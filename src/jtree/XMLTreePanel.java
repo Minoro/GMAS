@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import javax.swing.JOptionPane;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -14,10 +15,12 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreePath;
 
 import org.w3c.dom.Document;
+import utils.PainelDeControle;
 
 public class XMLTreePanel extends JPanel {
 
-    private JTree tree;
+    public static JTree tree;
+    public static XMLTreeNode node_selecionado;
     private XMLTreeModel model;
 //    private XMLInfoPanel
 
@@ -44,7 +47,8 @@ public class XMLTreePanel extends JPanel {
             public void valueChanged(TreeSelectionEvent e) {
                 Object lpc = e.getPath().getLastPathComponent();
                 if (lpc instanceof XMLTreeNode) {
-                    text.setText(((XMLTreeNode) lpc).getNodeName());
+                    text.setText("Tipo de Elemento: " + ((XMLTreeNode) lpc).getNodeName());
+                    node_selecionado = (XMLTreeNode) lpc;
                     XMLInfoPanel.alteraInfo((XMLTreeNode) lpc);
                 }
             }
@@ -56,8 +60,18 @@ public class XMLTreePanel extends JPanel {
                 TreePath selPath = tree.getPathForLocation(e.getX(), e.getY());
                 if (selRow != -1) {
                     if (e.getClickCount() == 2) {
-                        XMLTreeNode no = (XMLTreeNode) selPath.getLastPathComponent();
-                        System.out.println("Double Click em " + no.toString() + "!");
+                        Object[] no = (Object[]) selPath.getPath();
+                        String caminho = "";
+                        //Monta a 'url' do elemento que recebeu o clique duplo
+                        for (Object obj : no) {
+                            caminho += obj.toString() + "/";
+                        }
+                        //Se deu 2 cliques em um arquivo, retira a última barra
+                        if (((XMLTreeNode) selPath.getLastPathComponent()).getNodeName().equals(PainelDeControle.TAG_ARQUIVO)) {
+                            caminho = caminho.substring(0, caminho.length() - 1);
+                        }
+
+                        System.out.println("Double Click em " + caminho);
                     }
                 }
             }
@@ -73,4 +87,36 @@ public class XMLTreePanel extends JPanel {
         return model.getDocument();
     }
 
+    /**
+     * Monta uma String com o caminho do item selecionado. Se o item selecionado
+     * é um arquivo e o parametro é true, o último elemento é excluido do
+     * caminho
+     *
+     * @param excluirUltimo boolean - true: excluir o último item do caminho,
+     * caso este seja um arquivo; false: não tira o último elemento, seja um
+     * arquivo ou não
+     * @return String - caminho do item selecionado na árvore de hierarquia
+     */
+    public static String getCaminhoSelecionado(boolean excluirUltimo) {
+        TreePath tp = tree.getSelectionPath();
+        String caminho = "";
+        if (tp != null) {
+            Object[] no = (Object[]) tp.getPath();
+            //Monta a 'url' do elemento que está selecionado
+            for (Object obj : no) {
+                caminho += obj.toString() + "/";
+            }
+            // Se o último selecionado é um arquivo, retira o último elemento
+            if (((XMLTreeNode) tp.getLastPathComponent()).getNodeName().equals(PainelDeControle.TAG_ARQUIVO) && excluirUltimo) {
+                caminho = caminho.substring(0, caminho.length() - 1);
+                caminho = caminho.substring(0, caminho.lastIndexOf("/"));
+            }
+        } else {
+            JOptionPane.showMessageDialog(DemoMain.main, "Não há nenhum caminho selecionado.\nSelecione um elemento na árvore de hierarquia e tente novamente");
+        }
+        // Retira o nome da raiz, pois a função montaExpressao já inclui a raiz por padrão
+        caminho = caminho.substring(caminho.indexOf("/") + 1, caminho.length());
+        System.out.println("Caminho do item selecionado: " + caminho);
+        return caminho;
+    }
 }

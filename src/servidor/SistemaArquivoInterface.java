@@ -3,8 +3,6 @@ package servidor;
 import model.Arquivo;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
 import javax.xml.xpath.XPathExpressionException;
 import org.w3c.dom.Document;
 
@@ -20,13 +18,28 @@ public interface SistemaArquivoInterface extends Remote {
      *
      * @param caminho String - caminho onde será criado o arquivo, concatenado
      * com "/" e o nome do arquivo
+     * @param arquivo Arquivo - Objeto do arquivo a ser salvo no disco
      * @return boolean - true caso seja possivel criar o arquivo ou false caso
      * já exista um arquivo com o nome
      * @throws RemoteException
      * @throws javax.xml.xpath.XPathExpressionException
      *
      */
-    boolean criarArquivo(String caminho) throws RemoteException, XPathExpressionException;
+    boolean criarArquivo(String caminho, Arquivo arquivo) throws RemoteException, XPathExpressionException;
+
+    /**
+     * Cria uma pasta dado um caminho, onde o último nome, após a última barra,
+     * corresponde ao nome da pasta
+     *
+     * @param caminho String - caminho onde será criado a pasta, concatenado
+     * com "/" e o nome da pasta
+     * @return boolean - true caso seja possivel criar a pasta ou false caso
+     * já exista uma pasta com o mesmo nome
+     * @throws RemoteException
+     * @throws javax.xml.xpath.XPathExpressionException
+     *
+     */
+    boolean criarPasta(String caminho) throws RemoteException, XPathExpressionException;
 
     /**
      * Deleta um arquivo passando o caminho do arquivo, separado por barra, onde
@@ -47,16 +60,15 @@ public interface SistemaArquivoInterface extends Remote {
      * arquivo. O caminho de destino corresponde ao caminho do arquivo, separado
      * por barra, onde o ultimo nome é o novo nome do arquivo
      *
-     * @param caminhoOrigem String - caminho do arquivo a ser renomeado,
+     * @param caminhoOrigem String - caminho do arquivo/pasta a ser renomeado,
      * concatenado com "/" e o nome do arquivo
-     * @param caminhoDestino String - caminho de destino o arquivo renomeado,
-     * concatenado com "/" e e novo nome do arquivo
+     * @param novoNome String - novo nome do arquivo/pasta
      * @return boolean - true caso seja possivel renomear o arquivo ou false
      * caso não seja possível
      * @throws RemoteException
      * @throws javax.xml.xpath.XPathExpressionException
      */
-    boolean renomearArquivo(String caminhoOrigem, String caminhoDestino) throws RemoteException, XPathExpressionException;
+    boolean renomearArquivo(String caminhoOrigem, String novoNome) throws RemoteException, XPathExpressionException;
 
     /**
      * Move um arquivo, dado um caminho de origem, onde o ultimo nome após a "/"
@@ -144,17 +156,6 @@ public interface SistemaArquivoInterface extends Remote {
      * @throws javax.xml.xpath.XPathExpressionException
      */
     void setAtributes(String caminho, Arquivo arquivo) throws RemoteException, XPathExpressionException;
-
-    /**
-     * Salva o xml do parâmetro no arquivo físico
-     *
-     * @param nomeUsuario String - nome do usuário para ser salvo o arquivo XML
-     * @param xml Document - Objeto representando o arquivo xml
-     * @return boolean - true caso salve o arquivo, false caso haja algum erro
-     * @throws RemoteException
-     * @throws TransformerConfigurationException
-     */
-    public boolean salvaXML(Document xml, String nomeUsuario) throws RemoteException, TransformerConfigurationException, TransformerException;
 
     Document pedirXML(String nomeUsuario) throws RemoteException, XPathExpressionException;
 }

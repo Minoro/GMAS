@@ -1,6 +1,5 @@
 package middleware;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -9,9 +8,6 @@ import java.net.MulticastSocket;
 import java.net.UnknownHostException;
 import java.util.LinkedList;
 import java.util.List;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import org.w3c.dom.Document;
 
 import utils.PainelDeControle;
 
@@ -51,7 +47,8 @@ public class Middleware {
 
     private void mergeUsuario(String multicastGroup, Boolean novoUsuario) throws UnknownHostException, IOException {
         InetAddress group = InetAddress.getByName(multicastGroup);
-        try (MulticastSocket mSckt = new MulticastSocket(); DatagramSocket server = new DatagramSocket(PainelDeControle.PORTA_MULTICAST)) {
+        try (MulticastSocket mSckt = new MulticastSocket();
+                DatagramSocket server = new DatagramSocket(PainelDeControle.PORTA_MULTICAST)) {
             String mensagem;
             if (novoUsuario) {
                 mensagem = PainelDeControle.NOVO_USUARIO;
@@ -65,34 +62,21 @@ public class Middleware {
             //recebe a confirmação dos 2 primeiros servidores de arquivo
 //            for (int i = 0; i < 2; i++) {
 //                while (true) {
-                byte[] resposta = new byte[PainelDeControle.TAMANHO_BUFFER];
-                DatagramPacket receivePacket = new DatagramPacket(resposta, resposta.length);
-                server.receive(receivePacket);
-                //confirmação do servidor
-                servidoresArquivo.add(receivePacket.getAddress());
-                System.out.println("Novo server adicionado! " + receivePacket.getAddress().getHostAddress());
-                System.out.println("Mensagem: " + new String(receivePacket.getData()));
+            System.out.println("Esperando mensagem server");
+            byte[] resposta = new byte[PainelDeControle.TAMANHO_BUFFER];
+            DatagramPacket receivePacket = new DatagramPacket(resposta, resposta.length);
+            server.receive(receivePacket);
+            //confirmação do servidor
+            servidoresArquivo.add(receivePacket.getAddress());
+            System.out.println("Novo server adicionado! " + receivePacket.getAddress().getHostAddress());
+            System.out.println("Mensagem: " + new String(receivePacket.getData()));
 //                }
 //            }
         }
     }
 
-    public String montaURL_RMI(String ip){
+    public String montaURL_RMI(String ip) {
         String url = "rmi://" + ip + ":/teste";
         return url;
-    }
-    
-    public Document pedirXML() {
-        Document document = null;
-        try {
-            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = dbFactory.newDocumentBuilder();
-            document = builder.parse(new File("10.12.5.12/" + nomeUsuario + ".xml"));
-            document.normalize();
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
-        return document;
     }
 }

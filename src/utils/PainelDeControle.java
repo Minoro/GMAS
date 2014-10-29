@@ -27,6 +27,6 @@ public class PainelDeControle {
     public static String TAG_ARQUIVO = "arquivo";
     public static String TAG_PASTA = "pasta";
     public static Document xml;
-    public static String CAMINHO_XML = HOME + SEPARADOR + RAIZ + SEPARADOR + username + ".xml";
+    public static String PASTA_XML = HOME + SEPARADOR + RAIZ + SEPARADOR;
     
 }

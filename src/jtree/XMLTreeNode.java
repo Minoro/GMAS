@@ -16,6 +16,10 @@ public class XMLTreeNode {
         return element;
     }
 
+    /**
+     * Retorna o valor do nó
+     * @return String
+     */
     public String toString() {
         NodeList list = element.getChildNodes();
         for (int i = 0; i < list.getLength(); i++) {

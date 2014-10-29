@@ -20,20 +20,26 @@ public class GerenciadorArquivos {
     /**
      * Cria um arquivo em disco caso não exista nenhum com o nome
      *
+     * @param arquivo Arquivo - Objeto do arquivo a ser salvo fisicamente
      * @return String - retorna um nome aleatório referente ao arquivo em disco
      * caso seja possível criar o arquivo caso contrário retorna uma string
      * vazia
      */
-    public static String criarArquivo() {
+    public static String criarArquivo(Arquivo arquivo) {
         String randomName;
         UUID uuid = UUID.randomUUID();
 
         randomName = uuid.toString().substring(0, 32);
 
-        File file = new File(System.getProperty("user.dir") + "/raiz/" + randomName);
+        File file = new File(System.getProperty("user.dir") + "/raiz/" + randomName + ".agms");
         if (!file.exists()) {
             try {
                 file.createNewFile();
+                FileWriter fw;
+                fw = new FileWriter(file.getAbsoluteFile());
+                BufferedWriter bw = new BufferedWriter(fw);
+                bw.write(arquivo.getConteudo());//salva as informações no arquivo no disco
+                bw.close();
             } catch (IOException e) {
                 e.printStackTrace();
                 return "";
