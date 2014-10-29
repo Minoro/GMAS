@@ -75,6 +75,16 @@ public class XMLMenu extends JMenuBar {
         menu.add(item);
 
         add(menu);
+        
+        menu = new JMenu("Atualizar Árvore");
+        menu.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                XMLTreePanel.atualizaArvore();
+            }
+        });
+        add(menu);
     }
 
 }

@@ -19,7 +19,7 @@ import utils.PainelDeControle;
  *
  * @author Matheus
  */
-public class Renomear extends javax.swing.JDialog {
+public class Renomear extends DefaultDialog {
 
     /**
      * Creates new form Renomear
@@ -35,7 +35,8 @@ public class Renomear extends javax.swing.JDialog {
         } else if (tipo_de_no.equals((PainelDeControle.TAG_PASTA))) {
             label.setText("Nome da pasta");
         } else {
-            JOptionPane.showMessageDialog(DemoMain.main, "Você não pode renomear este tipo de nó! (" + tipo_de_no + ")");
+            JOptionPane.showMessageDialog(DemoMain.main, "Você não pode renomear o tipo de nó " + tipo_de_no);
+            this.close();
         }
         nome.setText(node.toString());
     }
@@ -99,20 +100,26 @@ public class Renomear extends javax.swing.JDialog {
         caminho = caminho.substring(0, caminho.length() - 1);
         String nome_digitado = nome.getText();
         //Se o caminho termina com .txt e o nome digitado nao termina com .txt, adiciona .txt no final do novo nome
-        if(caminho.endsWith(".txt") && !nome_digitado.endsWith(".txt")){
+        if (caminho.endsWith(".txt") && !nome_digitado.endsWith(".txt")) {
             nome_digitado += ".txt";
         }
-        System.out.println("Caminho do arquivo: " + caminho);
+        System.out.println("Caminho do arquivo/pasta: " + caminho);
         System.out.println("Novo nome: " + nome_digitado);
         //Se for renomear algo que nao é um arquivo, e colocar extensao de arquivo, nao deixa.
-        if(!caminho.endsWith(".txt") && nome_digitado.endsWith(".txt")){
-            
+        if (!caminho.endsWith(".txt") && nome_digitado.endsWith(".txt")) {
+            JOptionPane.showMessageDialog(DemoMain.main, "Você não pode adicionar uma extensão de arquivo (.txt) em uma pasta");
+            return;
         }
         try {
-            DemoMain.server.renomearArquivo(caminho, nome_digitado);
+            if (DemoMain.server.renomearArquivo(caminho, nome_digitado)) {
+                JOptionPane.showMessageDialog(DemoMain.main, "Arquivo/Pasta renomeado para " + nome_digitado);
+            } else {
+                JOptionPane.showMessageDialog(DemoMain.main, "Arquivo para renomeação não existente");
+            }
         } catch (RemoteException | XPathExpressionException ex) {
             Logger.getLogger(Renomear.class.getName()).log(Level.SEVERE, null, ex);
         }
+        close();
     }//GEN-LAST:event_jButton1MouseClicked
 
     /**

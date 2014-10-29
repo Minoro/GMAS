@@ -16,7 +16,7 @@ import jtree.XMLTreePanel;
  *
  * @author Matheus
  */
-public class NovaPasta extends javax.swing.JDialog {
+public class NovaPasta extends DefaultDialog {
 
     /**
      * Creates new form NovaPasta
@@ -84,7 +84,7 @@ public class NovaPasta extends javax.swing.JDialog {
         } catch (RemoteException | XPathExpressionException ex) {
             Logger.getLogger(NovaPasta.class.getName()).log(Level.SEVERE, null, ex);
         }
-        this.setVisible(false);
+        close();
     }//GEN-LAST:event_jButton1MouseClicked
 
     /**

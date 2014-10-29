@@ -26,7 +26,6 @@ public class XMLTreePanel extends JPanel {
 
     public XMLTreePanel() {
         setLayout(new BorderLayout());
-
         model = new XMLTreeModel();
         tree = new JTree();
         tree.setModel(model);
@@ -118,5 +117,11 @@ public class XMLTreePanel extends JPanel {
         caminho = caminho.substring(caminho.indexOf("/") + 1, caminho.length());
         System.out.println("Caminho do item selecionado: " + caminho);
         return caminho;
+    }
+    /**
+     * Função para atualizar a árvore de hierarquia após modificar o XML
+     */
+    public static void atualizaArvore(){
+        tree.updateUI();
     }
 }

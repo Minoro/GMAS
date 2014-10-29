@@ -112,8 +112,8 @@ public class Cliente extends javax.swing.JFrame {
             Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
             System.exit(0);
         }
-        this.setVisible(false);
         new DemoMain();
+        dispose();
     }//GEN-LAST:event_jButton1MouseClicked
 
     /**

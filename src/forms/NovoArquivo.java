@@ -17,7 +17,7 @@ import model.Arquivo;
  *
  * @author Matheus
  */
-public class NovoArquivo extends javax.swing.JDialog {
+public class NovoArquivo extends DefaultDialog {
 
     /**
      * Creates new form NovoArquivo
@@ -117,7 +117,7 @@ public class NovoArquivo extends javax.swing.JDialog {
         } catch (RemoteException | XPathExpressionException ex) {
             Logger.getLogger(NovaPasta.class.getName()).log(Level.SEVERE, null, ex);
         }
-        this.setVisible(false);
+        close();
     }//GEN-LAST:event_jButton1MouseClicked
 
     /**

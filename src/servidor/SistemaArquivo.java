@@ -19,6 +19,7 @@ import java.security.Policy;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -89,6 +90,7 @@ public class SistemaArquivo
 
         new Thread(new MensagemBoasVindas()).start();
     }
+    
     private class MensagemBoasVindas implements Runnable {
 
         private MulticastSocket s;
@@ -151,7 +153,7 @@ public class SistemaArquivo
     public boolean criarArquivo(String caminho, Arquivo arquivo)
             throws RemoteException, XPathExpressionException {
 
-        if (existeArquivo(caminho)) {
+        if (existeArquivoPasta(caminho, false)) {
             return false;
         }
         String nomeArquivo = caminho.substring(caminho.lastIndexOf("/") + 1);//separa o nome do arquivo (ultimo item do caminho)
@@ -182,7 +184,7 @@ public class SistemaArquivo
     public boolean criarPasta(String caminho)
             throws RemoteException, XPathExpressionException {
 
-        if (existePasta(caminho)) {
+        if (existeArquivoPasta(caminho, true)) {
             return false;
         }
         String nomePasta = caminho.substring(caminho.lastIndexOf("/") + 1);//separa o nome da pasta €(ultimo item do caminho)
@@ -242,7 +244,7 @@ public class SistemaArquivo
     @Override
     public boolean deletarArquivo(String caminho)
             throws RemoteException, XPathExpressionException {
-        if (!existeArquivo(caminho)) {
+        if (!existeArquivoPasta(caminho, false)) {
             return false;
         }
 
@@ -261,26 +263,38 @@ public class SistemaArquivo
     public boolean renomearArquivo(String caminhoOrigem, String novoNome)
             throws RemoteException, XPathExpressionException {
 
-        if (!existeArquivo(caminhoOrigem)) {
-            return false;
-        }
-
         //TODO
         //Alterar XML
         String expressao;
         if (caminhoOrigem.endsWith(".txt")) {
+            //Renomeando arquivo
+            if (!existeArquivoPasta(caminhoOrigem, false)) {
+                return false;
+            }
             expressao = montaExpressao(caminhoOrigem, false);
         } else {
+            //Renomeando pasta
+            if (!existeArquivoPasta(caminhoOrigem, true)) {
+                return false;
+            }
             expressao = montaExpressao(caminhoOrigem, true);
         }
 
+        Node node = pegaUltimoNode(expressao);
+
+        node.setTextContent(novoNome);
+        try {
+            salvaXML(PainelDeControle.xml, PainelDeControle.username);
+        } catch (TransformerException ex) {
+            Logger.getLogger(SistemaArquivo.class.getName()).log(Level.SEVERE, null, ex);
+        }
         return true;
     }
 
     @Override
     public boolean moverArquivo(String caminhoOrigem, String caminhoDestino)
             throws RemoteException, XPathExpressionException {
-        if (!existeArquivo(caminhoOrigem)) {
+        if (!existeArquivoPasta(caminhoOrigem, false)) {
             return false;
         }
         // TODO
@@ -292,7 +306,7 @@ public class SistemaArquivo
     @Override
     public boolean copiarArquivo(String caminhoOrigem, String caminhoDestino)
             throws RemoteException, XPathExpressionException {
-        if (!existeArquivo(caminhoOrigem)) {
+        if (!existeArquivoPasta(caminhoOrigem, false)) {
             return false;
         }
 
@@ -304,7 +318,7 @@ public class SistemaArquivo
     @Override
     public String lerArquivo(String caminho)
             throws RemoteException, XPathExpressionException {
-        if (!existeArquivo(caminho)) {
+        if (!existeArquivoPasta(caminho, false)) {
             return null;
         }
         String nomeArquivo = caminho.substring(caminho.lastIndexOf("/") + 1);
@@ -322,7 +336,7 @@ public class SistemaArquivo
     public boolean escreverArquivo(String caminho, String texto)
             throws RemoteException, XPathExpressionException {
 
-        if (!existeArquivo(caminho)) {
+        if (!existeArquivoPasta(caminho, false)) {
             return false;
         }
         String nomeArquivo = caminho.substring(caminho.lastIndexOf("/") + 1);
@@ -342,7 +356,7 @@ public class SistemaArquivo
     public boolean escreverArquivo(String caminho, String texto, int posicao)
             throws RemoteException, XPathExpressionException {
 
-        if (!existeArquivo(caminho)) {
+        if (!existeArquivoPasta(caminho, false)) {
             return false;
         }
         String nomeArquivo = caminho.substring(caminho.lastIndexOf("/") + 1);
@@ -365,7 +379,7 @@ public class SistemaArquivo
     @Override
     public Arquivo getAtributes(String caminho)
             throws RemoteException, XPathExpressionException {
-        if (!existeArquivo(caminho)) {
+        if (!existeArquivoPasta(caminho, false)) {
             return null;
         }
         String nomeArquivo = caminho.substring(caminho.lastIndexOf("/") + 1);
@@ -389,16 +403,16 @@ public class SistemaArquivo
     }
 
     /**
-     * Verifica a existência de um ARQUIVO no XML
+     * Verifica a existência de um ARQUIVO ou PASTA no XML
      *
      * @param caminho String - caminho do arquivo a ser checado, com a extensão
      * no fim. Exemplo: "Pasta 1/Pasta 2/Pasta 3/ultima/senha_facebook.txt"
      * @return boolean - true caso exista o arquivo, falso caso não exista
      * @throws XPathExpressionException
      */
-    public boolean existeArquivo(String caminho)
+    public boolean existeArquivoPasta(String caminho, boolean pasta)
             throws XPathExpressionException {
-        String expressao = montaExpressao(caminho, false);
+        String expressao = montaExpressao(caminho, pasta);
 
         XPath xpath = XPathFactory.newInstance().newXPath();
         XPathExpression expr = xpath.compile(expressao);
@@ -474,10 +488,25 @@ public class SistemaArquivo
         Object exprResult = expr.evaluate(PainelDeControle.xml, XPathConstants.NODESET);
         NodeList node = (NodeList) exprResult;
         if (node.getLength() == 0) {
-            throw new Error("Não há nós a serem retornados com a seguinte expressão: " + expressao);
+            JOptionPane.showMessageDialog(DemoMain.main, "Não há nós a serem retornados com a seguinte expressão: " + expressao);
         }
         if (node.getLength() > 1) {
-            throw new Error("Mais de um nó foram encontrados com a seguinte expressão: " + expressao);
+            JOptionPane.showMessageDialog(DemoMain.main, "Mais de um nó foram encontrados com a seguinte expressão: " + expressao);
+        }
+        return node.item(0);
+    }
+
+    public Node pegaUltimoNode(String expressao)
+            throws XPathExpressionException {
+        XPath xpath = XPathFactory.newInstance().newXPath();
+        XPathExpression expr = xpath.compile(expressao);
+        Object exprResult = expr.evaluate(PainelDeControle.xml, XPathConstants.NODESET);
+        NodeList node = (NodeList) exprResult;
+        if (node.getLength() == 0) {
+            JOptionPane.showMessageDialog(DemoMain.main, "Não há nós a serem retornados com a seguinte expressão: " + expressao);
+        }
+        if (node.getLength() > 1) {
+            JOptionPane.showMessageDialog(DemoMain.main, "Mais de um nó foram encontrados com a seguinte expressão: " + expressao);
         }
         return node.item(0);
     }
