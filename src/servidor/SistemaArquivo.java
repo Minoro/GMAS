@@ -19,8 +19,8 @@ import java.security.Policy;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JOptionPane;
 
+import javax.swing.JOptionPane;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -35,6 +35,7 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
+
 import jtree.DemoMain;
 import model.Arquivo;
 
@@ -46,11 +47,8 @@ import org.xml.sax.SAXException;
 
 import utils.PainelDeControle;
 
-public class SistemaArquivo
-    extends UnicastRemoteObject
-    implements SistemaArquivoInterface {
-
-    private GerenciadorArquivos gerenciadorArquivos;
+public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquivoInterface {
+	private static final long serialVersionUID = 1L;
 
     public static void main(String[] args) {
         try {
@@ -66,11 +64,11 @@ public class SistemaArquivo
         }
     }
 
-//    public SistemaArquivo() {
-//        //para testes sem servidor
-//    }
+    /*public SistemaArquivo() {
+        //para testes sem servidor
+    }*/
 
-    private boolean existePasta(String caminho) throws XPathExpressionException {
+    /*private boolean existePasta(String caminho) throws XPathExpressionException {
         String expressao = montaExpressao(caminho, true);
 
         XPath xpath = XPathFactory.newInstance().newXPath();
@@ -81,18 +79,28 @@ public class SistemaArquivo
             return true;
         }
         return false;
-    }
+    }*/
 
     protected SistemaArquivo() throws RemoteException, IOException {
-        super();
-        // TODO Auto-generated constructor stub
-        gerenciadorArquivos = new GerenciadorArquivos();
-
+        super();        
         new Thread(new MensagemBoasVindas()).start();
     }
     
+    /** 
+     * @author mastelini
+     *
+     * 	Thread que escuta mensagens enviadas via multicast dos clientes, requisitando por
+     * servidores de arquivos. O servidor responde ao requisitante via UDP.
+     * 
+     * 	Se a instância em questão é o servidor de arquivos do cliente requisitante (cliente já existente)
+     * envia uma resposta informando esse fato. Caso contrário não responde à requisição.
+     * 
+     * 	Se o cliente requisitante é um novo cliente, uma resposta de "boas vindas" é enviada, indicando
+     * que o servidor em questão está disponível para atender o cliente.
+     * 
+     * 
+     */
     private class MensagemBoasVindas implements Runnable {
-
         private MulticastSocket s;
 
         public MensagemBoasVindas() throws IOException {
@@ -119,9 +127,9 @@ public class SistemaArquivo
                         byte[] responder = respostaNovoUsuario.getBytes();
                         DatagramPacket dp = new DatagramPacket(responder, responder.length, ipUsuario, PainelDeControle.PORTA_MULTICAST);
                         DatagramSocket ds = new DatagramSocket();
-                        System.out.println("Enviando");
                         ds.send(dp);
                         System.out.println("Novo usuário na parada! Mensagem enviada a ele. " + ipUsuario.getHostAddress());
+                        ds.close();
 
                     } else if (mensagem.startsWith(PainelDeControle.USUARIO_EXISTENTE)) {
                         System.out.println("Usuário já existente! " + ipUsuario.getHostAddress());
@@ -136,7 +144,7 @@ public class SistemaArquivo
     }
 
     /**
-     * Classe para politica de segurança do RMI, evitando arquivos externos
+     * Classe para politica de segurança do RMI, evitando arquivos externos.
      *
      */
     public static class MyPolicy extends Policy {
@@ -152,7 +160,6 @@ public class SistemaArquivo
     @Override
     public boolean criarArquivo(String caminho, Arquivo arquivo)
             throws RemoteException, XPathExpressionException {
-
         if (existeArquivoPasta(caminho, false)) {
             return false;
         }
@@ -160,7 +167,7 @@ public class SistemaArquivo
         String expressao = montaExpressao(caminho, false);
 
         try {
-            String nomeArquivoServidor = gerenciadorArquivos.criarArquivo(arquivo);//cria arquivo e salva o nome que esta no servidor
+            String nomeArquivoServidor = GerenciadorArquivos.criarArquivo(arquivo);//cria arquivo e salva o nome que esta no servidor
             //TODO
             //faz o parsing do XML inserindo o caminho e o nome do arquivo
             Node ultima_pasta = pegaUltimaPasta(expressao);
@@ -253,7 +260,7 @@ public class SistemaArquivo
         //TODO
         //se não existir caminho ou arquivo no XML retorna falso
         //pega o nome do arquivo no servidor
-        gerenciadorArquivos.apagarArquivo(nomeArquivo);
+        GerenciadorArquivos.apagarArquivo(nomeArquivo);
         //apaga do xml
 
         return true;
@@ -326,7 +333,7 @@ public class SistemaArquivo
         //TODO
         //se não existir caminho ou arquivo no XML retorna falso
         //pega o nome do arquivo no servidor
-        Arquivo arquivo = gerenciadorArquivos.abrirArquivo(nomeArquivo);
+        Arquivo arquivo = GerenciadorArquivos.abrirArquivo(nomeArquivo);
         String conteudo = arquivo.getConteudo();
 
         return conteudo;
@@ -343,12 +350,12 @@ public class SistemaArquivo
         //TODO
         //se não existir caminho ou arquivo no XML retorna falso
         //pega o nome do arquivo no servidor
-        Arquivo arquivo = gerenciadorArquivos.abrirArquivo(nomeArquivo);
+        Arquivo arquivo = GerenciadorArquivos.abrirArquivo(nomeArquivo);
 
         arquivo.setConteudo(texto);//passa informação para o arquivo
 
         //alterar nome para nome aleatório
-        return gerenciadorArquivos.salvarArquivo(arquivo, nomeArquivo);
+        return GerenciadorArquivos.salvarArquivo(arquivo, nomeArquivo);
 
     }
 
@@ -364,7 +371,7 @@ public class SistemaArquivo
         //TODO
         //se não existir caminho ou arquivo no XML retorna falso
         //pega o nome do arquivo no servidor
-        Arquivo arquivo = gerenciadorArquivos.abrirArquivo(nomeArquivo);
+        Arquivo arquivo = GerenciadorArquivos.abrirArquivo(nomeArquivo);
         String conteudo = arquivo.getConteudo();
 
         String inicioTexto = conteudo.substring(0, posicao);
@@ -372,7 +379,7 @@ public class SistemaArquivo
 
         arquivo.setConteudo(inicioTexto + texto + fimTexto);
 
-        gerenciadorArquivos.salvarArquivo(arquivo, nomeArquivo);
+        GerenciadorArquivos.salvarArquivo(arquivo, nomeArquivo);
         return false;
     }
 
@@ -386,7 +393,7 @@ public class SistemaArquivo
 
         //TODO
         //Pega o nome do arquivo no XML
-        Arquivo arquivo = gerenciadorArquivos.abrirArquivo(nomeArquivo);
+        Arquivo arquivo = GerenciadorArquivos.abrirArquivo(nomeArquivo);
         return null;
     }
 
@@ -396,9 +403,9 @@ public class SistemaArquivo
 
         String nomeArquivo = caminho.substring(caminho.lastIndexOf("/") + 1);
 
-        Arquivo arquivoServidor = gerenciadorArquivos.abrirArquivo(nomeArquivo);
+        Arquivo arquivoServidor = GerenciadorArquivos.abrirArquivo(nomeArquivo);
         arquivoServidor = arquivo;
-        gerenciadorArquivos.salvarArquivo(arquivoServidor, nomeArquivo);
+        GerenciadorArquivos.salvarArquivo(arquivoServidor, nomeArquivo);
 
     }
 

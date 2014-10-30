@@ -17,8 +17,9 @@ import jtree.XMLTreePanel;
  * @author Matheus
  */
 public class DefaultDialog extends JDialog {
+	private static final long serialVersionUID = 1L;
 
-    public DefaultDialog(java.awt.Frame parent, boolean modal) {
+	public DefaultDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
 
     }

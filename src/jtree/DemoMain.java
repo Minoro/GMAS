@@ -50,12 +50,5 @@ public class DemoMain extends JFrame {
         setTitle("GMAS");
         setLocationRelativeTo(null);
         setVisible(true);
-//            } else {
-//                System.out.println("Já existe");
-//                System.exit(1);
-//            }
-//        } catch (XPathExpressionException | RemoteException ex) {
-//            Logger.getLogger(DemoMain.class.getName()).log(Level.SEVERE, null, ex);
-//        }
     }
 }
