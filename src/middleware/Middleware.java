@@ -68,15 +68,21 @@ public class Middleware {
             server.receive(receivePacket);
             //confirmação do servidor
             servidoresArquivo.add(receivePacket.getAddress());
-            System.out.println("Novo server adicionado! " + receivePacket.getAddress().getHostAddress());
-            System.out.println("Mensagem: " + new String(receivePacket.getData()));
 //                }
 //            }
         }
     }
-
-    public String montaURL_RMI(String ip) {
-        String url = "rmi://" + ip + ":/teste";
-        return url;
+    
+    /**
+     * Retorna a URL RMI de um dos servidores relacionados ao cliente em questão.
+     * 
+     * @param indiceServidor indice do servidor para recuperação de IP
+     * @return URL RMI do servidor de arquivo de índice "indiceServidor"
+     */
+    
+    public String getURLServidorRMI(int indiceServidor) {
+    	if(indiceServidor >= servidoresArquivo.size())
+    		return null;
+    	return "rmi://" + servidoresArquivo.get(indiceServidor).getHostAddress() + ":/teste";
     }
 }

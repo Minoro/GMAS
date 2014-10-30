@@ -15,8 +15,8 @@ import servidor.SistemaArquivoInterface;
 import utils.PainelDeControle;
 
 public class DemoMain extends JFrame {
-
-//    public static SistemaArquivo server;
+	private static final long serialVersionUID = 1L;
+	//    public static SistemaArquivo server;
     public static SistemaArquivoInterface server;
     public static DemoMain main;
 
@@ -28,9 +28,7 @@ public class DemoMain extends JFrame {
         Document document = null;
         try {
         //servidor RMI
-        server = (SistemaArquivoInterface) Naming.lookup(PainelDeControle.middleware.montaURL_RMI("localhost"));
-            //teste local
-//        server = new SistemaArquivo();
+        server = (SistemaArquivoInterface) Naming.lookup(PainelDeControle.middleware.getURLServidorRMI(0));
             document = server.pedirXML(PainelDeControle.username);
         } catch (RemoteException | XPathExpressionException | NotBoundException | MalformedURLException ex) {
             Logger.getLogger(DemoMain.class.getName()).log(Level.SEVERE, null, ex);
