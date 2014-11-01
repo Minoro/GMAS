@@ -25,12 +25,16 @@ public class XMLTreePanel extends JPanel {
 //    private XMLInfoPanel
 
     public XMLTreePanel() {
+        XMLTreeCellRenderer renderer = new XMLTreeCellRenderer();
+        
         setLayout(new BorderLayout());
         model = new XMLTreeModel();
         tree = new JTree();
         tree.setModel(model);
         tree.setShowsRootHandles(true);
         tree.setEditable(false);
+        tree.setCellRenderer(renderer);
+        
 
         JScrollPane pane = new JScrollPane(tree);
         pane.setPreferredSize(new Dimension(400, 600));
