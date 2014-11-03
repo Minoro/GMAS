@@ -14,25 +14,28 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import cliente.InterfaceUsuario;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
- *  Implementa operações simples para manipulação do XML
- * 
+ * Implementa operações simples para manipulação do XML
+ *
  * @author minoro
  */
 public class ManipuladorXML {
-    public boolean existeArquivo(String caminho) throws XPathExpressionException{
+
+    public boolean existeArquivo(String caminho) throws XPathExpressionException {
         return existeArquivoPasta(caminho, false);
     }
-    
-    public boolean existePasta(String caminho) throws XPathExpressionException{
+
+    public boolean existePasta(String caminho) throws XPathExpressionException {
         return existeArquivoPasta(caminho, true);
     }
-    
+
     /**
      * Verifica a existência de um ARQUIVO ou PASTA no XML
      *
@@ -41,20 +44,33 @@ public class ManipuladorXML {
      * @return boolean - true caso exista o arquivo, falso caso não exista
      * @throws XPathExpressionException
      */
-    private boolean existeArquivoPasta(String caminho, boolean pasta)
-            throws XPathExpressionException {
+    private boolean existeArquivoPasta(String caminho, boolean pasta) {
         String expressao = montaExpressao(caminho, pasta);
 
         XPath xpath = XPathFactory.newInstance().newXPath();
-        XPathExpression expr = xpath.compile(expressao);
-        Object exprResult = expr.evaluate(PainelDeControle.xml, XPathConstants.NODESET);
+        XPathExpression expr;
+        Object exprResult = null;
+        System.out.println("nossa");
+        try {
+            expr = xpath.compile(expressao);
+        } catch (XPathExpressionException ex) {
+            System.out.println("AQUI!");
+            return false;
+//            Logger.getLogger(ManipuladorXML.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        try {
+            exprResult = expr.evaluate(PainelDeControle.xml, XPathConstants.NODESET);
+        } catch (XPathExpressionException ex) {
+            System.out.println("na outra");
+            Logger.getLogger(ManipuladorXML.class.getName()).log(Level.SEVERE, null, ex);
+        }
         NodeList node = (NodeList) exprResult;
         if (node.getLength() != 0) {
             return true;
         }
         return false;
     }
-    
+
     /**
      * Monta uma expressão para arquivo o XPath compilar
      *
@@ -62,10 +78,10 @@ public class ManipuladorXML {
      * @return String - retorna uma String representando a expressão do caminho
      * do parâmetro
      */
-    public String montarExpressaoArquivo(String caminho){
+    public String montarExpressaoArquivo(String caminho) {
         return montaExpressao(caminho, false);
     }
-    
+
     /**
      * Monta uma expressão para pasta o XPath compilar
      *
@@ -73,10 +89,10 @@ public class ManipuladorXML {
      * @return String - retorna uma String representando a expressão do caminho
      * do parâmetro
      */
-    public String montarExpressaoPasta(String caminho){
+    public String montarExpressaoPasta(String caminho) {
         return montaExpressao(caminho, true);
     }
-    
+
     /**
      * Monta uma expressão para o XPath compilar
      *
@@ -105,7 +121,7 @@ public class ManipuladorXML {
         System.out.println("Expressão gerada: " + expressao);
         return expressao;
     }
-    
+
     /**
      * Dada uma expressão, retorna a última pasta dela. Utilizado para dar
      * appendChild.
@@ -131,10 +147,10 @@ public class ManipuladorXML {
     }
 
     /**
-     * 
+     *
      * @param expressao String - expressao XML
      * @return Node - o ultimo nó da expressão
-     * @throws XPathExpressionException 
+     * @throws XPathExpressionException
      */
     public Node pegaUltimoNode(String expressao)
             throws XPathExpressionException {
@@ -150,8 +166,8 @@ public class ManipuladorXML {
         }
         return node.item(0);
     }
-    
-     /**
+
+    /**
      * Salva o xml do parâmetro no arquivo físico
      *
      * @param nomeUsuario String - nome do usuário para ser salvo o arquivo XML
@@ -169,8 +185,8 @@ public class ManipuladorXML {
         transformer.transform(source, result);
         return true;
     }
-    
-    public String getNomeArquivoFisico(String caminho) throws XPathExpressionException{
+
+    public String getNomeArquivoFisico(String caminho) throws XPathExpressionException {
         Element ultimoNode = (Element) pegaUltimoNode(montarExpressaoPasta(caminho));
         return ultimoNode.getAttribute("nome");
     }
