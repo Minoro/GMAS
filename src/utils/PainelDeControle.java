@@ -24,7 +24,7 @@ public class PainelDeControle {
     public static final int PORTA_SERVIDORES = 5679;
     public static final String IP_MULTICAST = "228.5.6.7";
     public static final String SEPARADOR = File.separator;
-    public static final String RAIZ = "raiz";
+    public static final String PASTA_RAIZ = "raiz";
     public static final String HOME = System.getProperty("user.dir");
     public static Middleware middleware;
     public static String username;
@@ -32,20 +32,20 @@ public class PainelDeControle {
     public static String TAG_PASTA = "pasta";
     public static String TAG_RAIZ = "raiz";
     public static Document xml;
-    public static String PASTA_XML = HOME + SEPARADOR + RAIZ + SEPARADOR;
-    public static String PASTA_ICONES = PASTA_XML + "icones" + SEPARADOR;
+    public static String PASTA_XML = HOME + SEPARADOR + PASTA_RAIZ + SEPARADOR + "xml" + SEPARADOR;
+    public static String PASTA_ICONES = HOME + SEPARADOR + PASTA_RAIZ + SEPARADOR + "icones" + SEPARADOR;
     public static final double deltaTRespostaServidor = calibrarRede();
-    public static final double deltaTRespostaMulticast = 3*deltaTRespostaServidor;
-    
-    
+    public static final double deltaTRespostaMulticast = 3 * deltaTRespostaServidor;
+
     /**
-     * Método que define um valor delta de tempo para aceitação de respostas ou heartbeats no sistema de arquivos
-     * 
+     * Método que define um valor delta de tempo para aceitação de respostas ou
+     * heartbeats no sistema de arquivos
+     *
      * @return Valor de calibração da rede
      */
     public static double calibrarRede() {
         //TODO
         return 3.0;
     }
-    
+
 }
