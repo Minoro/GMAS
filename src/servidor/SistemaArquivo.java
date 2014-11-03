@@ -357,6 +357,8 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
             //faz o parsing do XML inserindo o caminho e o nome do arquivo
             Node ultima_pasta = manipuladorXML.pegaUltimaPasta(expressao);
             Element newelement = PainelDeControle.xml.createElement(PainelDeControle.TAG_ARQUIVO);
+            //TODO
+            //Arrumar atributos do XML
             System.out.println("ARRUMAR ATRIBUTOS DO XML AO CRIAR UM NOVO ARQUIVO");
             newelement.setAttribute("dataCriacao", new Date().toString());
             newelement.setAttribute("nome", nomeArquivoServidor);
@@ -512,7 +514,13 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
         //carrega arquivo a ser copiado
         Arquivo arquivoCopiado = getArquivo(caminhoOrigem);
         
-        return criarArquivo(caminhoDestino, arquivoCopiado);
+        //cria uma cópia do arquivo
+        if(!criarArquivo(caminhoDestino, arquivoCopiado)){
+            return false;//erro ao copiar o arquivo
+        }
+        
+        String nomeArquivoServidor = manipuladorXML.getNomeArquivoFisico(caminhoDestino);//nome do arquivo fisico copiado
+        return GerenciadorArquivos.salvarArquivo(arquivoCopiado, nomeArquivoServidor);
     }
 
     @Override
