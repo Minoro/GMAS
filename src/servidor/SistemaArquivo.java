@@ -141,6 +141,18 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
                     } else if (mensagem.startsWith(PainelDeControle.USUARIO_EXISTENTE)) {
                         System.out.println("Usuário já existente! " + ipUsuario.getHostAddress());
                         System.out.println("FALTA IMPLEMENTAR");
+                    } else if(mensagem.equals(PainelDeControle.USUARIOS_ARMAZENADOS)) {
+                        //chamar funcao do VELLONE
+                        try(DatagramSocket resp = new DatagramSocket()) {
+                            String msg = "";
+                            for(String u : getUsuarios) {
+                                msg += u + ";";
+                            }
+                            byte[] m = msg.getBytes();
+                            DatagramPacket messageOut = new DatagramPacket(m, m.length, group, PainelDeControle.PORTA_SERVIDORES+1); //responde solicitação do controlador de erros
+                            resp.send(messageOut);
+                        }
+                        
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -167,6 +179,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
     /**
      * Classe que controla a replicacao de dados caso um middleware detecte uma
      * falha em um de seus servidores
+     * 
      */
     private class ControleReplicacao implements Runnable {
 
@@ -188,7 +201,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
         @Override
         public void run() {
             try (MulticastSocket mSckt = new MulticastSocket();
-                    DatagramSocket server = new DatagramSocket(PainelDeControle.PORTA_SERVIDORES)) {
+                    DatagramSocket server = new DatagramSocket(PainelDeControle.PORTA_SERVIDORES+1)) {
                 //requisita aos outros servidores os usuarios que estes possuem
                 byte[] m = mensagem.getBytes();
                 DatagramPacket messageOut = new DatagramPacket(m, m.length, group, PainelDeControle.PORTA_MULTICAST);
@@ -204,9 +217,10 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
                     }
                     byte[] buffer = new byte[PainelDeControle.TAMANHO_BUFFER];
                     DatagramPacket messageIn = new DatagramPacket(buffer, buffer.length);
-                    s.receive(messageIn);
+                    server.receive(messageIn);
                     mensagem = new String(messageIn.getData());
                     mensagem = mensagem.substring(0, mensagem.indexOf("\0")); //elimina caracteres inuteis
+                    mensagem += "::" + messageIn.getAddress().getHostAddress(); //concatena o IP do servidor
                     respostas.add(mensagem);
                 }
                 //TODO
@@ -289,6 +303,10 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
                 }
             }
         }
+    }
+    
+    private class MonitorInterServidores {
+        
     }
 
     @Override
