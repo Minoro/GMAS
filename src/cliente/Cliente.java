@@ -8,7 +8,7 @@ package cliente;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import jtree.DemoMain;
+import javax.swing.JOptionPane;
 import middleware.Middleware;
 import utils.PainelDeControle;
 
@@ -104,6 +104,9 @@ public class Cliente extends javax.swing.JFrame {
 
     private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
         String nomeUser = nomeUsuario.getText();
+        if(nomeUser.contains(".")){
+            JOptionPane.showMessageDialog(Cliente.this, "Não é permitido nome de usuário com .(ponto)");
+        }
         String IPMulticast = multicast.getText();
         Boolean novoUsuario = usuarioNovo.isSelected();
         try {
@@ -112,7 +115,7 @@ public class Cliente extends javax.swing.JFrame {
             Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
             System.exit(0);
         }
-        new DemoMain();
+        new InterfaceUsuario();
         dispose();
     }//GEN-LAST:event_jButton1MouseClicked
 

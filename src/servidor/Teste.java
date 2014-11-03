@@ -11,8 +11,6 @@ package servidor;
  */
 public class Teste {
     public static void main(String[] args) throws InterruptedException {
-        long t1 = System.nanoTime();
-        Thread.sleep(2000);
-        System.out.println((System.nanoTime() - t1)/1000000000);
+        
     }
 }

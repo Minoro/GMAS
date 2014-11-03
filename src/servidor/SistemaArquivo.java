@@ -42,7 +42,8 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import jtree.DemoMain;
+import cliente.InterfaceUsuario;
+import java.util.ArrayList;
 import model.Arquivo;
 
 import org.w3c.dom.Document;
@@ -58,9 +59,9 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
 
     private ManipuladorXML manipuladorXML;
     
-    private static final long serialVersionUID = 1L;
     private MulticastSocket s;
-    InetAddress group;
+    private InetAddress group;
+    private static final long serialVersionUID = 1L;
 
     public static void main(String[] args) {
         try {
@@ -145,9 +146,20 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
                     } else if (mensagem.startsWith(PainelDeControle.USUARIO_EXISTENTE)) {
                         System.out.println("Usuário já existente! " + ipUsuario.getHostAddress());
                         System.out.println("FALTA IMPLEMENTAR");
+                    } else if (mensagem.equals(PainelDeControle.USUARIOS_ARMAZENADOS)) {
+                        try (DatagramSocket resp = new DatagramSocket()) {
+                            String msg = "";
+                            for (String u : getUsuarios()) {
+                                msg += u + ";";
+                            }
+                            byte[] m = msg.getBytes();
+                            DatagramPacket messageOut = new DatagramPacket(m, m.length, group, PainelDeControle.PORTA_SERVIDORES + 1); //responde solicitação do controlador de erros
+                            resp.send(messageOut);
+                        }
+
                     }
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    System.out.println(e);
                 }
             }
         }
@@ -171,6 +183,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
     /**
      * Classe que controla a replicacao de dados caso um middleware detecte uma
      * falha em um de seus servidores
+     *
      */
     private class ControleReplicacao implements Runnable {
 
@@ -192,7 +205,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
         @Override
         public void run() {
             try (MulticastSocket mSckt = new MulticastSocket();
-                    DatagramSocket server = new DatagramSocket(PainelDeControle.PORTA_SERVIDORES)) {
+                    DatagramSocket server = new DatagramSocket(PainelDeControle.PORTA_SERVIDORES + 1)) { //escuta respostas dos nomes de usuarios armazenados
                 //requisita aos outros servidores os usuarios que estes possuem
                 byte[] m = mensagem.getBytes();
                 DatagramPacket messageOut = new DatagramPacket(m, m.length, group, PainelDeControle.PORTA_MULTICAST);
@@ -208,9 +221,10 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
                     }
                     byte[] buffer = new byte[PainelDeControle.TAMANHO_BUFFER];
                     DatagramPacket messageIn = new DatagramPacket(buffer, buffer.length);
-                    s.receive(messageIn);
+                    server.receive(messageIn);
                     mensagem = new String(messageIn.getData());
                     mensagem = mensagem.substring(0, mensagem.indexOf("\0")); //elimina caracteres inuteis
+                    mensagem += "::" + messageIn.getAddress().getHostAddress(); //concatena o IP do servidor
                     respostas.add(mensagem);
                 }
                 
@@ -262,6 +276,9 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
                     Random rand = new Random();
                     String msg = PainelDeControle.FACA_BACKUP + "-" + u + "-" + servidor_X_usuario.get(u); //cabecalhoMsg-nomeUsuario-IPServidorQueOAtende
                     int indServidor = rand.nextInt(servidoresExistentes.size());
+                    while (servidoresExistentes.get(indServidor).equals(servidor_X_usuario.get(u))) { //evita que envie requisicao de backup para o proprio servidor que armazena o usuario em questao
+                        indServidor = rand.nextInt(servidoresExistentes.size());
+                    }
                     byte[] resposta = msg.getBytes();
                     DatagramPacket dp = new DatagramPacket(resposta, resposta.length, InetAddress.getByName(servidoresExistentes.get(indServidor)), PainelDeControle.PORTA_SERVIDORES);
                     DatagramSocket ds = new DatagramSocket();
@@ -294,6 +311,36 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
             }
         }
     }
+    
+    /**
+     * Classe que escuta requisições de backup de dados feita pelos outros
+     * servidores e avisos de falha, notificados pelo middleware (?)
+     */
+    private class MonitorInterServidores implements Runnable {
+
+        @Override
+        public void run() {
+            try (DatagramSocket server = new DatagramSocket(PainelDeControle.PORTA_SERVIDORES);) {
+                while (true) {
+                    byte[] buffer = new byte[PainelDeControle.TAMANHO_BUFFER];
+                    DatagramPacket messageIn = new DatagramPacket(buffer, buffer.length);
+                    server.receive(messageIn);
+                    String mensagem = new String(messageIn.getData());
+                    mensagem = mensagem.substring(0, mensagem.indexOf("\0"));
+                    if (mensagem.startsWith(PainelDeControle.FACA_BACKUP)) {
+                        //TODO -> chamar funcao de backup
+//                        if(naoexisteusuario)
+                        String msg = PainelDeControle.CONFIRMACAO_BACKUP;
+                        byte[] m = msg.getBytes();
+                        DatagramPacket resposta = new DatagramPacket(m, m.length, group, PainelDeControle.PORTA_SERVIDORES + 1);
+                        server.send(resposta); //envia confirmacao de backup
+                    }
+                }
+            } catch (IOException ex) {
+                Logger.getLogger(SistemaArquivo.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
 
     /* IMPLEMENTAÇÃO DOS METODOS RMI*/
     @Override
@@ -319,7 +366,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
             manipuladorXML.salvarXML(PainelDeControle.xml, PainelDeControle.username);
 
         } catch (TransformerException ex) {
-            Logger.getLogger(DemoMain.class
+            Logger.getLogger(InterfaceUsuario.class
                     .getName()).log(Level.SEVERE, null, ex);
             return false;
         }
@@ -350,7 +397,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
             //verifica se o caminho existe no XML, se não existir retorna falso (vellone pergunta: ?)
 
         } catch (TransformerException ex) {
-            Logger.getLogger(DemoMain.class
+            Logger.getLogger(InterfaceUsuario.class
                     .getName()).log(Level.SEVERE, null, ex);
         }
 
@@ -532,6 +579,21 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
         String nomeArquivoServidor = manipuladorXML.getNomeArquivoFisico(caminho);
         Arquivo arquivo = GerenciadorArquivos.abrirArquivo(nomeArquivoServidor);
         return arquivo;
+    }
+
+    public List<String> getUsuarios() {
+        List<String> usuarios = new ArrayList();
+        File folder = new File(PainelDeControle.PASTA_XML);
+        for (final File fileEntry : folder.listFiles()) {
+            if (!fileEntry.isDirectory()) {
+                String usuario = fileEntry.getName();
+                usuario = usuario.substring(0, usuario.indexOf("."));
+                usuarios.add(usuario);
+                System.out.println("Listando usuários = " + usuario);
+            } else {
+            }
+        }
+        return usuarios;
     }
 
 }
