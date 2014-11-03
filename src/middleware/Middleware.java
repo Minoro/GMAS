@@ -6,8 +6,12 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
 import java.net.UnknownHostException;
+import java.rmi.RemoteException;
 import java.util.LinkedList;
 import java.util.List;
+import javax.xml.xpath.XPathExpressionException;
+import model.Arquivo;
+import servidor.SistemaArquivoInterface;
 
 import utils.PainelDeControle;
 
@@ -23,6 +27,7 @@ public class Middleware {
      * Lista dos Servidores de arquivos que a aplicação esta utilizando
      */
     private List<InetAddress> servidoresArquivo;
+    public static SistemaArquivoInterface server;
 
     /**
      * Construtor da Classe de Middleware. A partir do endereço de um grupo
@@ -83,5 +88,17 @@ public class Middleware {
     	if(indiceServidor >= servidoresArquivo.size())
     		return null;
     	return "rmi://" + servidoresArquivo.get(indiceServidor).getHostAddress() + ":/teste";
+    }
+
+    public boolean renomearArquivo(String caminho, String nome_digitado) throws RemoteException, XPathExpressionException {
+        return server.renomearArquivo(caminho, nome_digitado, PainelDeControle.username);
+    }
+
+    public boolean criarArquivo(String caminhoSelecionado, Arquivo arquivo) throws RemoteException, XPathExpressionException {
+        return server.criarArquivo(caminhoSelecionado, arquivo, PainelDeControle.username);
+    }
+
+    public boolean criarPasta(String caminhoSelecionado) throws RemoteException, XPathExpressionException {
+        return server.criarPasta(caminhoSelecionado, PainelDeControle.username);
     }
 }

@@ -16,7 +16,6 @@ import javax.swing.JFrame;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPathExpressionException;
 import jtree.XMLInfoPanel;
 import jtree.XMLMenu;
 import jtree.XMLTreePanel;
@@ -27,9 +26,9 @@ import servidor.SistemaArquivoInterface;
 import utils.PainelDeControle;
 
 public class InterfaceUsuario extends JFrame {
-	private static final long serialVersionUID = 1L;
-	//    public static SistemaArquivo server;
-    public static SistemaArquivoInterface server;
+
+    private static final long serialVersionUID = 1L;
+    //    public static SistemaArquivo server;
     public static InterfaceUsuario main;
 
     public static void main(String[] args) {
@@ -37,15 +36,13 @@ public class InterfaceUsuario extends JFrame {
     }
 
     public InterfaceUsuario() {
-        Document document = null;
         try {
-        //servidor RMI
-        server = (SistemaArquivoInterface) Naming.lookup(PainelDeControle.middleware.getURLServidorRMI(0));
-            document = server.pedirXML(PainelDeControle.username);
-//            document = pedirXMLLocal(PainelDeControle.username);
-        } catch (RemoteException | XPathExpressionException | NotBoundException | MalformedURLException ex) {
+            PainelDeControle.middleware.server = (SistemaArquivoInterface) Naming.lookup(PainelDeControle.middleware.getURLServidorRMI(0));
+        } catch (NotBoundException | MalformedURLException | RemoteException ex) {
             Logger.getLogger(InterfaceUsuario.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
+        Document document = PainelDeControle.xml;
         PainelDeControle.xml = document;
         XMLTreePanel panel = new XMLTreePanel();
         XMLInfoPanel info = new XMLInfoPanel();
@@ -62,7 +59,7 @@ public class InterfaceUsuario extends JFrame {
         setLocationRelativeTo(null);
         setVisible(true);
     }
-    
+
     public Document pedirXMLLocal(String nomeUsuario) {
         System.out.println("PEDINDO XML LOCAL!!");
         Document retorno;
