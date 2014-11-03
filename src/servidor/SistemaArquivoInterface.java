@@ -134,7 +134,7 @@ public interface SistemaArquivoInterface extends Remote {
     boolean escreverArquivo(String caminho, String texto, int posicao) throws RemoteException, XPathExpressionException;
 
     /**
-     * Retorna um objeto com as informações referentes ao arquivo no final do
+     * Retorna um objeto Arquivo com as informações referentes ao arquivo no final do
      * caminho
      *
      * @param caminho String - caminho para o arquivo que se deseja as
@@ -144,18 +144,15 @@ public interface SistemaArquivoInterface extends Remote {
      * @throws RemoteException
      * @throws javax.xml.xpath.XPathExpressionException
      */
-    Arquivo getAtributes(String caminho) throws RemoteException, XPathExpressionException;
+    Arquivo getArquivo(String caminho) throws RemoteException, XPathExpressionException;
 
+   
     /**
-     * Altera os atributos referentes ao arquivo
-     *
-     * @param caminho String - caminho para o arquivo que se deseja alterar as
-     * informações
-     * @param arquivo Arquivo - Objeto com as informações a serem atualizadas
+     * 
+     * @param nomeUsuario String - nome do usuario que se deseja o xml
+     * @return Document - xml com a arvore de arquivos do usuario
      * @throws RemoteException
-     * @throws javax.xml.xpath.XPathExpressionException
+     * @throws XPathExpressionException 
      */
-    void setAtributes(String caminho, Arquivo arquivo) throws RemoteException, XPathExpressionException;
-
     Document pedirXML(String nomeUsuario) throws RemoteException, XPathExpressionException;
 }
