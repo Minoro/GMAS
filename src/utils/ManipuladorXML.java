@@ -50,19 +50,11 @@ public class ManipuladorXML {
         XPath xpath = XPathFactory.newInstance().newXPath();
         XPathExpression expr;
         Object exprResult = null;
-        System.out.println("nossa");
         try {
             expr = xpath.compile(expressao);
-        } catch (XPathExpressionException ex) {
-            System.out.println("AQUI!");
-            return false;
-//            Logger.getLogger(ManipuladorXML.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        try {
             exprResult = expr.evaluate(PainelDeControle.xml, XPathConstants.NODESET);
         } catch (XPathExpressionException ex) {
-            System.out.println("na outra");
-            Logger.getLogger(ManipuladorXML.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
         }
         NodeList node = (NodeList) exprResult;
         if (node.getLength() != 0) {
