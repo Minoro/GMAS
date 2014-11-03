@@ -14,8 +14,6 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import cliente.InterfaceUsuario;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -28,12 +26,12 @@ import org.w3c.dom.NodeList;
  */
 public class ManipuladorXML {
 
-    public boolean existeArquivo(String caminho) throws XPathExpressionException {
-        return existeArquivoPasta(caminho, false);
+    public boolean existeArquivo(String caminho,  Document xml) throws XPathExpressionException {
+        return existeArquivoPasta(caminho, false, xml);
     }
 
-    public boolean existePasta(String caminho) throws XPathExpressionException {
-        return existeArquivoPasta(caminho, true);
+    public boolean existePasta(String caminho, Document xml) throws XPathExpressionException {
+        return existeArquivoPasta(caminho, true, xml);
     }
 
     /**
@@ -44,7 +42,7 @@ public class ManipuladorXML {
      * @return boolean - true caso exista o arquivo, falso caso não exista
      * @throws XPathExpressionException
      */
-    private boolean existeArquivoPasta(String caminho, boolean pasta) {
+    private boolean existeArquivoPasta(String caminho, boolean pasta,  Document xml) {
         String expressao = montaExpressao(caminho, pasta);
 
         XPath xpath = XPathFactory.newInstance().newXPath();
@@ -52,7 +50,7 @@ public class ManipuladorXML {
         Object exprResult = null;
         try {
             expr = xpath.compile(expressao);
-            exprResult = expr.evaluate(PainelDeControle.xml, XPathConstants.NODESET);
+            exprResult = expr.evaluate(xml, XPathConstants.NODESET);
         } catch (XPathExpressionException ex) {
             return false;
         }
@@ -119,15 +117,16 @@ public class ManipuladorXML {
      * appendChild.
      *
      * @param expressao String - expressao XML
+     * @param xml - Document - xml para ser pesquisado
      * @return Node - o nó da última pasta da expressão
      * @throws XPathExpressionException
      */
-    public Node pegaUltimaPasta(String expressao)
+    public Node pegaUltimaPasta(String expressao, Document xml)
             throws XPathExpressionException {
         expressao = expressao.substring(0, expressao.lastIndexOf("/"));
         XPath xpath = XPathFactory.newInstance().newXPath();
         XPathExpression expr = xpath.compile(expressao);
-        Object exprResult = expr.evaluate(PainelDeControle.xml, XPathConstants.NODESET);
+        Object exprResult = expr.evaluate(xml, XPathConstants.NODESET);
         NodeList node = (NodeList) exprResult;
         if (node.getLength() == 0) {
             JOptionPane.showMessageDialog(InterfaceUsuario.main, "Não há nós a serem retornados com a seguinte expressão: " + expressao);
@@ -141,14 +140,15 @@ public class ManipuladorXML {
     /**
      *
      * @param expressao String - expressao XML
+     * @param xml - Document - xml a ser pesquisado
      * @return Node - o ultimo nó da expressão
      * @throws XPathExpressionException
      */
-    public Node pegaUltimoNode(String expressao)
+    public Node pegaUltimoNode(String expressao, Document xml)
             throws XPathExpressionException {
         XPath xpath = XPathFactory.newInstance().newXPath();
         XPathExpression expr = xpath.compile(expressao);
-        Object exprResult = expr.evaluate(PainelDeControle.xml, XPathConstants.NODESET);
+        Object exprResult = expr.evaluate(xml, XPathConstants.NODESET);
         NodeList node = (NodeList) exprResult;
         if (node.getLength() == 0) {
             JOptionPane.showMessageDialog(InterfaceUsuario.main, "Não há nós a serem retornados com a seguinte expressão: " + expressao);
@@ -178,8 +178,8 @@ public class ManipuladorXML {
         return true;
     }
 
-    public String getNomeArquivoFisico(String caminho) throws XPathExpressionException {
-        Element ultimoNode = (Element) pegaUltimoNode(montarExpressaoPasta(caminho));
+    public String getNomeArquivoFisico(String caminho, Document xml) throws XPathExpressionException {
+        Element ultimoNode = (Element) pegaUltimoNode(montarExpressaoPasta(caminho), xml);
         return ultimoNode.getAttribute("nome");
     }
 }

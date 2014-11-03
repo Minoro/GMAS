@@ -335,7 +335,9 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
     @Override
     public boolean criarArquivo(String caminho, Arquivo arquivo, String nomeUsuario)
             throws RemoteException, XPathExpressionException {
-        if (manipuladorXML.existeArquivo(caminho)) {
+        Document xml = pedirXML(nomeUsuario);
+
+        if (manipuladorXML.existeArquivo(caminho, xml)) {
             return false;
         }
         String nomeArquivo = caminho.substring(caminho.lastIndexOf("/") + 1);//separa o nome do arquivo (ultimo item do caminho)
@@ -344,7 +346,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
         try {
             String nomeArquivoServidor = GerenciadorArquivos.criarArquivo(arquivo);//cria arquivo e salva o nome que esta no servidor
             //faz o parsing do XML inserindo o caminho e o nome do arquivo
-            Node ultima_pasta = manipuladorXML.pegaUltimaPasta(expressao);
+            Node ultima_pasta = manipuladorXML.pegaUltimaPasta(expressao, xml);
             Element newelement = PainelDeControle.xml.createElement(PainelDeControle.TAG_ARQUIVO);
             //TODO
             //Arrumar atributos do XML
@@ -369,14 +371,15 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
     public boolean criarPasta(String caminho, String nomeUsuario)
             throws RemoteException, XPathExpressionException {
 
-        if (manipuladorXML.existePasta(caminho)) {
+        Document xml = pedirXML(nomeUsuario);
+        if (manipuladorXML.existePasta(caminho, xml)) {
             return false;
         }
         String nomePasta = caminho.substring(caminho.lastIndexOf("/") + 1);//separa o nome da pasta €(ultimo item do caminho)
         String expressao = manipuladorXML.montarExpressaoPasta(caminho);
         try {
             //faz o parsing do XML inserindo o caminho e o nome do arquivo
-            Node ultima_pasta = manipuladorXML.pegaUltimaPasta(expressao);
+            Node ultima_pasta = manipuladorXML.pegaUltimaPasta(expressao, xml);
             Element newelement = PainelDeControle.xml.createElement(PainelDeControle.TAG_PASTA);
             System.out.println("ARRUMAR ATRIBUTOS DO XML AO CRIAR UMA NOVA PASTA");
             newelement.setAttribute("dataCriacao", new Date().toString());
@@ -433,11 +436,12 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
     @Override
     public boolean deletarArquivo(String caminho, String nomeUsuario)
             throws RemoteException, XPathExpressionException {
-        if (!manipuladorXML.existeArquivo(caminho)) {
+        Document xml = pedirXML(nomeUsuario);
+        if (!manipuladorXML.existeArquivo(caminho, xml)) {
             return false;
         }
 
-        String nomeArquivoServidor = manipuladorXML.getNomeArquivoFisico(caminho);
+        String nomeArquivoServidor = manipuladorXML.getNomeArquivoFisico(caminho, xml);
         GerenciadorArquivos.apagarArquivo(nomeArquivoServidor);
 
         /**
@@ -450,25 +454,26 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
     @Override
     public boolean renomearArquivo(String caminhoOrigem, String novoNome, String nomeUsuario)
             throws RemoteException, XPathExpressionException {
+        Document xml = pedirXML(nomeUsuario);
 
         //TODO
         //Alterar XML
         String expressao;
         if (caminhoOrigem.endsWith(".txt")) {
             //Renomeando arquivo
-            if (!manipuladorXML.existeArquivo(caminhoOrigem)) {
+            if (!manipuladorXML.existeArquivo(caminhoOrigem, xml)) {
                 return false;
             }
             expressao = manipuladorXML.montarExpressaoArquivo(caminhoOrigem);
         } else {
             //Renomeando pasta
-            if (!manipuladorXML.existePasta(caminhoOrigem)) {
+            if (!manipuladorXML.existePasta(caminhoOrigem, xml)) {
                 return false;
             }
             expressao = manipuladorXML.montarExpressaoArquivo(caminhoOrigem);
         }
 
-        Node node = manipuladorXML.pegaUltimoNode(expressao);
+        Node node = manipuladorXML.pegaUltimoNode(expressao, xml);
 
         node.setTextContent(novoNome);
         try {
@@ -484,7 +489,9 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
     @Override
     public boolean moverArquivo(String caminhoOrigem, String caminhoDestino, String nomeUsuario)
             throws RemoteException, XPathExpressionException {
-        if (!manipuladorXML.existeArquivo(caminhoOrigem)) {
+        Document xml = pedirXML(nomeUsuario);
+
+        if (!manipuladorXML.existeArquivo(caminhoOrigem, xml)) {
             return false;
         }
         // TODO
@@ -496,28 +503,32 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
     @Override
     public boolean copiarArquivo(String caminhoOrigem, String caminhoDestino, String nomeUsuario)
             throws RemoteException, XPathExpressionException {
-        if (!manipuladorXML.existeArquivo(caminhoOrigem)) {
+        Document xml = pedirXML(nomeUsuario);
+
+        if (!manipuladorXML.existeArquivo(caminhoOrigem, xml)) {
             return false;
         }
         //carrega arquivo a ser copiado
-        Arquivo arquivoCopiado = getArquivo(caminhoOrigem);
+        Arquivo arquivoCopiado = getArquivo(caminhoOrigem, nomeUsuario);
 
         //cria uma cópia do arquivo
         if (!criarArquivo(caminhoDestino, arquivoCopiado, nomeUsuario)) {
             return false;//erro ao copiar o arquivo
         }
 
-        String nomeArquivoServidor = manipuladorXML.getNomeArquivoFisico(caminhoDestino);//nome do arquivo fisico copiado
+        String nomeArquivoServidor = manipuladorXML.getNomeArquivoFisico(caminhoDestino, xml);//nome do arquivo fisico copiado
         return GerenciadorArquivos.salvarArquivo(arquivoCopiado, nomeArquivoServidor);
     }
 
     @Override
-    public String lerArquivo(String caminho)
+    public String lerArquivo(String caminho, String nomeUsuario)
             throws RemoteException, XPathExpressionException {
-        if (!manipuladorXML.existeArquivo(caminho)) {
+        Document xml = pedirXML(nomeUsuario);
+
+        if (!manipuladorXML.existeArquivo(caminho, xml)) {
             return null;
         }
-        String nomeArquivoServidor = manipuladorXML.getNomeArquivoFisico(caminho);
+        String nomeArquivoServidor = manipuladorXML.getNomeArquivoFisico(caminho, xml);
 //        Element arquivoNode =(Element) pegaUltimoNode(montaExpressao(caminho, false));
 
         Arquivo arquivo = GerenciadorArquivos.abrirArquivo(nomeArquivoServidor);
@@ -530,10 +541,12 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
     public boolean escreverArquivo(String caminho, String texto, String nomeUsuario)
             throws RemoteException, XPathExpressionException {
 
-        if (!manipuladorXML.existeArquivo(caminho)) {
+        Document xml = pedirXML(nomeUsuario);
+
+        if (!manipuladorXML.existeArquivo(caminho, xml)) {
             return false;
         }
-        String nomeArquivoServidor = manipuladorXML.getNomeArquivoFisico(caminho);
+        String nomeArquivoServidor = manipuladorXML.getNomeArquivoFisico(caminho, xml);
         Arquivo arquivo = GerenciadorArquivos.abrirArquivo(nomeArquivoServidor);
 
         arquivo.setConteudo(texto);//passa informação para o arquivo
@@ -544,14 +557,16 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
     }
 
     @Override
-    public Arquivo getArquivo(String caminho)
+    public Arquivo getArquivo(String caminho, String nomeUsuario)
             throws RemoteException, XPathExpressionException {
-        if (!manipuladorXML.existeArquivo(caminho)) {
+        Document xml = pedirXML(nomeUsuario);
+
+        if (!manipuladorXML.existeArquivo(caminho, xml)) {
             return null;
         }
 
         //Pega o nome do arquivo no XML        
-        String nomeArquivoServidor = manipuladorXML.getNomeArquivoFisico(caminho);
+        String nomeArquivoServidor = manipuladorXML.getNomeArquivoFisico(caminho, xml);
         Arquivo arquivo = GerenciadorArquivos.abrirArquivo(nomeArquivoServidor);
         return arquivo;
     }

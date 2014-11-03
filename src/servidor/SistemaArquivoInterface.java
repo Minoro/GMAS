@@ -108,11 +108,12 @@ public interface SistemaArquivoInterface extends Remote {
      * Lê o conteudo do arquivo ao final do caminho
      *
      * @param caminho String - caminho para o arquivo
+     * @param nomeUsuario String - nome do usuario
      * @return String - retorna o conteudo do arquivo em forma de texto
      * @throws RemoteException
      * @throws javax.xml.xpath.XPathExpressionException
      */
-    String lerArquivo(String caminho) throws RemoteException, XPathExpressionException;
+    String lerArquivo(String caminho, String nomeUsuario) throws RemoteException, XPathExpressionException;
 
     /**
      * Escreve no final do arquivo indicado ao final do caminho
@@ -133,12 +134,13 @@ public interface SistemaArquivoInterface extends Remote {
      *
      * @param caminho String - caminho para o arquivo que se deseja as
      * informações
+     * @param nomeUsuario String - nome do usuario
      * @return Arquivo - retorna um objeto com as informações referentes ao
      * arquivo
      * @throws RemoteException
      * @throws javax.xml.xpath.XPathExpressionException
      */
-    Arquivo getArquivo(String caminho) throws RemoteException, XPathExpressionException;
+    Arquivo getArquivo(String caminho, String nomeUsuario) throws RemoteException, XPathExpressionException;
     
     /**
      * 
