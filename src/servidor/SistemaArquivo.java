@@ -42,7 +42,8 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import jtree.DemoMain;
+import cliente.InterfaceUsuario;
+import java.util.ArrayList;
 import model.Arquivo;
 
 import org.w3c.dom.Document;
@@ -55,6 +56,8 @@ import utils.PainelDeControle;
 
 public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquivoInterface {
 
+    private MulticastSocket s;
+    private InetAddress group;
     private static final long serialVersionUID = 1L;
 
     public static void main(String[] args) {
@@ -89,6 +92,9 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
      }*/
     protected SistemaArquivo() throws RemoteException, IOException {
         super();
+        group = InetAddress.getByName(PainelDeControle.IP_MULTICAST);
+        s = new MulticastSocket(PainelDeControle.PORTA_MULTICAST);
+        s.joinGroup(group);
         new Thread(new MulticastMonitor()).start();
     }
 
@@ -110,15 +116,6 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
      *
      */
     private class MulticastMonitor implements Runnable {
-
-        private MulticastSocket s;
-        private InetAddress group;
-
-        public MulticastMonitor() throws UnknownHostException, IOException {
-            group = InetAddress.getByName(PainelDeControle.IP_MULTICAST);
-            s = new MulticastSocket(PainelDeControle.PORTA_MULTICAST);
-            s.joinGroup(group);
-        }
 
         @Override
         public void run() {
@@ -146,7 +143,6 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
                         System.out.println("Usuário já existente! " + ipUsuario.getHostAddress());
                         System.out.println("FALTA IMPLEMENTAR");
                     } else if (mensagem.equals(PainelDeControle.USUARIOS_ARMAZENADOS)) {
-                        //chamar funcao do VELLONE
                         try (DatagramSocket resp = new DatagramSocket()) {
                             String msg = "";
                             for (String u : getUsuarios()) {
@@ -352,7 +348,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
             //verifica se o caminho existe no XML, se não existir retorna falso (vellone pergunta: ?)
 
         } catch (TransformerException ex) {
-            Logger.getLogger(DemoMain.class
+            Logger.getLogger(InterfaceUsuario.class
                     .getName()).log(Level.SEVERE, null, ex);
         }
 
@@ -369,7 +365,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
         String nomePasta = caminho.substring(caminho.lastIndexOf("/") + 1);//separa o nome da pasta €(ultimo item do caminho)
         String expressao = montaExpressao(caminho, true);
         try {
-            //TODO
+                //TODO
             //faz o parsing do XML inserindo o caminho e o nome do arquivo
             Node ultima_pasta = pegaUltimaPasta(expressao);
             Element newelement = PainelDeControle.xml.createElement(PainelDeControle.TAG_PASTA);
@@ -383,7 +379,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
             //verifica se o caminho existe no XML, se não existir retorna falso (vellone pergunta: ?)
 
         } catch (TransformerException ex) {
-            Logger.getLogger(DemoMain.class
+            Logger.getLogger(InterfaceUsuario.class
                     .getName()).log(Level.SEVERE, null, ex);
         }
 
@@ -434,7 +430,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
 
         String nomeArquivo = caminho.substring(caminho.lastIndexOf("/") + 1);
 
-        //TODO
+            //TODO
         //se não existir caminho ou arquivo no XML retorna falso
         //pega o nome do arquivo no servidor
         GerenciadorArquivos.apagarArquivo(nomeArquivo);
@@ -447,7 +443,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
     public boolean renomearArquivo(String caminhoOrigem, String novoNome)
             throws RemoteException, XPathExpressionException {
 
-        //TODO
+            //TODO
         //Alterar XML
         String expressao;
         if (caminhoOrigem.endsWith(".txt")) {
@@ -483,7 +479,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
         if (!existeArquivoPasta(caminhoOrigem, false)) {
             return false;
         }
-        // TODO
+            // TODO
         //alterar XML
 
         return false;
@@ -496,7 +492,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
             return false;
         }
 
-        // TODO 
+            // TODO 
         // alterar XML
         return false;
     }
@@ -509,7 +505,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
         }
         String nomeArquivo = caminho.substring(caminho.lastIndexOf("/") + 1);
 
-        //TODO
+            //TODO
         //se não existir caminho ou arquivo no XML retorna falso
         //pega o nome do arquivo no servidor
         Arquivo arquivo = GerenciadorArquivos.abrirArquivo(nomeArquivo);
@@ -526,7 +522,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
             return false;
         }
         String nomeArquivo = caminho.substring(caminho.lastIndexOf("/") + 1);
-        //TODO
+            //TODO
         //se não existir caminho ou arquivo no XML retorna falso
         //pega o nome do arquivo no servidor
         Arquivo arquivo = GerenciadorArquivos.abrirArquivo(nomeArquivo);
@@ -547,7 +543,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
         }
         String nomeArquivo = caminho.substring(caminho.lastIndexOf("/") + 1);
 
-        //TODO
+            //TODO
         //se não existir caminho ou arquivo no XML retorna falso
         //pega o nome do arquivo no servidor
         Arquivo arquivo = GerenciadorArquivos.abrirArquivo(nomeArquivo);
@@ -570,7 +566,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
         }
         String nomeArquivo = caminho.substring(caminho.lastIndexOf("/") + 1);
 
-        //TODO
+            //TODO
         //Pega o nome do arquivo no XML
         Arquivo arquivo = GerenciadorArquivos.abrirArquivo(nomeArquivo);
         return null;
@@ -674,10 +670,10 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
         Object exprResult = expr.evaluate(PainelDeControle.xml, XPathConstants.NODESET);
         NodeList node = (NodeList) exprResult;
         if (node.getLength() == 0) {
-            JOptionPane.showMessageDialog(DemoMain.main, "Não há nós a serem retornados com a seguinte expressão: " + expressao);
+            JOptionPane.showMessageDialog(InterfaceUsuario.main, "Não há nós a serem retornados com a seguinte expressão: " + expressao);
         }
         if (node.getLength() > 1) {
-            JOptionPane.showMessageDialog(DemoMain.main, "Mais de um nó foram encontrados com a seguinte expressão: " + expressao);
+            JOptionPane.showMessageDialog(InterfaceUsuario.main, "Mais de um nó foram encontrados com a seguinte expressão: " + expressao);
         }
         return node.item(0);
     }
@@ -689,12 +685,27 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
         Object exprResult = expr.evaluate(PainelDeControle.xml, XPathConstants.NODESET);
         NodeList node = (NodeList) exprResult;
         if (node.getLength() == 0) {
-            JOptionPane.showMessageDialog(DemoMain.main, "Não há nós a serem retornados com a seguinte expressão: " + expressao);
+            JOptionPane.showMessageDialog(InterfaceUsuario.main, "Não há nós a serem retornados com a seguinte expressão: " + expressao);
         }
         if (node.getLength() > 1) {
-            JOptionPane.showMessageDialog(DemoMain.main, "Mais de um nó foram encontrados com a seguinte expressão: " + expressao);
+            JOptionPane.showMessageDialog(InterfaceUsuario.main, "Mais de um nó foram encontrados com a seguinte expressão: " + expressao);
         }
         return node.item(0);
+    }
+
+    public List<String> getUsuarios() {
+        List<String> usuarios = new ArrayList();
+        File folder = new File(PainelDeControle.PASTA_XML);
+        for (final File fileEntry : folder.listFiles()) {
+            if (!fileEntry.isDirectory()) {
+                String usuario = fileEntry.getName();
+                usuario = usuario.substring(0, usuario.indexOf("."));
+                usuarios.add(usuario);
+                System.out.println("Listando usuários = " + usuario);
+            } else {
+            }
+        }
+        return usuarios;
     }
 
 }
