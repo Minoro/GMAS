@@ -38,8 +38,8 @@ public class InterfaceUsuario extends JFrame {
 
     public InterfaceUsuario() {
         try {
-            PainelDeControle.xml = PainelDeControle.middleware.server.pedirXML(PainelDeControle.username);
             PainelDeControle.middleware.server = (SistemaArquivoInterface) Naming.lookup(PainelDeControle.middleware.getURLServidorRMI(0));
+            PainelDeControle.xml = PainelDeControle.middleware.server.pedirXML(PainelDeControle.username);
         } catch (NotBoundException | MalformedURLException | RemoteException | XPathExpressionException ex) {
             Logger.getLogger(InterfaceUsuario.class.getName()).log(Level.SEVERE, null, ex);
         }
