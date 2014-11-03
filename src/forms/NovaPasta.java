@@ -9,7 +9,7 @@ import java.rmi.RemoteException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.xpath.XPathExpressionException;
-import jtree.DemoMain;
+import cliente.InterfaceUsuario;
 import jtree.XMLTreePanel;
 
 /**
@@ -80,7 +80,7 @@ public class NovaPasta extends DefaultDialog {
         caminhoSelecionado += nome_pasta;
 
         try {
-            DemoMain.server.criarPasta(caminhoSelecionado);
+            InterfaceUsuario.server.criarPasta(caminhoSelecionado);
         } catch (RemoteException | XPathExpressionException ex) {
             Logger.getLogger(NovaPasta.class.getName()).log(Level.SEVERE, null, ex);
         }

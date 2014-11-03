@@ -23,7 +23,6 @@ public class Middleware {
      * Lista dos Servidores de arquivos que a aplicação esta utilizando
      */
     private List<InetAddress> servidoresArquivo;
-    private String nomeUsuario;
 
     /**
      * Construtor da Classe de Middleware. A partir do endereço de um grupo
@@ -40,7 +39,7 @@ public class Middleware {
     public Middleware(String multicastGroup, String nomeUsuario, Boolean novoUsuario) throws IOException {
         PainelDeControle.username = nomeUsuario;
         servidoresArquivo = new LinkedList<>();
-        this.nomeUsuario = nomeUsuario;
+        PainelDeControle.username = nomeUsuario;
         mergeUsuario(multicastGroup, novoUsuario);
 
     }
@@ -53,7 +52,7 @@ public class Middleware {
             if (novoUsuario) {
                 mensagem = PainelDeControle.NOVO_USUARIO;
             } else {
-                mensagem = PainelDeControle.USUARIO_EXISTENTE + "-" + nomeUsuario;
+                mensagem = PainelDeControle.USUARIO_EXISTENTE + "-" + PainelDeControle.username;
             }
             byte[] m = mensagem.getBytes();
             DatagramPacket messageOut = new DatagramPacket(m, m.length, group, PainelDeControle.PORTA_MULTICAST);

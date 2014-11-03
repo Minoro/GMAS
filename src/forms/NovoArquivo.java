@@ -9,7 +9,7 @@ import java.rmi.RemoteException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.xpath.XPathExpressionException;
-import jtree.DemoMain;
+import cliente.InterfaceUsuario;
 import jtree.XMLTreePanel;
 import model.Arquivo;
 
@@ -113,7 +113,7 @@ public class NovoArquivo extends DefaultDialog {
         try {
             Arquivo arquivo = new Arquivo();
             arquivo.setConteudo(conteudo_arquivo);
-            DemoMain.server.criarArquivo(caminhoSelecionado, arquivo);
+            InterfaceUsuario.server.criarArquivo(caminhoSelecionado, arquivo);
         } catch (RemoteException | XPathExpressionException ex) {
             Logger.getLogger(NovaPasta.class.getName()).log(Level.SEVERE, null, ex);
         }

@@ -1,4 +1,4 @@
-package jtree;
+package cliente;
 
 import java.awt.Dimension;
 import java.io.BufferedWriter;
@@ -17,23 +17,26 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
+import jtree.XMLInfoPanel;
+import jtree.XMLMenu;
+import jtree.XMLTreePanel;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 import servidor.SistemaArquivo;
 import servidor.SistemaArquivoInterface;
 import utils.PainelDeControle;
 
-public class DemoMain extends JFrame {
+public class InterfaceUsuario extends JFrame {
 	private static final long serialVersionUID = 1L;
 	//    public static SistemaArquivo server;
     public static SistemaArquivoInterface server;
-    public static DemoMain main;
+    public static InterfaceUsuario main;
 
     public static void main(String[] args) {
-        main = new DemoMain();
+        main = new InterfaceUsuario();
     }
 
-    public DemoMain() {
+    public InterfaceUsuario() {
         Document document = null;
         try {
         //servidor RMI
@@ -41,7 +44,7 @@ public class DemoMain extends JFrame {
             document = server.pedirXML(PainelDeControle.username);
 //            document = pedirXMLLocal(PainelDeControle.username);
         } catch (RemoteException | XPathExpressionException | NotBoundException | MalformedURLException ex) {
-            Logger.getLogger(DemoMain.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(InterfaceUsuario.class.getName()).log(Level.SEVERE, null, ex);
         }
         PainelDeControle.xml = document;
         XMLTreePanel panel = new XMLTreePanel();
