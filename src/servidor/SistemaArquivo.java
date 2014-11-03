@@ -155,7 +155,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
 
                     }
                 } catch (IOException e) {
-                    System.out.println(e); 
+                    System.out.println(e);
                 }
             }
         }
@@ -272,7 +272,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
                     Random rand = new Random();
                     String msg = PainelDeControle.FACA_BACKUP + "-" + u + "-" + servidor_X_usuario.get(u); //cabecalhoMsg-nomeUsuario-IPServidorQueOAtende
                     int indServidor = rand.nextInt(servidoresExistentes.size());
-                    while(servidoresExistentes.get(indServidor).equals(servidor_X_usuario.get(u))) { //evita que envie requisicao de backup para o proprio servidor que armazena o usuario em questao
+                    while (servidoresExistentes.get(indServidor).equals(servidor_X_usuario.get(u))) { //evita que envie requisicao de backup para o proprio servidor que armazena o usuario em questao
                         indServidor = rand.nextInt(servidoresExistentes.size());
                     }
                     byte[] resposta = msg.getBytes();
@@ -323,12 +323,12 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
                     server.receive(messageIn);
                     String mensagem = new String(messageIn.getData());
                     mensagem = mensagem.substring(0, mensagem.indexOf("\0"));
-                    if(mensagem.startsWith(PainelDeControle.FACA_BACKUP)) {
+                    if (mensagem.startsWith(PainelDeControle.FACA_BACKUP)) {
                         //TODO -> chamar funcao de backup
 //                        if(naoexisteusuario)
                         String msg = PainelDeControle.CONFIRMACAO_BACKUP;
-                        byte [] m = msg.getBytes();
-                        DatagramPacket resposta = new DatagramPacket(m, m.length, group, PainelDeControle.PORTA_SERVIDORES+1);
+                        byte[] m = msg.getBytes();
+                        DatagramPacket resposta = new DatagramPacket(m, m.length, group, PainelDeControle.PORTA_SERVIDORES + 1);
                         server.send(resposta); //envia confirmacao de backup
                     }
                 }
@@ -380,7 +380,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
         String nomePasta = caminho.substring(caminho.lastIndexOf("/") + 1);//separa o nome da pasta €(ultimo item do caminho)
         String expressao = montaExpressao(caminho, true);
         try {
-                //TODO
+            //TODO
             //faz o parsing do XML inserindo o caminho e o nome do arquivo
             Node ultima_pasta = pegaUltimaPasta(expressao);
             Element newelement = PainelDeControle.xml.createElement(PainelDeControle.TAG_PASTA);
@@ -445,7 +445,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
 
         String nomeArquivo = caminho.substring(caminho.lastIndexOf("/") + 1);
 
-            //TODO
+        //TODO
         //se não existir caminho ou arquivo no XML retorna falso
         //pega o nome do arquivo no servidor
         GerenciadorArquivos.apagarArquivo(nomeArquivo);
@@ -458,7 +458,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
     public boolean renomearArquivo(String caminhoOrigem, String novoNome)
             throws RemoteException, XPathExpressionException {
 
-            //TODO
+        //TODO
         //Alterar XML
         String expressao;
         if (caminhoOrigem.endsWith(".txt")) {
@@ -494,7 +494,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
         if (!existeArquivoPasta(caminhoOrigem, false)) {
             return false;
         }
-            // TODO
+        // TODO
         //alterar XML
 
         return false;
@@ -507,7 +507,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
             return false;
         }
 
-            // TODO 
+        // TODO 
         // alterar XML
         return false;
     }
@@ -520,7 +520,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
         }
         String nomeArquivo = caminho.substring(caminho.lastIndexOf("/") + 1);
 
-            //TODO
+        //TODO
         //se não existir caminho ou arquivo no XML retorna falso
         //pega o nome do arquivo no servidor
         Arquivo arquivo = GerenciadorArquivos.abrirArquivo(nomeArquivo);
@@ -537,7 +537,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
             return false;
         }
         String nomeArquivo = caminho.substring(caminho.lastIndexOf("/") + 1);
-            //TODO
+        //TODO
         //se não existir caminho ou arquivo no XML retorna falso
         //pega o nome do arquivo no servidor
         Arquivo arquivo = GerenciadorArquivos.abrirArquivo(nomeArquivo);
@@ -558,7 +558,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
         }
         String nomeArquivo = caminho.substring(caminho.lastIndexOf("/") + 1);
 
-            //TODO
+        //TODO
         //se não existir caminho ou arquivo no XML retorna falso
         //pega o nome do arquivo no servidor
         Arquivo arquivo = GerenciadorArquivos.abrirArquivo(nomeArquivo);
@@ -581,7 +581,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
         }
         String nomeArquivo = caminho.substring(caminho.lastIndexOf("/") + 1);
 
-            //TODO
+        //TODO
         //Pega o nome do arquivo no XML
         Arquivo arquivo = GerenciadorArquivos.abrirArquivo(nomeArquivo);
         return null;
