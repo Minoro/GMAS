@@ -6,9 +6,12 @@
 package cliente;
 
 import java.io.IOException;
+import java.net.UnknownHostException;
+import java.rmi.RemoteException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import javax.xml.xpath.XPathExpressionException;
 import middleware.Middleware;
 import utils.PainelDeControle;
 
@@ -114,7 +117,9 @@ public class Cliente extends javax.swing.JFrame {
         } catch (IOException ex) {
             Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
             System.exit(0);
-        }
+        }   catch (XPathExpressionException ex) {
+                Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
+            }
         new InterfaceUsuario();
         dispose();
     }//GEN-LAST:event_jButton1MouseClicked
