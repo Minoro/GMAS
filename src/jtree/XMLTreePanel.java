@@ -1,5 +1,6 @@
 package jtree;
 
+import cliente.InterfaceUsuario;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.MouseAdapter;
@@ -115,7 +116,7 @@ public class XMLTreePanel extends JPanel {
                 caminho = caminho.substring(0, caminho.lastIndexOf("/"));
             }
         } else {
-            JOptionPane.showMessageDialog(DemoMain.main, "Não há nenhum caminho selecionado.\nSelecione um elemento na árvore de hierarquia e tente novamente");
+            JOptionPane.showMessageDialog(InterfaceUsuario.main, "Não há nenhum caminho selecionado.\nSelecione um elemento na árvore de hierarquia e tente novamente");
         }
         // Retira o nome da raiz, pois a função montaExpressao já inclui a raiz por padrão
         caminho = caminho.substring(caminho.indexOf("/") + 1, caminho.length());

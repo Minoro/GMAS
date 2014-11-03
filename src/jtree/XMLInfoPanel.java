@@ -24,9 +24,13 @@ public class XMLInfoPanel extends JPanel {
 
         int i = 0;
         for (Field field : Arquivo.class.getDeclaredFields()) {
-            JTextField jtf = new JTextField();
-
+            //Para nao exibir o nome da pasta/arquivo, uma vez que já é exibido na árvore de hierarquia
             String variavel = field.getName();
+            if(variavel.equals("nome")){
+                continue;
+            }
+
+            JTextField jtf = new JTextField();
             jtf.setEditable(false);
             jtf.setPreferredSize(new Dimension(400, 69));
             jtf.setLocation(0, 50 * i);

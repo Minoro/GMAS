@@ -42,7 +42,8 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import jtree.DemoMain;
+import cliente.InterfaceUsuario;
+import java.util.ArrayList;
 import model.Arquivo;
 
 import org.w3c.dom.Document;
@@ -316,7 +317,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
             //verifica se o caminho existe no XML, se não existir retorna falso (vellone pergunta: ?)
 
         } catch (TransformerException ex) {
-            Logger.getLogger(DemoMain.class
+            Logger.getLogger(InterfaceUsuario.class
                     .getName()).log(Level.SEVERE, null, ex);
         }
 
@@ -347,7 +348,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
             //verifica se o caminho existe no XML, se não existir retorna falso (vellone pergunta: ?)
 
         } catch (TransformerException ex) {
-            Logger.getLogger(DemoMain.class
+            Logger.getLogger(InterfaceUsuario.class
                     .getName()).log(Level.SEVERE, null, ex);
         }
 
@@ -638,10 +639,10 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
         Object exprResult = expr.evaluate(PainelDeControle.xml, XPathConstants.NODESET);
         NodeList node = (NodeList) exprResult;
         if (node.getLength() == 0) {
-            JOptionPane.showMessageDialog(DemoMain.main, "Não há nós a serem retornados com a seguinte expressão: " + expressao);
+            JOptionPane.showMessageDialog(InterfaceUsuario.main, "Não há nós a serem retornados com a seguinte expressão: " + expressao);
         }
         if (node.getLength() > 1) {
-            JOptionPane.showMessageDialog(DemoMain.main, "Mais de um nó foram encontrados com a seguinte expressão: " + expressao);
+            JOptionPane.showMessageDialog(InterfaceUsuario.main, "Mais de um nó foram encontrados com a seguinte expressão: " + expressao);
         }
         return node.item(0);
     }
@@ -653,12 +654,27 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
         Object exprResult = expr.evaluate(PainelDeControle.xml, XPathConstants.NODESET);
         NodeList node = (NodeList) exprResult;
         if (node.getLength() == 0) {
-            JOptionPane.showMessageDialog(DemoMain.main, "Não há nós a serem retornados com a seguinte expressão: " + expressao);
+            JOptionPane.showMessageDialog(InterfaceUsuario.main, "Não há nós a serem retornados com a seguinte expressão: " + expressao);
         }
         if (node.getLength() > 1) {
-            JOptionPane.showMessageDialog(DemoMain.main, "Mais de um nó foram encontrados com a seguinte expressão: " + expressao);
+            JOptionPane.showMessageDialog(InterfaceUsuario.main, "Mais de um nó foram encontrados com a seguinte expressão: " + expressao);
         }
         return node.item(0);
+    }
+
+    public static List<String> getUsuarios() {
+        List<String> usuarios = new ArrayList();
+        File folder = new File(PainelDeControle.PASTA_XML);
+        for (final File fileEntry : folder.listFiles()) {
+            if (!fileEntry.isDirectory()) {
+                String usuario = fileEntry.getName();
+                usuario = usuario.substring(0, usuario.indexOf("."));
+                usuarios.add(usuario);
+                System.out.println("Listando usuários = " + usuario);
+            } else {
+            }
+        }
+        return usuarios;
     }
 
 }

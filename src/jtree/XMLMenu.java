@@ -5,6 +5,7 @@
  */
 package jtree;
 
+import cliente.InterfaceUsuario;
 import forms.NovaPasta;
 import forms.NovoArquivo;
 import forms.Renomear;
@@ -33,7 +34,7 @@ public class XMLMenu extends JMenuBar {
 
             @Override
             public void mousePressed(MouseEvent e) {
-                Renomear renomear = new Renomear(DemoMain.main, true);
+                Renomear renomear = new Renomear(InterfaceUsuario.main, true);
                 renomear.setVisible(true);
             }
         });
@@ -45,7 +46,7 @@ public class XMLMenu extends JMenuBar {
 
             @Override
             public void mousePressed(MouseEvent e) {
-                NovoArquivo na = new NovoArquivo(DemoMain.main, true);
+                NovoArquivo na = new NovoArquivo(InterfaceUsuario.main, true);
                 na.setVisible(true);
             }
         });
@@ -57,7 +58,7 @@ public class XMLMenu extends JMenuBar {
 
             @Override
             public void mousePressed(MouseEvent e) {
-                NovaPasta np = new NovaPasta(DemoMain.main, true);
+                NovaPasta np = new NovaPasta(InterfaceUsuario.main, true);
                 np.setVisible(true);
             }
         });
