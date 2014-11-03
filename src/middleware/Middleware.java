@@ -78,7 +78,6 @@ public class Middleware {
 //                }
 //            }
         }
-        PainelDeControle.xml = server.pedirXML(PainelDeControle.username);
     }
     
     /**
