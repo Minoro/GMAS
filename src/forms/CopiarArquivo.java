@@ -73,7 +73,7 @@ public class CopiarArquivo extends DefaultDialog {
             expressao = manipulador.montarExpressaoPasta(caminho);
         }
         try {
-            Node pasta = manipulador.pegaUltimaPasta(expressao);
+            Node pasta = manipulador.pegaUltimaPasta(expressao, PainelDeControle.xml);
             pasta.appendChild(pasta);
         } catch (XPathExpressionException ex) {
             Logger.getLogger(CopiarArquivo.class.getName()).log(Level.SEVERE, null, ex);

@@ -75,7 +75,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
 
      XPath xpath = XPathFactory.newInstance().newXPath();
      XPathExpression expr = xpath.compile(expressao);
-     Object exprResult = expr.evaluate(PainelDeControle.xml, XPathConstants.NODESET);
+     Object exprResult = expr.evaluate(xml, XPathConstants.NODESET);
      NodeList node = (NodeList) exprResult;
      if (node.getLength() != 0) {
      return true;
@@ -347,7 +347,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
             String nomeArquivoServidor = GerenciadorArquivos.criarArquivo(arquivo);//cria arquivo e salva o nome que esta no servidor
             //faz o parsing do XML inserindo o caminho e o nome do arquivo
             Node ultima_pasta = manipuladorXML.pegaUltimaPasta(expressao, xml);
-            Element newelement = PainelDeControle.xml.createElement(PainelDeControle.TAG_ARQUIVO);
+            Element newelement = xml.createElement(PainelDeControle.TAG_ARQUIVO);
             //TODO
             //Arrumar atributos do XML
             System.out.println("ARRUMAR ATRIBUTOS DO XML AO CRIAR UM NOVO ARQUIVO");
@@ -356,7 +356,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
             newelement.setTextContent(nomeArquivo);
             ultima_pasta.appendChild(newelement);
 
-            manipuladorXML.salvarXML(PainelDeControle.xml, nomeUsuario);
+            manipuladorXML.salvarXML(xml, nomeUsuario);
 
         } catch (TransformerException ex) {
             Logger.getLogger(InterfaceUsuario.class
@@ -380,14 +380,14 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
         try {
             //faz o parsing do XML inserindo o caminho e o nome do arquivo
             Node ultima_pasta = manipuladorXML.pegaUltimaPasta(expressao, xml);
-            Element newelement = PainelDeControle.xml.createElement(PainelDeControle.TAG_PASTA);
+            Element newelement = xml.createElement(PainelDeControle.TAG_PASTA);
             System.out.println("ARRUMAR ATRIBUTOS DO XML AO CRIAR UMA NOVA PASTA");
             newelement.setAttribute("dataCriacao", new Date().toString());
             //usar atributo nome do XML para armazenar o nome físico do arquivo, com o objetivo de saber qual arquivo físico abrir
             newelement.setAttribute("nome", nomePasta);
             newelement.setTextContent(nomePasta);
             ultima_pasta.appendChild(newelement);
-            manipuladorXML.salvarXML(PainelDeControle.xml, nomeUsuario);
+            manipuladorXML.salvarXML(xml, nomeUsuario);
             //verifica se o caminho existe no XML, se não existir retorna falso (vellone pergunta: ?)
 
         } catch (TransformerException ex) {
@@ -477,7 +477,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
 
         node.setTextContent(novoNome);
         try {
-            manipuladorXML.salvarXML(PainelDeControle.xml, nomeUsuario);
+            manipuladorXML.salvarXML(xml, nomeUsuario);
 
         } catch (TransformerException ex) {
             Logger.getLogger(SistemaArquivo.class
