@@ -16,6 +16,7 @@ import javax.swing.JFrame;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPathExpressionException;
 import jtree.XMLInfoPanel;
 import jtree.XMLMenu;
 import jtree.XMLTreePanel;
@@ -41,7 +42,7 @@ public class InterfaceUsuario extends JFrame {
         } catch (NotBoundException | MalformedURLException | RemoteException ex) {
             Logger.getLogger(InterfaceUsuario.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
         Document document = PainelDeControle.xml;
         PainelDeControle.xml = document;
         XMLTreePanel panel = new XMLTreePanel();

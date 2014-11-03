@@ -27,7 +27,7 @@ public class Middleware {
      * Lista dos Servidores de arquivos que a aplicação esta utilizando
      */
     private List<InetAddress> servidoresArquivo;
-    public static SistemaArquivoInterface server;
+    public SistemaArquivoInterface server;
 
     /**
      * Construtor da Classe de Middleware. A partir do endereço de um grupo
@@ -39,9 +39,12 @@ public class Middleware {
      * @param nomeUsuario Nome do usuário
      * @param novoUsuario Boolean que representa se é novo usuário ou não
      * @throws IOException
+     * @throws java.net.UnknownHostException
+     * @throws java.rmi.RemoteException
+     * @throws javax.xml.xpath.XPathExpressionException
      */
     //Adicionar arquivo de persistencia de servidores.
-    public Middleware(String multicastGroup, String nomeUsuario, Boolean novoUsuario) throws IOException {
+    public Middleware(String multicastGroup, String nomeUsuario, Boolean novoUsuario) throws IOException, UnknownHostException, RemoteException, XPathExpressionException {
         PainelDeControle.username = nomeUsuario;
         servidoresArquivo = new LinkedList<>();
         PainelDeControle.username = nomeUsuario;
@@ -49,7 +52,7 @@ public class Middleware {
 
     }
 
-    private void mergeUsuario(String multicastGroup, Boolean novoUsuario) throws UnknownHostException, IOException {
+    private void mergeUsuario(String multicastGroup, Boolean novoUsuario) throws UnknownHostException, IOException, RemoteException, XPathExpressionException {
         InetAddress group = InetAddress.getByName(multicastGroup);
         try (MulticastSocket mSckt = new MulticastSocket();
                 DatagramSocket server = new DatagramSocket(PainelDeControle.PORTA_MULTICAST)) {
@@ -75,6 +78,7 @@ public class Middleware {
 //                }
 //            }
         }
+        PainelDeControle.xml = server.pedirXML(PainelDeControle.username);
     }
     
     /**
