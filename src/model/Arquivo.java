@@ -1,5 +1,6 @@
 package model;
 
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -9,8 +10,9 @@ import java.util.Date;
  * @author minoro
  *
  */
-public class Arquivo {
+public class Arquivo implements Serializable {
 
+    
     private String nome;
     private Integer identificador;
     private int posicao;
