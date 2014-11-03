@@ -272,6 +272,9 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
                     Random rand = new Random();
                     String msg = PainelDeControle.FACA_BACKUP + "-" + u + "-" + servidor_X_usuario.get(u); //cabecalhoMsg-nomeUsuario-IPServidorQueOAtende
                     int indServidor = rand.nextInt(servidoresExistentes.size());
+                    while(servidoresExistentes.get(indServidor).equals(servidor_X_usuario.get(u))) { //evita que envie requisicao de backup para o proprio servidor que armazena o usuario em questao
+                        indServidor = rand.nextInt(servidoresExistentes.size());
+                    }
                     byte[] resposta = msg.getBytes();
                     DatagramPacket dp = new DatagramPacket(resposta, resposta.length, InetAddress.getByName(servidoresExistentes.get(indServidor)), PainelDeControle.PORTA_SERVIDORES);
                     DatagramSocket ds = new DatagramSocket();
@@ -315,9 +318,21 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
         public void run() {
             try (DatagramSocket server = new DatagramSocket(PainelDeControle.PORTA_SERVIDORES);) {
                 while (true) {
-
+                    byte[] buffer = new byte[PainelDeControle.TAMANHO_BUFFER];
+                    DatagramPacket messageIn = new DatagramPacket(buffer, buffer.length);
+                    server.receive(messageIn);
+                    String mensagem = new String(messageIn.getData());
+                    mensagem = mensagem.substring(0, mensagem.indexOf("\0"));
+                    if(mensagem.startsWith(PainelDeControle.FACA_BACKUP)) {
+                        //TODO -> chamar funcao de backup
+//                        if(naoexisteusuario)
+                        String msg = PainelDeControle.CONFIRMACAO_BACKUP;
+                        byte [] m = msg.getBytes();
+                        DatagramPacket resposta = new DatagramPacket(m, m.length, group, PainelDeControle.PORTA_SERVIDORES+1);
+                        server.send(resposta); //envia confirmacao de backup
+                    }
                 }
-            } catch (SocketException ex) {
+            } catch (IOException ex) {
                 Logger.getLogger(SistemaArquivo.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
