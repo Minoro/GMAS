@@ -16,8 +16,12 @@ public class PainelDeControle {
     public static final String USUARIO_EXISTENTE = "1";
     public static final String RESPOSTA_NOVO_USUARIO = "0";
     public static final String RESPOSTA_USUARIO_EXISTENTE = "1";
+    public static final String USUARIOS_ARMAZENADOS = "2";
+    public static final String FACA_BACKUP = "3";
+    public static final String CONFIRMACAO_BACKUP = "4";
     public static final int TAMANHO_BUFFER = 500;
     public static final int PORTA_MULTICAST = 5678;
+    public static final int PORTA_SERVIDORES = 5679;
     public static final String IP_MULTICAST = "228.5.6.7";
     public static final String SEPARADOR = File.separator;
     public static final String RAIZ = "raiz";
@@ -30,5 +34,18 @@ public class PainelDeControle {
     public static Document xml;
     public static String PASTA_XML = HOME + SEPARADOR + RAIZ + SEPARADOR;
     public static String PASTA_ICONES = PASTA_XML + "icones" + SEPARADOR;
+    public static final double deltaTRespostaServidor = calibrarRede();
+    public static final double deltaTRespostaMulticast = 3*deltaTRespostaServidor;
+    
+    
+    /**
+     * Método que define um valor delta de tempo para aceitação de respostas ou heartbeats no sistema de arquivos
+     * 
+     * @return Valor de calibração da rede
+     */
+    public static double calibrarRede() {
+        //TODO
+        return 3.0;
+    }
     
 }
