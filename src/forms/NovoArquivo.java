@@ -107,6 +107,8 @@ public class NovoArquivo extends DefaultDialog {
             nome_arquivo += ".txt";
         }
         String conteudo_arquivo = conteudo.getText();
+        //TODO
+        //Acho que nao é só por true no parametro
         String caminhoSelecionado = XMLTreePanel.getCaminhoSelecionado(true);
         caminhoSelecionado += nome_arquivo;
 

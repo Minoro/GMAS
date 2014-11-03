@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package forms;
 
 import java.awt.Toolkit;
@@ -13,7 +8,6 @@ import javax.swing.JDialog;
 import jtree.XMLTreePanel;
 
 /**
- *
  * @author Matheus
  */
 public class DefaultDialog extends JDialog {

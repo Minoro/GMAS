@@ -6,6 +6,7 @@
 package jtree;
 
 import cliente.InterfaceUsuario;
+import forms.CopiarArquivo;
 import forms.NovaPasta;
 import forms.NovoArquivo;
 import forms.Renomear;
@@ -14,7 +15,9 @@ import java.awt.event.MouseEvent;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
+import utils.PainelDeControle;
 
 /**
  *
@@ -28,6 +31,24 @@ public class XMLMenu extends JMenuBar {
 
         menu = new JMenu("Ações");
 
+        item = new JMenuItem("Copiar Arquivo");
+        item.addMouseListener(new MouseAdapter() {
+            String nome_da_pasta;
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                XMLTreeNode node = XMLTreePanel.node_selecionado;
+                if (!node.getNodeName().equals(PainelDeControle.TAG_ARQUIVO)) {
+                    JOptionPane.showMessageDialog(InterfaceUsuario.main, "Não é possível copiar uma " + node.getNodeName());
+                    return;
+                }
+                CopiarArquivo copiaArquivo = new CopiarArquivo(InterfaceUsuario.main, false);
+                JOptionPane.showMessageDialog(InterfaceUsuario.main, "Selecione o destino da cópia do arquivo e clique em OK");
+                
+            }
+        });
+        menu.add(item);
+
         item = new JMenuItem("Renomear");
         item.addMouseListener(new MouseAdapter() {
             String nome_da_pasta = "Novo Arquivo";
@@ -39,7 +60,7 @@ public class XMLMenu extends JMenuBar {
             }
         });
         menu.add(item);
-        
+
         item = new JMenuItem("Novo Arquivo");
         item.addMouseListener(new MouseAdapter() {
             String nome_da_pasta = "Novo Arquivo";
@@ -51,7 +72,7 @@ public class XMLMenu extends JMenuBar {
             }
         });
         menu.add(item);
-        
+
         item = new JMenuItem("Nova Pasta");
         item.addMouseListener(new MouseAdapter() {
             String nome_da_pasta = "Nova Pasta";
@@ -65,7 +86,7 @@ public class XMLMenu extends JMenuBar {
         menu.add(item);
 
         menu.add(new JPopupMenu.Separator());
-        
+
         item = new JMenuItem("Sair");
         item.addMouseListener(new MouseAdapter() {
             @Override
@@ -76,7 +97,7 @@ public class XMLMenu extends JMenuBar {
         menu.add(item);
 
         add(menu);
-        
+
         menu = new JMenu("Atualizar Árvore");
         menu.addMouseListener(new MouseAdapter() {
 
