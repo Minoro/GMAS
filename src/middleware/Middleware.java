@@ -79,18 +79,19 @@ public class Middleware {
 //            }
         }
     }
-    
+
     /**
-     * Retorna a URL RMI de um dos servidores relacionados ao cliente em questão.
-     * 
+     * Retorna a URL RMI de um dos servidores relacionados ao cliente em
+     * questão.
+     *
      * @param indiceServidor indice do servidor para recuperação de IP
      * @return URL RMI do servidor de arquivo de índice "indiceServidor"
      */
-    
     public String getURLServidorRMI(int indiceServidor) {
-    	if(indiceServidor >= servidoresArquivo.size())
-    		return null;
-    	return "rmi://" + servidoresArquivo.get(indiceServidor).getHostAddress() + ":/teste";
+        if (indiceServidor >= servidoresArquivo.size()) {
+            return null;
+        }
+        return "rmi://" + servidoresArquivo.get(indiceServidor).getHostAddress() + ":/teste";
     }
 
     public boolean renomearArquivo(String caminho, String nome_digitado) throws RemoteException, XPathExpressionException {

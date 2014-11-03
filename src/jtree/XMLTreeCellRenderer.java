@@ -21,8 +21,7 @@ class XMLTreeCellRenderer extends DefaultTreeCellRenderer {
             = {
                 new ImageIcon(PainelDeControle.PASTA_ICONES + "pasta.jpg"),
                 new ImageIcon(PainelDeControle.PASTA_ICONES + "arquivo.jpg"),
-                new ImageIcon(PainelDeControle.PASTA_ICONES + "raiz.jpg"),
-            };
+                new ImageIcon(PainelDeControle.PASTA_ICONES + "raiz.jpg"),};
 
     @Override
     // rendering the tree
@@ -36,11 +35,11 @@ class XMLTreeCellRenderer extends DefaultTreeCellRenderer {
             boolean hasFocus) {
         super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
         String tag = ((XMLTreeNode) value).getNodeName();
-        if (tag.equals(PainelDeControle.TAG_ARQUIVO)){
+        if (tag.equals(PainelDeControle.TAG_ARQUIVO)) {
             setIcon(XMLTreeIcons[1]);
-        }else if (tag.equals(PainelDeControle.TAG_PASTA)){
+        } else if (tag.equals(PainelDeControle.TAG_PASTA)) {
             setIcon(XMLTreeIcons[0]);
-        }else{
+        } else {
             setIcon(XMLTreeIcons[2]);
         }
         return this;

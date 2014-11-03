@@ -5,6 +5,9 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.rmi.RemoteException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -14,6 +17,7 @@ import javax.swing.JTree;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreePath;
+import javax.xml.xpath.XPathExpressionException;
 
 import org.w3c.dom.Document;
 
@@ -28,7 +32,7 @@ public class XMLTreePanel extends JPanel {
 
     public XMLTreePanel() {
         XMLTreeCellRenderer renderer = new XMLTreeCellRenderer();
-        
+
         setLayout(new BorderLayout());
         model = new XMLTreeModel();
         tree = new JTree();
@@ -36,7 +40,6 @@ public class XMLTreePanel extends JPanel {
         tree.setShowsRootHandles(true);
         tree.setEditable(false);
         tree.setCellRenderer(renderer);
-        
 
         JScrollPane pane = new JScrollPane(tree);
         pane.setPreferredSize(new Dimension(400, 600));
@@ -124,10 +127,16 @@ public class XMLTreePanel extends JPanel {
         System.out.println("Caminho do item selecionado: " + caminho);
         return caminho;
     }
+
     /**
      * Função para atualizar a árvore de hierarquia após modificar o XML
      */
-    public static void atualizaArvore(){
+    public static void atualizaArvore() {
+        try {
+            PainelDeControle.xml = PainelDeControle.middleware.server.pedirXML(PainelDeControle.username);
+        } catch (RemoteException | XPathExpressionException ex) {
+            Logger.getLogger(XMLTreePanel.class.getName()).log(Level.SEVERE, null, ex);
+        }
         tree.updateUI();
     }
 }

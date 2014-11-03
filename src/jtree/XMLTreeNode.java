@@ -18,6 +18,7 @@ public class XMLTreeNode {
 
     /**
      * Retorna o valor do nó
+     *
      * @return String
      */
     public String toString() {

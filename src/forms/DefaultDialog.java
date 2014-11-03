@@ -11,13 +11,14 @@ import jtree.XMLTreePanel;
  * @author Matheus
  */
 public class DefaultDialog extends JDialog {
-	private static final long serialVersionUID = 1L;
 
-	public DefaultDialog(java.awt.Frame parent, boolean modal) {
+    private static final long serialVersionUID = 1L;
+
+    public DefaultDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
 
     }
-    
+
     protected void close() {
         XMLTreePanel.atualizaArvore();
         WindowEvent winClosingEvent = new WindowEvent(this, WindowEvent.WINDOW_CLOSING);

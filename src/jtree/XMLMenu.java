@@ -44,7 +44,7 @@ public class XMLMenu extends JMenuBar {
                 }
                 CopiarArquivo copiaArquivo = new CopiarArquivo(InterfaceUsuario.main, false);
                 JOptionPane.showMessageDialog(InterfaceUsuario.main, "Selecione o destino da cópia do arquivo e clique em OK");
-                
+
             }
         });
         menu.add(item);

@@ -26,7 +26,7 @@ import org.w3c.dom.NodeList;
  */
 public class ManipuladorXML {
 
-    public boolean existeArquivo(String caminho,  Document xml) throws XPathExpressionException {
+    public boolean existeArquivo(String caminho, Document xml) throws XPathExpressionException {
         return existeArquivoPasta(caminho, false, xml);
     }
 
@@ -42,7 +42,7 @@ public class ManipuladorXML {
      * @return boolean - true caso exista o arquivo, falso caso não exista
      * @throws XPathExpressionException
      */
-    private boolean existeArquivoPasta(String caminho, boolean pasta,  Document xml) {
+    private boolean existeArquivoPasta(String caminho, boolean pasta, Document xml) {
         String expressao = montaExpressao(caminho, pasta);
 
         XPath xpath = XPathFactory.newInstance().newXPath();

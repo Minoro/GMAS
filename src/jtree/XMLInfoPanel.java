@@ -26,7 +26,7 @@ public class XMLInfoPanel extends JPanel {
         for (Field field : Arquivo.class.getDeclaredFields()) {
             //Para nao exibir o nome da pasta/arquivo, uma vez que já é exibido na árvore de hierarquia
             String variavel = field.getName();
-            if(variavel.equals("nome")){
+            if (variavel.equals("nome")) {
                 continue;
             }
 

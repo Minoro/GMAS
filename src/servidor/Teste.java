@@ -10,7 +10,8 @@ package servidor;
  * @author mastelini
  */
 public class Teste {
+
     public static void main(String[] args) throws InterruptedException {
-        
+
     }
 }

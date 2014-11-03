@@ -32,11 +32,11 @@ public interface SistemaArquivoInterface extends Remote {
      * Cria uma pasta dado um caminho, onde o último nome, após a última barra,
      * corresponde ao nome da pasta
      *
-     * @param caminho String - caminho onde será criado a pasta, concatenado
-     * com "/" e o nome da pasta
+     * @param caminho String - caminho onde será criado a pasta, concatenado com
+     * "/" e o nome da pasta
      * * @param nomeUsuario String - nome do usuário para salvar o XML
-     * @return boolean - true caso seja possivel criar a pasta ou false caso
-     * já exista uma pasta com o mesmo nome
+     * @return boolean - true caso seja possivel criar a pasta ou false caso já
+     * exista uma pasta com o mesmo nome
      * @throws RemoteException
      * @throws javax.xml.xpath.XPathExpressionException
      *
@@ -129,8 +129,8 @@ public interface SistemaArquivoInterface extends Remote {
     boolean escreverArquivo(String caminho, String texto, String nomeUsuario) throws RemoteException, XPathExpressionException;
 
     /**
-     * Retorna um objeto Arquivo com as informações referentes ao arquivo no final do
-     * caminho
+     * Retorna um objeto Arquivo com as informações referentes ao arquivo no
+     * final do caminho
      *
      * @param caminho String - caminho para o arquivo que se deseja as
      * informações
@@ -141,13 +141,13 @@ public interface SistemaArquivoInterface extends Remote {
      * @throws javax.xml.xpath.XPathExpressionException
      */
     Arquivo getArquivo(String caminho, String nomeUsuario) throws RemoteException, XPathExpressionException;
-    
+
     /**
-     * 
+     *
      * @param nomeUsuario String - nome do usuario que se deseja o xml
      * @return Document - xml com a arvore de arquivos do usuario
      * @throws RemoteException
-     * @throws XPathExpressionException 
+     * @throws XPathExpressionException
      */
     Document pedirXML(String nomeUsuario) throws RemoteException, XPathExpressionException;
 }

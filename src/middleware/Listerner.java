@@ -23,7 +23,7 @@ public class Listerner {
                 String mensagem = new String(messageIn.getData());
                 mensagem = mensagem.substring(0, mensagem.indexOf("\0"));
                 System.out.println("Mensagem recebida: " + mensagem);
-            } catch (IOException e){
+            } catch (IOException e) {
                 System.out.println(e);
             }
         }

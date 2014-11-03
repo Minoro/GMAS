@@ -12,7 +12,6 @@ import java.util.Date;
  */
 public class Arquivo implements Serializable {
 
-    
     private String nome;
     private Integer identificador;
     private int posicao;
