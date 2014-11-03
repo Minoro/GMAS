@@ -56,8 +56,6 @@ import utils.PainelDeControle;
 public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquivoInterface {
 
     private static final long serialVersionUID = 1L;
-    private MulticastSocket s;
-    InetAddress group;
 
     public static void main(String[] args) {
         try {
@@ -91,9 +89,6 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
      }*/
     protected SistemaArquivo() throws RemoteException, IOException {
         super();
-        group = InetAddress.getByName(PainelDeControle.IP_MULTICAST);
-        s = new MulticastSocket(PainelDeControle.PORTA_MULTICAST);
-        s.joinGroup(group);
         new Thread(new MulticastMonitor()).start();
     }
 
@@ -115,6 +110,15 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
      *
      */
     private class MulticastMonitor implements Runnable {
+
+        private MulticastSocket s;
+        private InetAddress group;
+
+        public MulticastMonitor() throws UnknownHostException, IOException {
+            group = InetAddress.getByName(PainelDeControle.IP_MULTICAST);
+            s = new MulticastSocket(PainelDeControle.PORTA_MULTICAST);
+            s.joinGroup(group);
+        }
 
         @Override
         public void run() {
@@ -141,18 +145,18 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
                     } else if (mensagem.startsWith(PainelDeControle.USUARIO_EXISTENTE)) {
                         System.out.println("Usuário já existente! " + ipUsuario.getHostAddress());
                         System.out.println("FALTA IMPLEMENTAR");
-                    } else if(mensagem.equals(PainelDeControle.USUARIOS_ARMAZENADOS)) {
+                    } else if (mensagem.equals(PainelDeControle.USUARIOS_ARMAZENADOS)) {
                         //chamar funcao do VELLONE
-                        try(DatagramSocket resp = new DatagramSocket()) {
+                        try (DatagramSocket resp = new DatagramSocket()) {
                             String msg = "";
-                            for(String u : getUsuarios) {
+                            for (String u : getUsuarios()) {
                                 msg += u + ";";
                             }
                             byte[] m = msg.getBytes();
-                            DatagramPacket messageOut = new DatagramPacket(m, m.length, group, PainelDeControle.PORTA_SERVIDORES+1); //responde solicitação do controlador de erros
+                            DatagramPacket messageOut = new DatagramPacket(m, m.length, group, PainelDeControle.PORTA_SERVIDORES + 1); //responde solicitação do controlador de erros
                             resp.send(messageOut);
                         }
-                        
+
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -179,7 +183,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
     /**
      * Classe que controla a replicacao de dados caso um middleware detecte uma
      * falha em um de seus servidores
-     * 
+     *
      */
     private class ControleReplicacao implements Runnable {
 
@@ -201,7 +205,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
         @Override
         public void run() {
             try (MulticastSocket mSckt = new MulticastSocket();
-                    DatagramSocket server = new DatagramSocket(PainelDeControle.PORTA_SERVIDORES+1)) {
+                    DatagramSocket server = new DatagramSocket(PainelDeControle.PORTA_SERVIDORES + 1)) { //escuta respostas dos nomes de usuarios armazenados
                 //requisita aos outros servidores os usuarios que estes possuem
                 byte[] m = mensagem.getBytes();
                 DatagramPacket messageOut = new DatagramPacket(m, m.length, group, PainelDeControle.PORTA_MULTICAST);
@@ -304,9 +308,23 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
             }
         }
     }
-    
-    private class MonitorInterServidores {
-        
+
+    /**
+     * Classe que escuta requisições de backup de dados feita pelos outros
+     * servidores e avisos de falha, notificados pelo middleware (?)
+     */
+    private class MonitorInterServidores implements Runnable {
+
+        @Override
+        public void run() {
+            try (DatagramSocket server = new DatagramSocket(PainelDeControle.PORTA_SERVIDORES);) {
+                while (true) {
+
+                }
+            } catch (SocketException ex) {
+                Logger.getLogger(SistemaArquivo.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     }
 
     @Override
