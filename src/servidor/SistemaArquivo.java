@@ -143,7 +143,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
                         System.out.println("FALTA IMPLEMENTAR");
                     }
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    System.out.println(e); 
                 }
             }
         }
