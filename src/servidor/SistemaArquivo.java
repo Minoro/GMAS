@@ -410,7 +410,6 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
             newelement.setAttribute("dataCriacao", dataAgora);
             newelement.setAttribute("dataUltimaModificacao", dataAgora);
             newelement.setAttribute("tamanho", "0");
-            newelement.setAttribute("dataCriacao", new Date().toString());
             newelement.setTextContent(nomePasta);
             
             ultima_pasta.appendChild(newelement);
