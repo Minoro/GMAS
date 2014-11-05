@@ -20,6 +20,7 @@ public class PainelDeControle {
     public static final String FACA_BACKUP = "3";
     public static final String CONFIRMACAO_BACKUP = "4";
     public static final String FALHA_SERVIDOR = "5";
+    public static final String EU_ESCOLHO_VOCE = "6";
     public static final int TAMANHO_BUFFER = 500;
     public static final int PORTA_MULTICAST = 5678;
     public static final int PORTA_SERVIDORES = 5679;

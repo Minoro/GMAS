@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.DatagramPacket;
-import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
 import java.net.SocketException;
@@ -33,6 +32,8 @@ import javax.xml.transform.TransformerException;
 import javax.xml.xpath.XPathExpressionException;
 
 import cliente.InterfaceUsuario;
+import java.net.DatagramSocket;
+import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import model.Arquivo;
@@ -70,7 +71,6 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
     /*public SistemaArquivo() {
      //para testes sem servidor
      }*/
-
     protected SistemaArquivo() throws RemoteException, IOException {
         super();
         manipuladorXML = new ManipuladorXML();
@@ -78,6 +78,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
         s = new MulticastSocket(PainelDeControle.PORTA_MULTICAST);
         s.joinGroup(group);
         new Thread(new MulticastMonitor()).start();
+        new Thread(new MonitorServidores()).start();
     }
 
     /**
@@ -114,33 +115,40 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
                     if (mensagem.equals(PainelDeControle.NOVO_USUARIO)) {
                         String respostaNovoUsuario = PainelDeControle.RESPOSTA_NOVO_USUARIO;
                         byte[] responder = respostaNovoUsuario.getBytes();
-                        DatagramPacket dp = new DatagramPacket(responder, responder.length, ipUsuario, PainelDeControle.PORTA_MULTICAST);
-                        DatagramSocket ds = new DatagramSocket();
-                        ds.send(dp);
-                        System.out.println("Novo usuário na parada! Mensagem enviada a ele. " + ipUsuario.getHostAddress());
-                        ds.close();
+                        try (Socket welcome = new Socket(ipUsuario, PainelDeControle.PORTA_MULTICAST)) {
+                            welcome.getOutputStream().write(responder);
+                            System.out.println("Novo usuário na parada! Mensagem enviada a ele. " + ipUsuario.getHostAddress());
+                        } catch (IOException e) {
+                            //faz nada
+                            System.out.println("Tempo de resposta excedido.");
+                        }
 
                     } else if (mensagem.startsWith(PainelDeControle.USUARIO_EXISTENTE)) {
                         String nomeUsuario = mensagem.split("-")[1];
                         File arq = new File(PainelDeControle.PASTA_XML + nomeUsuario + ".xml"); //procura pela raiz (xml) do usuario
                         if (arq.exists()) {
                             String respostaUsuarioExistente = PainelDeControle.RESPOSTA_USUARIO_EXISTENTE;
-                            byte[] resposta = respostaUsuarioExistente.getBytes();
-                            DatagramPacket dp = new DatagramPacket(resposta, resposta.length, ipUsuario, PainelDeControle.PORTA_MULTICAST); //usuario escuta na mesma porta do multicast
-                            DatagramSocket ds = new DatagramSocket();
-                            ds.send(dp);
-                            System.out.println("Usário já existente na parada! Mensagem enviada a ele. " + ipUsuario.getHostAddress());
-                            ds.close();
+                            try (Socket welcome = new Socket(ipUsuario, PainelDeControle.PORTA_MULTICAST)) {
+                                byte[] resposta = respostaUsuarioExistente.getBytes();
+                                welcome.getOutputStream().write(resposta);
+                                new Thread(new Heartbeat(welcome.getInetAddress(), PainelDeControle.PORTA_HEARTBEAT)).start();
+                                System.out.println("Usuário já existente na parada! Mensagem enviada a ele. " + ipUsuario.getHostAddress());
+                            } catch (IOException e) {
+                                //faz nada
+                                System.out.println("Tempo de resposta excedido.");
+                            }
                         }
                     } else if (mensagem.equals(PainelDeControle.USUARIOS_ARMAZENADOS)) {
-                        try (DatagramSocket resp = new DatagramSocket()) {
+                        try (Socket resp = new Socket(messageIn.getAddress(), PainelDeControle.PORTA_SERVIDORES + 1)) {
                             String msg = "";
                             for (String u : getUsuarios()) {
                                 msg += u + ";";
                             }
                             byte[] m = msg.getBytes();
-                            DatagramPacket messageOut = new DatagramPacket(m, m.length, group, PainelDeControle.PORTA_SERVIDORES + 1); //responde solicitação do controlador de erros
-                            resp.send(messageOut);
+                            resp.getOutputStream().write(m);
+                        } catch (IOException e) {
+                            //do nothing
+                            System.out.println("Tempo excedido");
                         }
 
                     }
@@ -179,9 +187,9 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
         private HashMap<String, String> servidor_X_usuario;
         private final List<String> respostas;
         private final List<String> usuariosExistentes, servidoresExistentes;
-        private String middlewareSolicitante;
-        private InetAddress endMiddleware;
-        
+        private final String middlewareSolicitante;
+        private final InetAddress endMiddleware;
+
         //FAZER RESPONDER AO MIDDLEWARE QUE O AVISOU DA FALHA QUEM É O NOVO SERVIDOR DE ARQUIVOS
         public ControleReplicacao(String middlewareSolicitante, InetAddress endMiddleware) {
             mensagem = PainelDeControle.USUARIOS_ARMAZENADOS;
@@ -196,30 +204,29 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
         @Override
         public void run() {
             try (MulticastSocket mSckt = new MulticastSocket();
-                    DatagramSocket server = new DatagramSocket(PainelDeControle.PORTA_SERVIDORES + 1)) { //escuta respostas dos nomes de usuarios armazenados
+                    ServerSocket server = new ServerSocket(PainelDeControle.PORTA_SERVIDORES + 1)) { //escuta respostas dos nomes de usuarios armazenados
                 //requisita aos outros servidores os usuarios que estes possuem
                 byte[] m = mensagem.getBytes();
                 DatagramPacket messageOut = new DatagramPacket(m, m.length, group, PainelDeControle.PORTA_MULTICAST);
                 mSckt.send(messageOut);
                 //definicao de um delta de tempo para aceitacao de respostas
+
                 tempoInicio = System.nanoTime();
                 while (true) {
                     tempoTeste = System.nanoTime();
-
                     //N segundos aguardando respostas => Definido na classe Painel de controle
                     if ((tempoTeste - tempoInicio) / 1000000000.0 > PainelDeControle.deltaTRespostaMulticast) {
                         break;
                     }
-                    byte[] buffer = new byte[PainelDeControle.TAMANHO_BUFFER];
-                    DatagramPacket messageIn = new DatagramPacket(buffer, buffer.length);
-                    server.receive(messageIn);
-                    mensagem = new String(messageIn.getData());
-                    mensagem = mensagem.substring(0, mensagem.indexOf("\0")); //elimina caracteres inuteis
-                    mensagem += "::" + messageIn.getAddress().getHostAddress(); //concatena o IP do servidor
-                    respostas.add(mensagem);
+                    try (Socket recebimento = server.accept()) {
+                        byte[] buffer = new byte[PainelDeControle.TAMANHO_BUFFER];
+                        recebimento.getInputStream().read(buffer);
+                        mensagem = new String(buffer);
+                        mensagem = mensagem.substring(0, mensagem.indexOf("\0")); //elimina caracteres inuteis
+                        mensagem += "::" + recebimento.getInetAddress(); //concatena o IP do servidor
+                        respostas.add(mensagem);
+                    }
                 }
-
-                //adiciona os proprios usuarios
                 processaUsuarios();
                 delegaBackup();
             } catch (IOException ex) {
@@ -255,8 +262,9 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
         /**
          * Escolhe de maneira aleatória um dos servidores para realizar o backup
          * dos dados de um usuário e envia uma mensagem solicitando essa ação.
-         * 
-         * Envia ao middleware que detectou o erro o IP do novo servidor relacionado a este (através de TCP).
+         *
+         * Envia ao middleware que detectou o erro o IP do novo servidor
+         * relacionado a este (através de TCP).
          *
          * @throws SocketException
          * @throws UnknownHostException
@@ -272,41 +280,19 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
                     while (servidoresExistentes.get(indServidor).equals(servidor_X_usuario.get(u))) { //evita que envie requisicao de backup para o proprio servidor que armazena o usuario em questao
                         indServidor = rand.nextInt(servidoresExistentes.size());
                     }
-                    byte[] resposta = msg.getBytes();
-                    DatagramPacket dp = new DatagramPacket(resposta, resposta.length, InetAddress.getByName(servidoresExistentes.get(indServidor)), PainelDeControle.PORTA_SERVIDORES);
-                    DatagramSocket ds = new DatagramSocket();
-                    boolean pararSolicitacao = false;
-                    while (!pararSolicitacao) {
-                        //envio da mensagem
-                        ds.send(dp);
-                        ds = new DatagramSocket(PainelDeControle.PORTA_SERVIDORES + 1);
-                        tempoInicio = System.nanoTime();
-                        while (true) {
-                            tempoTeste = System.nanoTime();
-                            //N' segundos aguardando respostas => Definido na classe Painel de controle
-                            if ((tempoTeste - tempoInicio) / 1000000000.0 > PainelDeControle.deltaTRespostaServidor) {
-                                break;
-                            }
-                            byte[] buffer = new byte[PainelDeControle.TAMANHO_BUFFER];
-                            DatagramPacket messageIn = new DatagramPacket(buffer, buffer.length);
-                            ds.receive(messageIn);
-                            mensagem = new String(messageIn.getData());
-                            mensagem = mensagem.substring(0, mensagem.indexOf("\0")); //elimina caracteres inuteis
-                            if (mensagem.equals(PainelDeControle.CONFIRMACAO_BACKUP)) {
-                                pararSolicitacao = true; //resposta recebida
-                                break;
-                            }
-                        }
+                    try (Socket backup = new Socket(InetAddress.getByName(servidoresExistentes.get(indServidor)), PainelDeControle.PORTA_SERVIDORES)) {
+                        byte[] solicitacao = msg.getBytes();
+                        backup.getOutputStream().write(solicitacao); //requisita a execucao de backup
                     }
-                    ds.close();
+
                     //envia para o middleware solicitante o IP do novo servidor deste
                     if (u.equals(middlewareSolicitante)) {
-                        Socket resp = new Socket(endMiddleware, PainelDeControle.PORTA_RESOLUCAO_FALHA);
-                        resp.getOutputStream().write(servidoresExistentes.get(indServidor).getBytes()); //envia o IP do novo servidor
-                        resp.close();
+                        try (Socket resp = new Socket(endMiddleware, PainelDeControle.PORTA_RESOLUCAO_FALHA)) {
+                            resp.getOutputStream().write(servidoresExistentes.get(indServidor).getBytes()); //envia o IP do novo servidor
+                        } //envia o IP do novo servidor
                     }
                 }
-                
+
             }
         }
     }
@@ -316,34 +302,69 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
      * servidores e avisos de falha, notificados pelo middleware (?)
      */
     private class MonitorServidores implements Runnable {
+
         @Override
         public void run() {
-            try (DatagramSocket server = new DatagramSocket(PainelDeControle.PORTA_SERVIDORES);) {
+            try (ServerSocket server = new ServerSocket(PainelDeControle.PORTA_SERVIDORES);) {
                 while (true) {
-                    byte[] buffer = new byte[PainelDeControle.TAMANHO_BUFFER];
-                    DatagramPacket messageIn = new DatagramPacket(buffer, buffer.length);
-                    server.receive(messageIn);
-                    String mensagem = new String(messageIn.getData());
-                    mensagem = mensagem.substring(0, mensagem.indexOf("\0"));
-                    if (mensagem.startsWith(PainelDeControle.FACA_BACKUP)) {
-                        //TODO -> chamar funcao de backup
-//                        if(naoexisteusuario)
-                        String msg = PainelDeControle.CONFIRMACAO_BACKUP;
-                        byte[] m = msg.getBytes();
-                        DatagramPacket resposta = new DatagramPacket(m, m.length, messageIn.getAddress(), PainelDeControle.PORTA_SERVIDORES + 1);
-                        server.send(resposta); //envia confirmacao de backup
-                    } else if(mensagem.startsWith(PainelDeControle.FALHA_SERVIDOR)) { //falha detectada
-                        String nomeSolicitante = mensagem.split("-")[1]; //nome do usuario (middleware) que detectou a falha
-                        new Thread(new ControleReplicacao(nomeSolicitante, messageIn.getAddress())).start(); //dispara gerenciador de replicao
-                        String msg = PainelDeControle.MENSAGEM_CONFIRMACAO;
-                        byte[] m = msg.getBytes();
-                        DatagramPacket resposta = new DatagramPacket(m, m.length, messageIn.getAddress(), PainelDeControle.PORTA_SERVIDORES);
-                        server.send(resposta); //envia confirmacao de backup
-                        
+                    try (Socket conexao = server.accept()) {
+                        byte[] buffer = new byte[PainelDeControle.TAMANHO_BUFFER];
+                        conexao.getInputStream().read(buffer);
+                        String mensagem = new String(buffer);
+                        mensagem = mensagem.substring(0, mensagem.indexOf("\0"));
+                        if (mensagem.startsWith(PainelDeControle.FACA_BACKUP)) {
+                            //TODO -> chamar funcao de backup
+                            //if(naoexisteusuario)
+//                         
+                        } else if (mensagem.startsWith(PainelDeControle.FALHA_SERVIDOR)) { //falha detectada
+                            String nomeSolicitante = mensagem.split("-")[1]; //nome do usuario (middleware) que detectou a falha
+                            new Thread(new ControleReplicacao(nomeSolicitante, conexao.getInetAddress())).start(); //dispara gerenciador de replicao
+                        } else if(mensagem.startsWith(PainelDeControle.EU_ESCOLHO_VOCE)) {
+                            new Thread(new Heartbeat(conexao.getInetAddress(), PainelDeControle.PORTA_HEARTBEAT)).start();//inicia Heartbeat
+                        }
                     }
                 }
             } catch (IOException ex) {
                 Logger.getLogger(SistemaArquivo.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    /**
+     * Classe de Heartbeat
+     * 
+     * @author Guilherme
+     */
+    public class Heartbeat implements Runnable {
+
+        private final InetAddress ip;
+        private final int port;
+
+        public InetAddress getIp() {
+            return ip;
+        }
+
+        public int getPort() {
+            return port;
+        }
+
+        public Heartbeat(InetAddress ip, int port) throws IOException {
+            this.ip = ip;
+            this.port = port;
+        }
+
+        @Override
+        public void run() {
+            try {
+                byte[] heartbeat = PainelDeControle.MENSAGEM_HEARTBEAT.getBytes();
+                while (true) {
+                    DatagramPacket dp = new DatagramPacket(heartbeat, heartbeat.length, getIp(), getPort());
+                    try (DatagramSocket ds = new DatagramSocket()) {
+                        ds.send(dp);
+                    }
+                }
+            } catch (IOException e) {
+                System.out.println(e);
             }
         }
     }

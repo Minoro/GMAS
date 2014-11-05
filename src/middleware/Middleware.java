@@ -71,32 +71,41 @@ public class Middleware {
             byte[] m = mensagem.getBytes();
             DatagramPacket messageOut = new DatagramPacket(m, m.length, group, PainelDeControle.PORTA_MULTICAST);
             mSckt.send(messageOut);
-
-            long tempoInicio, tempoTeste;
-            int i = 0;
-            tempoInicio = System.nanoTime();
-            while (true) {
-                if (i == 2) {
-                    break;
-                }
-                tempoTeste = System.nanoTime();
-                //N segundos aguardando respostas => Definido na classe Painel de controle
-                if ((tempoTeste - tempoInicio) / 1000000000.0 > PainelDeControle.deltaTRespostaMulticast) {
-                    break;
-                }
-                System.out.println("Esperando mensagem server");
-                byte[] resposta = new byte[PainelDeControle.TAMANHO_BUFFER];
-                DatagramPacket receivePacket = new DatagramPacket(resposta, resposta.length);
-                serverResp.receive(receivePacket);
-                String resp = new String(receivePacket.getData());
-                //confirmação do servidor
-                if (resp.equals(PainelDeControle.RESPOSTA_USUARIO_EXISTENTE)) {
-                    servidoresArquivo.add(receivePacket.getAddress());
-                    i++;
+            try (ServerSocket welcome = new ServerSocket(PainelDeControle.PORTA_MULTICAST)) {
+                long tempoInicio, tempoTeste;
+                int i = 0;
+                tempoInicio = System.nanoTime();
+                while (true) {
+                    if (i == 2) {
+                        break;
+                    }
+                    tempoTeste = System.nanoTime();
+                    //N segundos aguardando respostas => Definido na classe Painel de controle
+                    if ((tempoTeste - tempoInicio) / 1000000000.0 > PainelDeControle.deltaTRespostaMulticast) {
+                        break;
+                    }
+                    welcome.setSoTimeout(((int) PainelDeControle.deltaTRespostaMulticast)*1000);
+                    try (Socket resp = welcome.accept()) {
+                        System.out.println("Esperando mensagem server");
+                        byte[] resposta = new byte[PainelDeControle.TAMANHO_BUFFER];
+                        resp.getInputStream().read(resposta);
+                        //confirmação do servidor
+                        servidoresArquivo.add(resp.getInetAddress());
+                        i++;
+                    }
                 }
             }
-            if(servidoresArquivo.size() == 1)
+            if(novoUsuario) {
+                for(InetAddress ip : servidoresArquivo) {
+                    try(Socket con = new Socket(ip, PainelDeControle.PORTA_SERVIDORES)) {
+                        byte [] b = PainelDeControle.EU_ESCOLHO_VOCE.getBytes();
+                        con.getOutputStream().write(b);
+                    }
+                }
+            }
+            if (servidoresArquivo.size() == 1) {
                 new Thread(new GerenciadorDeFalhas()).start();
+            }
             listenerHeartBeat = new ListenerHeartBeat(servidoresArquivo);
             new Thread(listenerHeartBeat).start(); //inicia listener de Heartbeat
         }
@@ -193,13 +202,13 @@ public class Middleware {
      */
     private class GerenciadorDeFalhas implements Runnable {
 
-        private InetAddress servidorNotificacao;
+        private final InetAddress servidorNotificacao;
 
         public GerenciadorDeFalhas(InetAddress servidorFalho) {
             removeServidorFalho(servidorFalho); //remove da lista de servidores ativos
             servidorNotificacao = servidoresArquivo.get(0); //o unico servidor que resta
         }
-        
+
         public GerenciadorDeFalhas() {
             servidorNotificacao = servidoresArquivo.get(0); //o unico servidor que resta
         }
@@ -209,19 +218,9 @@ public class Middleware {
             try (ServerSocket tcpServer = new ServerSocket(PainelDeControle.PORTA_RESOLUCAO_FALHA)) {
                 //laco de envio com resposta
                 String msg = PainelDeControle.FALHA_SERVIDOR + "-" + PainelDeControle.username;
-                while (true) {
+                try (Socket solicitacao = new Socket(servidorNotificacao, PainelDeControle.PORTA_SERVIDORES)) {
                     byte[] resposta = msg.getBytes();
-                    DatagramPacket dp = new DatagramPacket(resposta, resposta.length, servidorNotificacao, PainelDeControle.PORTA_SERVIDORES);
-                    DatagramSocket ds = new DatagramSocket();
-                    //envio da mensagem
-                    ds.send(dp);
-                    ds = new DatagramSocket(PainelDeControle.PORTA_SERVIDORES);
-                    byte[] buffer = new byte[PainelDeControle.TAMANHO_BUFFER];
-                    DatagramPacket messageIn = new DatagramPacket(buffer, buffer.length);
-                    ds.receive(messageIn);
-                    String r = new String(messageIn.getData());
-                    if(r.startsWith(PainelDeControle.MENSAGEM_CONFIRMACAO)) //tratar sincronismo???
-                        break;
+                    solicitacao.getOutputStream().write(resposta);
                 }
 
                 Socket respostaServidor = tcpServer.accept();
@@ -234,6 +233,11 @@ public class Middleware {
                 servidoresArquivo.add(InetAddress.getByName(novoServidor)); //adiciona o novo servidor
                 //Adiciona o novo servidor ao Listener
                 listenerHeartBeat.adicionaNovoServidor(InetAddress.getByName(novoServidor));
+                
+                try(Socket iniciaHearBeat = new Socket(novoServidor, PainelDeControle.PORTA_SERVIDORES)) {
+                    byte [] beat = PainelDeControle.EU_ESCOLHO_VOCE.getBytes();
+                    iniciaHearBeat.getOutputStream().write(beat);
+                }
 
             } catch (IOException ex) {
                 Logger.getLogger(Middleware.class.getName()).log(Level.SEVERE, null, ex);
