@@ -13,10 +13,7 @@ import java.util.Date;
 public class Arquivo implements Serializable {
 
     private String nome;
-    private Integer identificador;
-    private int posicao;
     private float tamanho;
-    private String proprietario;
     private Date dataCriacao;
     private Date dataUltimaModificacao;
     private String conteudo;
@@ -32,9 +29,7 @@ public class Arquivo implements Serializable {
      */
     Arquivo(String nome, String proprietario) {
         this.nome = nome;
-        this.proprietario = proprietario;
 
-        this.posicao = 0;
         this.tamanho = 0;
         this.dataCriacao = Calendar.getInstance().getTime();
         this.dataUltimaModificacao = Calendar.getInstance().getTime();
@@ -48,7 +43,7 @@ public class Arquivo implements Serializable {
 
     @Override
     public String toString() {
-        String string = nome + "\n" + tamanho + "\n" + proprietario + "\n" + dataCriacao.getTime() + "\n" + dataUltimaModificacao.getTime() + "\n" + conteudo;
+        String string = nome + "\n" + tamanho + "\n" + dataCriacao.getTime() + "\n" + dataUltimaModificacao.getTime() + "\n" + conteudo;
 
         return string;
     }
@@ -67,14 +62,6 @@ public class Arquivo implements Serializable {
 
     public void setTamanho(float tamanho) {
         this.tamanho = tamanho;
-    }
-
-    public String getProprietario() {
-        return proprietario;
-    }
-
-    public void setProprietario(String proprietario) {
-        this.proprietario = proprietario;
     }
 
     public Date getDataCriacao() {

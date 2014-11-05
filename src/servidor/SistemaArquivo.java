@@ -34,6 +34,7 @@ import javax.xml.xpath.XPathExpressionException;
 
 import cliente.InterfaceUsuario;
 import java.net.Socket;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import model.Arquivo;
 
@@ -70,7 +71,6 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
     /*public SistemaArquivo() {
      //para testes sem servidor
      }*/
-
     protected SistemaArquivo() throws RemoteException, IOException {
         super();
         manipuladorXML = new ManipuladorXML();
@@ -181,7 +181,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
         private final List<String> usuariosExistentes, servidoresExistentes;
         private String middlewareSolicitante;
         private InetAddress endMiddleware;
-        
+
         //FAZER RESPONDER AO MIDDLEWARE QUE O AVISOU DA FALHA QUEM É O NOVO SERVIDOR DE ARQUIVOS
         public ControleReplicacao(String middlewareSolicitante, InetAddress endMiddleware) {
             mensagem = PainelDeControle.USUARIOS_ARMAZENADOS;
@@ -255,8 +255,9 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
         /**
          * Escolhe de maneira aleatória um dos servidores para realizar o backup
          * dos dados de um usuário e envia uma mensagem solicitando essa ação.
-         * 
-         * Envia ao middleware que detectou o erro o IP do novo servidor relacionado a este (através de TCP).
+         *
+         * Envia ao middleware que detectou o erro o IP do novo servidor
+         * relacionado a este (através de TCP).
          *
          * @throws SocketException
          * @throws UnknownHostException
@@ -306,7 +307,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
                         resp.close();
                     }
                 }
-                
+
             }
         }
     }
@@ -316,6 +317,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
      * servidores e avisos de falha, notificados pelo middleware (?)
      */
     private class MonitorServidores implements Runnable {
+
         @Override
         public void run() {
             try (DatagramSocket server = new DatagramSocket(PainelDeControle.PORTA_SERVIDORES);) {
@@ -332,14 +334,14 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
                         byte[] m = msg.getBytes();
                         DatagramPacket resposta = new DatagramPacket(m, m.length, messageIn.getAddress(), PainelDeControle.PORTA_SERVIDORES + 1);
                         server.send(resposta); //envia confirmacao de backup
-                    } else if(mensagem.startsWith(PainelDeControle.FALHA_SERVIDOR)) { //falha detectada
+                    } else if (mensagem.startsWith(PainelDeControle.FALHA_SERVIDOR)) { //falha detectada
                         String nomeSolicitante = mensagem.split("-")[1]; //nome do usuario (middleware) que detectou a falha
                         new Thread(new ControleReplicacao(nomeSolicitante, messageIn.getAddress())).start(); //dispara gerenciador de replicao
                         String msg = PainelDeControle.MENSAGEM_CONFIRMACAO;
                         byte[] m = msg.getBytes();
                         DatagramPacket resposta = new DatagramPacket(m, m.length, messageIn.getAddress(), PainelDeControle.PORTA_SERVIDORES);
                         server.send(resposta); //envia confirmacao de backup
-                        
+
                     }
                 }
             } catch (IOException ex) {
@@ -365,12 +367,16 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
             //faz o parsing do XML inserindo o caminho e o nome do arquivo
             Node ultima_pasta = manipuladorXML.pegaUltimaPasta(expressao, xml);
             Element newelement = xml.createElement(PainelDeControle.TAG_ARQUIVO);
-            //TODO
-            //Arrumar atributos do XML
-            System.out.println("ARRUMAR ATRIBUTOS DO XML AO CRIAR UM NOVO ARQUIVO");
-            newelement.setAttribute("dataCriacao", new Date().toString());
+            
+            SimpleDateFormat sdf = new SimpleDateFormat("dd-mm-YYYY HH:MM");
+            String dataAgora = sdf.format(new Date());
+            String tamanho = arquivo.getConteudo().length() + "";
+            newelement.setAttribute("dataCriacao", dataAgora);
+            newelement.setAttribute("dataUltimaModificacao", dataAgora);
+            newelement.setAttribute("tamanho", tamanho);
             newelement.setAttribute("nome", nomeArquivoServidor);
             newelement.setTextContent(nomeArquivo);
+            
             ultima_pasta.appendChild(newelement);
 
             manipuladorXML.salvarXML(xml, nomeUsuario);
@@ -398,12 +404,15 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
             //faz o parsing do XML inserindo o caminho e o nome do arquivo
             Node ultima_pasta = manipuladorXML.pegaUltimaPasta(expressao, xml);
             Element newelement = xml.createElement(PainelDeControle.TAG_PASTA);
-            //TODO
-            System.out.println("ARRUMAR ATRIBUTOS DO XML AO CRIAR UMA NOVA PASTA");
+            
+            SimpleDateFormat sdf = new SimpleDateFormat("dd-mm-YYYY HH:MM");
+            String dataAgora = sdf.format(new Date());
+            newelement.setAttribute("dataCriacao", dataAgora);
+            newelement.setAttribute("dataUltimaModificacao", dataAgora);
+            newelement.setAttribute("tamanho", "0");
             newelement.setAttribute("dataCriacao", new Date().toString());
-            //usar atributo nome do XML para armazenar o nome físico do arquivo, com o objetivo de saber qual arquivo físico abrir
-            newelement.setAttribute("nome", nomePasta);
             newelement.setTextContent(nomePasta);
+            
             ultima_pasta.appendChild(newelement);
             manipuladorXML.salvarXML(xml, nomeUsuario);
             //verifica se o caminho existe no XML, se não existir retorna falso (vellone pergunta: ?)
