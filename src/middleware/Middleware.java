@@ -9,6 +9,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.rmi.RemoteException;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -164,6 +165,7 @@ public class Middleware {
 
         public ListenerHeartBeat(List<InetAddress> ipServidores) {
             this.ipServidores = ipServidores;
+            this.isAlive = new HashMap<>();
             for (InetAddress i : ipServidores) {
                 isAlive.put(i, System.nanoTime()); //para controle de tempo de resposta
             }
