@@ -45,7 +45,6 @@ public class InterfaceUsuario extends JFrame {
         }
 
         Document document = PainelDeControle.xml;
-        PainelDeControle.xml = document;
         XMLTreePanel panel = new XMLTreePanel();
         XMLInfoPanel info = new XMLInfoPanel();
         XMLMenu menu = new XMLMenu();
