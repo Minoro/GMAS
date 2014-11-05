@@ -78,8 +78,13 @@ public class XMLTreePanel extends JPanel {
                         //Se deu 2 cliques em um arquivo, retira a última barra
                         if (((XMLTreeNode) selPath.getLastPathComponent()).getNodeName().equals(PainelDeControle.TAG_ARQUIVO)) {
                             caminho = caminho.substring(0, caminho.length() - 1);
-                            String conteudo = PainelDeControle.middleware.lerArquivo(getCaminhoSelecionado(false));
-                            new GMASEditor(conteudo);
+                            String conteudo;
+                            try {
+                                conteudo = PainelDeControle.middleware.lerArquivo(getCaminhoSelecionado(false));
+                                new GMASEditor(conteudo);
+                            } catch (RemoteException | XPathExpressionException ex) {
+                                Logger.getLogger(XMLTreePanel.class.getName()).log(Level.SEVERE, null, ex);
+                            }
                         }
 
                         System.out.println("Double Click em " + caminho);

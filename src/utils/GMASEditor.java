@@ -2,7 +2,11 @@ package utils;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.rmi.RemoteException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.*;
+import javax.xml.xpath.XPathExpressionException;
 import jtree.XMLTreePanel;
 
 /**
@@ -33,7 +37,11 @@ public class GMASEditor extends JFrame {
             @Override
             public void mousePressed(MouseEvent e) {
                 String conteudo = areaEdicao.getText();
-                PainelDeControle.middleware.salvarArquivo(XMLTreePanel.getCaminhoSelecionado(false), conteudo);
+                try {
+                    PainelDeControle.middleware.salvarArquivo(XMLTreePanel.getCaminhoSelecionado(false), conteudo);
+                } catch (RemoteException | XPathExpressionException ex) {
+                    Logger.getLogger(GMASEditor.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
 
