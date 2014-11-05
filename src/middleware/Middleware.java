@@ -55,7 +55,7 @@ public class Middleware {
     private void mergeUsuario(String multicastGroup, Boolean novoUsuario) throws UnknownHostException, IOException, RemoteException, XPathExpressionException {
         InetAddress group = InetAddress.getByName(multicastGroup);
         try (MulticastSocket mSckt = new MulticastSocket();
-                DatagramSocket server = new DatagramSocket(PainelDeControle.PORTA_MULTICAST)) {
+                DatagramSocket server = new DatagramSocket(PainelDeControle.PORTA_MULTICAST)) { //usuario "escuta" na mesa porta do multicast
             String mensagem;
             if (novoUsuario) {
                 mensagem = PainelDeControle.NOVO_USUARIO;
@@ -69,14 +69,30 @@ public class Middleware {
             //recebe a confirmação dos 2 primeiros servidores de arquivo
 //            for (int i = 0; i < 2; i++) {
 //                while (true) {
-            System.out.println("Esperando mensagem server");
-            byte[] resposta = new byte[PainelDeControle.TAMANHO_BUFFER];
-            DatagramPacket receivePacket = new DatagramPacket(resposta, resposta.length);
-            server.receive(receivePacket);
-            //confirmação do servidor
-            servidoresArquivo.add(receivePacket.getAddress());
 //                }
 //            }
+            long tempoInicio, tempoTeste;
+            int i = 0;
+            tempoInicio = System.nanoTime();
+            while (true) {
+                if(i == 2)
+                    break;
+                tempoTeste = System.nanoTime();
+                //N segundos aguardando respostas => Definido na classe Painel de controle
+                if ((tempoTeste - tempoInicio) / 1000000000.0 > PainelDeControle.deltaTRespostaMulticast)
+                    break;
+                System.out.println("Esperando mensagem server");
+                byte[] resposta = new byte[PainelDeControle.TAMANHO_BUFFER];
+                DatagramPacket receivePacket = new DatagramPacket(resposta, resposta.length);
+                server.receive(receivePacket);
+                String resp = new String(receivePacket.getData());
+                //confirmação do servidor
+                if(resp.equals(PainelDeControle.RESPOSTA_USUARIO_EXISTENTE)) {
+                    servidoresArquivo.add(receivePacket.getAddress());
+                    i++;
+                }
+            }
+
         }
     }
 

@@ -112,7 +112,6 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
 
         @Override
         public void run() {
-            System.out.println("Thread para receber mensagem de boas vindas iniciou!");
             while (true) {
                 byte[] buffer = new byte[PainelDeControle.TAMANHO_BUFFER];
                 DatagramPacket messageIn = new DatagramPacket(buffer, buffer.length);
@@ -133,8 +132,17 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
                         ds.close();
 
                     } else if (mensagem.startsWith(PainelDeControle.USUARIO_EXISTENTE)) {
-                        System.out.println("Usuário já existente! " + ipUsuario.getHostAddress());
-                        System.out.println("FALTA IMPLEMENTAR");
+                        String nomeUsuario = mensagem.split("-")[1];
+                        File arq = new File(PainelDeControle.PASTA_XML + nomeUsuario + ".xml"); //procura pela raiz (xml) do usuario
+                        if (arq.exists()) {
+                            String respostaUsuarioExistente = PainelDeControle.RESPOSTA_USUARIO_EXISTENTE;
+                            byte[] resposta = respostaUsuarioExistente.getBytes();
+                            DatagramPacket dp = new DatagramPacket(resposta, resposta.length, ipUsuario, PainelDeControle.PORTA_MULTICAST); //usuario escuta na mesma porta do multicast
+                            DatagramSocket ds = new DatagramSocket();
+                            ds.send(dp);
+                            System.out.println("Usário já existente na parada! Mensagem enviada a ele. " + ipUsuario.getHostAddress());
+                            ds.close();
+                        }
                     } else if (mensagem.equals(PainelDeControle.USUARIOS_ARMAZENADOS)) {
                         try (DatagramSocket resp = new DatagramSocket()) {
                             String msg = "";
@@ -381,6 +389,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
             //faz o parsing do XML inserindo o caminho e o nome do arquivo
             Node ultima_pasta = manipuladorXML.pegaUltimaPasta(expressao, xml);
             Element newelement = xml.createElement(PainelDeControle.TAG_PASTA);
+            //TODO
             System.out.println("ARRUMAR ATRIBUTOS DO XML AO CRIAR UMA NOVA PASTA");
             newelement.setAttribute("dataCriacao", new Date().toString());
             //usar atributo nome do XML para armazenar o nome físico do arquivo, com o objetivo de saber qual arquivo físico abrir
@@ -580,7 +589,6 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
                 usuario = usuario.substring(0, usuario.indexOf("."));
                 usuarios.add(usuario);
                 System.out.println("Listando usuários = " + usuario);
-            } else {
             }
         }
         return usuarios;
