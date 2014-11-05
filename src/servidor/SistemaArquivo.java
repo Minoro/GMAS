@@ -33,6 +33,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.xpath.XPathExpressionException;
 
 import cliente.InterfaceUsuario;
+import java.net.Socket;
 import java.util.ArrayList;
 import model.Arquivo;
 
@@ -46,10 +47,10 @@ import utils.PainelDeControle;
 
 public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquivoInterface {
 
-    private ManipuladorXML manipuladorXML;
+    private final ManipuladorXML manipuladorXML;
 
-    private MulticastSocket s;
-    private InetAddress group;
+    private final MulticastSocket s;
+    private final InetAddress group;
     private static final long serialVersionUID = 1L;
 
     public static void main(String[] args) {
@@ -70,18 +71,6 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
      //para testes sem servidor
      }*/
 
-    /*private boolean existePasta(String caminho) throws XPathExpressionException {
-     String expressao = montaExpressao(caminho, true);
-
-     XPath xpath = XPathFactory.newInstance().newXPath();
-     XPathExpression expr = xpath.compile(expressao);
-     Object exprResult = expr.evaluate(xml, XPathConstants.NODESET);
-     NodeList node = (NodeList) exprResult;
-     if (node.getLength() != 0) {
-     return true;
-     }
-     return false;
-     }*/
     protected SistemaArquivo() throws RemoteException, IOException {
         super();
         manipuladorXML = new ManipuladorXML();
@@ -186,17 +175,22 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
 
         private String mensagem;
         private long tempoInicio, tempoTeste;
-        private HashMap<String, Integer> contagemUsuarios;
+        private final HashMap<String, Integer> contagemUsuarios;
         private HashMap<String, String> servidor_X_usuario;
-        private List<String> respostas;
-        private List<String> usuariosExistentes, servidoresExistentes;
-
-        public ControleReplicacao() {
+        private final List<String> respostas;
+        private final List<String> usuariosExistentes, servidoresExistentes;
+        private String middlewareSolicitante;
+        private InetAddress endMiddleware;
+        
+        //FAZER RESPONDER AO MIDDLEWARE QUE O AVISOU DA FALHA QUEM É O NOVO SERVIDOR DE ARQUIVOS
+        public ControleReplicacao(String middlewareSolicitante, InetAddress endMiddleware) {
             mensagem = PainelDeControle.USUARIOS_ARMAZENADOS;
             contagemUsuarios = new HashMap<>();
             respostas = new LinkedList<>();
             usuariosExistentes = new LinkedList<>();
             servidoresExistentes = new LinkedList<>();
+            this.middlewareSolicitante = middlewareSolicitante;
+            this.endMiddleware = endMiddleware;
         }
 
         @Override
@@ -261,6 +255,8 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
         /**
          * Escolhe de maneira aleatória um dos servidores para realizar o backup
          * dos dados de um usuário e envia uma mensagem solicitando essa ação.
+         * 
+         * Envia ao middleware que detectou o erro o IP do novo servidor relacionado a este (através de TCP).
          *
          * @throws SocketException
          * @throws UnknownHostException
@@ -297,14 +293,20 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
                             mensagem = new String(messageIn.getData());
                             mensagem = mensagem.substring(0, mensagem.indexOf("\0")); //elimina caracteres inuteis
                             if (mensagem.equals(PainelDeControle.CONFIRMACAO_BACKUP)) {
-                                //tratar falha na resposta nos outros servidores
                                 pararSolicitacao = true; //resposta recebida
                                 break;
                             }
                         }
                     }
                     ds.close();
+                    //envia para o middleware solicitante o IP do novo servidor deste
+                    if (u.equals(middlewareSolicitante)) {
+                        Socket resp = new Socket(endMiddleware, PainelDeControle.PORTA_RESOLUCAO_FALHA);
+                        resp.getOutputStream().write(servidoresExistentes.get(indServidor).getBytes()); //envia o IP do novo servidor
+                        resp.close();
+                    }
                 }
+                
             }
         }
     }
@@ -313,8 +315,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
      * Classe que escuta requisições de backup de dados feita pelos outros
      * servidores e avisos de falha, notificados pelo middleware (?)
      */
-    private class MonitorInterServidores implements Runnable {
-
+    private class MonitorServidores implements Runnable {
         @Override
         public void run() {
             try (DatagramSocket server = new DatagramSocket(PainelDeControle.PORTA_SERVIDORES);) {
@@ -329,8 +330,16 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
 //                        if(naoexisteusuario)
                         String msg = PainelDeControle.CONFIRMACAO_BACKUP;
                         byte[] m = msg.getBytes();
-                        DatagramPacket resposta = new DatagramPacket(m, m.length, group, PainelDeControle.PORTA_SERVIDORES + 1);
+                        DatagramPacket resposta = new DatagramPacket(m, m.length, messageIn.getAddress(), PainelDeControle.PORTA_SERVIDORES + 1);
                         server.send(resposta); //envia confirmacao de backup
+                    } else if(mensagem.startsWith(PainelDeControle.FALHA_SERVIDOR)) { //falha detectada
+                        String nomeSolicitante = mensagem.split("-")[1]; //nome do usuario (middleware) que detectou a falha
+                        new Thread(new ControleReplicacao(nomeSolicitante, messageIn.getAddress())).start(); //dispara gerenciador de replicao
+                        String msg = PainelDeControle.MENSAGEM_CONFIRMACAO;
+                        byte[] m = msg.getBytes();
+                        DatagramPacket resposta = new DatagramPacket(m, m.length, messageIn.getAddress(), PainelDeControle.PORTA_SERVIDORES);
+                        server.send(resposta); //envia confirmacao de backup
+                        
                     }
                 }
             } catch (IOException ex) {

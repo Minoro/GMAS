@@ -19,6 +19,7 @@ public class PainelDeControle {
     public static final String USUARIOS_ARMAZENADOS = "2";
     public static final String FACA_BACKUP = "3";
     public static final String CONFIRMACAO_BACKUP = "4";
+    public static final String FALHA_SERVIDOR = "5";
     public static final int TAMANHO_BUFFER = 500;
     public static final int PORTA_MULTICAST = 5678;
     public static final int PORTA_SERVIDORES = 5679;
@@ -36,6 +37,11 @@ public class PainelDeControle {
     public static Middleware middleware;
     public static String username;
     public static Document xml;
+    public static final String MENSAGEM_HEARTBEAT = "<3";
+    public static final int PORTA_HEARTBEAT = 5555;
+    public static final int PORTA_RESOLUCAO_FALHA = 5556;
+    public static final String MENSAGEM_CONFIRMACAO = "OK";
+    
 
     /**
      * Método que define um valor delta de tempo para aceitação de respostas ou
