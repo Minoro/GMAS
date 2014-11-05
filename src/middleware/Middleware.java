@@ -7,6 +7,7 @@ import java.net.InetAddress;
 import java.net.MulticastSocket;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.rmi.RemoteException;
 import java.util.HashMap;
@@ -93,6 +94,8 @@ public class Middleware {
                         //confirmação do servidor
                         servidoresArquivo.add(resp.getInetAddress());
                         i++;
+                    } catch(SocketTimeoutException e) {
+                        break;
                     }
                 }
             }
