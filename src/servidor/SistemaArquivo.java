@@ -83,7 +83,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
         new Thread(new MulticastMonitor()).start();
         new Thread(new MonitorServidores()).start();
     }
-    
+
     /**
      * @author mastelini
      *
@@ -305,7 +305,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
      * servidores e avisos de falha, notificados pelo middleware (?)
      */
     private class MonitorServidores implements Runnable {
-        
+
         @Override
         public void run() {
             try (ServerSocket server = new ServerSocket(PainelDeControle.PORTA_SERVIDORES);) {
@@ -317,11 +317,11 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
                         mensagem = mensagem.substring(0, mensagem.indexOf("\0"));
                         if (mensagem.startsWith(PainelDeControle.FACA_BACKUP)) {
                             realizarBackup(mensagem);
-                            
+
                         } else if (mensagem.startsWith(PainelDeControle.FALHA_SERVIDOR)) { //falha detectada
                             String nomeSolicitante = mensagem.split("-")[1]; //nome do usuario (middleware) que detectou a falha
                             new Thread(new ControleReplicacao(nomeSolicitante, conexao.getInetAddress())).start(); //dispara gerenciador de replicao
-                        } else if(mensagem.startsWith(PainelDeControle.EU_ESCOLHO_VOCE)) {
+                        } else if (mensagem.startsWith(PainelDeControle.EU_ESCOLHO_VOCE)) {
                             new Thread(new Heartbeat(conexao.getInetAddress(), PainelDeControle.PORTA_HEARTBEAT)).start();//inicia Heartbeat
                         }
                     } catch (NotBoundException ex) {
@@ -338,29 +338,29 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
                 Logger.getLogger(SistemaArquivo.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        
-        private void realizarBackup(String mensagem) throws NotBoundException, MalformedURLException, RemoteException, XPathExpressionException{
+
+        private void realizarBackup(String mensagem) throws NotBoundException, MalformedURLException, RemoteException, XPathExpressionException {
             SistemaArquivoInterface server;
             List<Arquivo> arquivosBackup;
-            
+
             String mensagemSeparada[] = mensagem.split("-");
             String usuario = mensagemSeparada[1];
             String ipServidor = mensagemSeparada[2];
-            String urlRMI = "rmi://" + ipServidor+ ":/teste";
+            String urlRMI = "rmi://" + ipServidor + ":/teste";
 
             server = (SistemaArquivoInterface) Naming.lookup(urlRMI);
             arquivosBackup = server.backupArquivosUsuario(usuario);
-            
+
             for (Arquivo arquivo : arquivosBackup) {
                 GerenciadorArquivos.salvarArquivo(arquivo, arquivo.getNome());
             }
-            
+
         }
     }
 
     /**
      * Classe de Heartbeat
-     * 
+     *
      * @author Guilherme
      */
     public class Heartbeat implements Runnable {
@@ -383,16 +383,24 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
 
         @Override
         public void run() {
-            try {
-                byte[] heartbeat = PainelDeControle.MENSAGEM_HEARTBEAT.getBytes();
-                while (true) {
-                    DatagramPacket dp = new DatagramPacket(heartbeat, heartbeat.length, getIp(), getPort());
-                    try (DatagramSocket ds = new DatagramSocket()) {
-                        ds.send(dp);
-                    }
+            /*try {
+             byte[] heartbeat = PainelDeControle.MENSAGEM_HEARTBEAT.getBytes();
+             while (true) {
+             DatagramPacket dp = new DatagramPacket(heartbeat, heartbeat.length, getIp(), getPort());
+             try (DatagramSocket ds = new DatagramSocket()) {
+             ds.send(dp);
+             }
+             }
+             } catch (IOException e) {
+             System.out.println(e);
+             }*/
+            while (true) {
+                try (Socket send = new Socket(ip, port)) {
+                    byte[] heartbeat = PainelDeControle.MENSAGEM_HEARTBEAT.getBytes();
+                    send.getOutputStream().write(heartbeat);
+                } catch (IOException ex) {
+                    break;
                 }
-            } catch (IOException e) {
-                System.out.println(e);
             }
         }
     }
@@ -414,7 +422,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
             //faz o parsing do XML inserindo o caminho e o nome do arquivo
             Node ultima_pasta = manipuladorXML.pegaUltimaPasta(expressao, xml);
             Element newelement = xml.createElement(PainelDeControle.TAG_ARQUIVO);
-            
+
             SimpleDateFormat sdf = new SimpleDateFormat("dd-mm-YYYY HH:MM");
             String dataAgora = sdf.format(new Date());
             String tamanho = arquivo.getConteudo().length() + "";
@@ -423,7 +431,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
             newelement.setAttribute("tamanho", tamanho);
             newelement.setAttribute("nome", nomeArquivoServidor);
             newelement.setTextContent(nomeArquivo);
-            
+
             ultima_pasta.appendChild(newelement);
 
             manipuladorXML.salvarXML(xml, nomeUsuario);
@@ -451,14 +459,14 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
             //faz o parsing do XML inserindo o caminho e o nome do arquivo
             Node ultima_pasta = manipuladorXML.pegaUltimaPasta(expressao, xml);
             Element newelement = xml.createElement(PainelDeControle.TAG_PASTA);
-            
+
             SimpleDateFormat sdf = new SimpleDateFormat("dd-mm-YYYY HH:MM");
             String dataAgora = sdf.format(new Date());
             newelement.setAttribute("dataCriacao", dataAgora);
             newelement.setAttribute("dataUltimaModificacao", dataAgora);
             newelement.setAttribute("tamanho", "0");
             newelement.setTextContent(nomePasta);
-            
+
             ultima_pasta.appendChild(newelement);
             manipuladorXML.salvarXML(xml, nomeUsuario);
             //verifica se o caminho existe no XML, se não existir retorna falso (vellone pergunta: ?)
@@ -566,11 +574,11 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
 
         //verifica se o arquivo de origem existe e se não há arquivo com o mesmo
         //nome no destino
-        if (!manipuladorXML.existeArquivo(caminhoOrigem, xml) 
+        if (!manipuladorXML.existeArquivo(caminhoOrigem, xml)
                 || manipuladorXML.existeArquivo(caminhoDestino, xml)) {
             return false;
         }
-        
+
         Arquivo arquivo = getArquivo(caminhoOrigem, nomeUsuario);
         criarArquivo(caminhoDestino, arquivo, nomeUsuario);
         deletarArquivo(caminhoOrigem, nomeUsuario);
@@ -648,19 +656,19 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
         Arquivo arquivo = GerenciadorArquivos.abrirArquivo(nomeArquivoServidor);
         return arquivo;
     }
-    
+
     @Override
     public List<Arquivo> backupArquivosUsuario(String nomeUsuario) throws RemoteException, XPathExpressionException {
         List<Arquivo> backup = new ArrayList<>();
-        
+
         Document xml = pedirXML(nomeUsuario);
         List<String> nomeArquivosUsuario = manipuladorXML.getNomesArquivosFisicos(xml);
-        
+
         for (String nomeArquivo : nomeArquivosUsuario) {
             Arquivo arquivo = GerenciadorArquivos.abrirArquivo(nomeArquivo);
             backup.add(arquivo);
         }
-        
+
         return backup;
     }
 

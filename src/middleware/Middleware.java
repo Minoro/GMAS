@@ -175,7 +175,8 @@ public class Middleware {
 
         @Override
         public void run() {
-            try {
+            /*
+                try {
                 DatagramSocket s = new DatagramSocket(PainelDeControle.PORTA_HEARTBEAT);
 
                 while (true) {
@@ -200,6 +201,23 @@ public class Middleware {
                 }
             } catch (IOException ex) {
                 Logger.getLogger(ListenerHeartBeat.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            */
+            try(ServerSocket s = new ServerSocket(PainelDeControle.PORTA_HEARTBEAT)) {
+                try(Socket socket = s.accept()) {
+                    byte[] buffer = new byte[PainelDeControle.TAMANHO_BUFFER];
+                    socket.getInputStream().read(buffer);
+                    isAlive.put(socket.getInetAddress(), System.nanoTime());
+                    for (InetAddress i : ipServidores) {
+                        if ((System.nanoTime() - isAlive.get(i)) / 1000000000 > PainelDeControle.deltaTRespostaServidor) { //servidor caiu
+                            isAlive.remove(i);
+                            new Thread(new GerenciadorDeFalhas(i)).start(); //avisa erro
+                            ipServidores.remove(i);
+                        }
+                    }
+                } 
+            } catch (IOException ex) {
+                System.out.println("Falha ao inicializar Listener Heartbeat");
             }
         }
 
