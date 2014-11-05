@@ -1,7 +1,6 @@
 package utils;
 
 import java.io.File;
-import javax.swing.JOptionPane;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -13,7 +12,6 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
-import cliente.InterfaceUsuario;
 import java.util.ArrayList;
 import java.util.List;
 import org.w3c.dom.Document;
@@ -194,7 +192,7 @@ public class ManipuladorXML {
     }
 
     public String getNomeArquivoFisico(String caminho, Document xml) throws XPathExpressionException {
-        Element ultimoNode = (Element) pegaUltimoNode(montarExpressaoPasta(caminho), xml);
+        Element ultimoNode = (Element) pegaUltimoNode(montarExpressaoArquivo(caminho), xml);
         return ultimoNode.getAttribute("nome");
     }
 }
