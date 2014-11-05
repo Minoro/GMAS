@@ -104,12 +104,13 @@ public class Middleware {
             new Thread(listenerHeartBeat).start(); //inicia listener de Heartbeat
 
             for (InetAddress ip : servidoresArquivo) {
+                System.out.println(ip.getHostAddress());
                 try (Socket con = new Socket(ip, PainelDeControle.PORTA_SERVIDORES)) {
                     byte[] b = PainelDeControle.EU_ESCOLHO_VOCE.getBytes();
                     con.getOutputStream().write(b);
                 }
             }
-
+            
             if (servidoresArquivo.size() == 1) {
                 System.out.println("Falha detectada no MergeUsuario");
                 new Thread(new GerenciadorDeFalhas()).start();
@@ -231,6 +232,7 @@ public class Middleware {
                 }
             } catch (IOException ex) {
                 System.out.println("Falha ao inicializar Listener Heartbeat");
+                System.out.println(ex);
             }
         }
 
