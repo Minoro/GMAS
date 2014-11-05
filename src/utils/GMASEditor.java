@@ -39,7 +39,7 @@ public class GMASEditor extends JFrame {
                 String conteudo = areaEdicao.getText();
                 try {
                     PainelDeControle.middleware.salvarArquivo(XMLTreePanel.getCaminhoSelecionado(false), conteudo);
-                } catch (RemoteException | XPathExpressionException ex) {
+                } catch (RemoteException ex) {
                     Logger.getLogger(GMASEditor.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }

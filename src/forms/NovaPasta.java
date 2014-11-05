@@ -8,8 +8,6 @@ package forms;
 import java.rmi.RemoteException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.xml.xpath.XPathExpressionException;
-import cliente.InterfaceUsuario;
 import jtree.XMLTreePanel;
 import utils.PainelDeControle;
 
@@ -83,7 +81,7 @@ public class NovaPasta extends DefaultDialog {
 
         try {
             PainelDeControle.middleware.criarPasta(caminhoSelecionado);
-        } catch (RemoteException | XPathExpressionException ex) {
+        } catch (RemoteException ex) {
             Logger.getLogger(NovaPasta.class.getName()).log(Level.SEVERE, null, ex);
         }
         close();

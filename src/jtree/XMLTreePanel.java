@@ -82,7 +82,7 @@ public class XMLTreePanel extends JPanel {
                             try {
                                 conteudo = PainelDeControle.middleware.lerArquivo(getCaminhoSelecionado(false));
                                 new GMASEditor(conteudo);
-                            } catch (RemoteException | XPathExpressionException ex) {
+                            } catch (RemoteException ex) {
                                 Logger.getLogger(XMLTreePanel.class.getName()).log(Level.SEVERE, null, ex);
                             }
                         }

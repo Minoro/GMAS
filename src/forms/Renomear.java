@@ -118,7 +118,7 @@ public class Renomear extends DefaultDialog {
             } else {
                 JOptionPane.showMessageDialog(InterfaceUsuario.main, "Arquivo para renomeação não existente");
             }
-        } catch (RemoteException | XPathExpressionException ex) {
+        } catch (RemoteException ex) {
             Logger.getLogger(Renomear.class.getName()).log(Level.SEVERE, null, ex);
         }
         close();

@@ -100,19 +100,19 @@ public class Middleware {
                     }
                 }
             }
-            if (novoUsuario) {
-                for (InetAddress ip : servidoresArquivo) {
-                    try (Socket con = new Socket(ip, PainelDeControle.PORTA_SERVIDORES)) {
-                        byte[] b = PainelDeControle.EU_ESCOLHO_VOCE.getBytes();
-                        con.getOutputStream().write(b);
-                    }
+            listenerHeartBeat = new ListenerHeartBeat(servidoresArquivo);
+            new Thread(listenerHeartBeat).start(); //inicia listener de Heartbeat
+
+            for (InetAddress ip : servidoresArquivo) {
+                try (Socket con = new Socket(ip, PainelDeControle.PORTA_SERVIDORES)) {
+                    byte[] b = PainelDeControle.EU_ESCOLHO_VOCE.getBytes();
+                    con.getOutputStream().write(b);
                 }
             }
+
             if (servidoresArquivo.size() == 1) {
                 new Thread(new GerenciadorDeFalhas()).start();
             }
-            listenerHeartBeat = new ListenerHeartBeat(servidoresArquivo);
-            new Thread(listenerHeartBeat).start(); //inicia listener de Heartbeat
         }
     }
 
@@ -212,44 +212,18 @@ public class Middleware {
 
         @Override
         public void run() {
-            /*
-             try {
-             DatagramSocket s = new DatagramSocket(PainelDeControle.PORTA_HEARTBEAT);
-
-             while (true) {
-             byte[] buffer = new byte[PainelDeControle.TAMANHO_BUFFER];
-             DatagramPacket messageIn = new DatagramPacket(buffer, buffer.length);
-
-             s.receive(messageIn);
-             String mensagem = new String(messageIn.getData());
-             mensagem = mensagem.substring(0, mensagem.indexOf("\0"));
-             //                System.out.println("Mensagem recebida: " + mensagem);
-             if (mensagem.equals(PainelDeControle.MENSAGEM_HEARTBEAT)) {
-             isAlive.put(messageIn.getAddress(), System.nanoTime());
-             }
-
-             for (InetAddress i : ipServidores) {
-             if ((System.nanoTime() - isAlive.get(i)) / 1000000000 > PainelDeControle.deltaTRespostaServidor) { //servidor caiu
-             isAlive.remove(i);
-             new Thread(new GerenciadorDeFalhas(i)).start(); //avisa erro
-             ipServidores.remove(i);
-             }
-             }
-             }
-             } catch (IOException ex) {
-             Logger.getLogger(ListenerHeartBeat.class.getName()).log(Level.SEVERE, null, ex);
-             }
-             */
             try (ServerSocket s = new ServerSocket(PainelDeControle.PORTA_HEARTBEAT)) {
-                try (Socket socket = s.accept()) {
-                    byte[] buffer = new byte[PainelDeControle.TAMANHO_BUFFER];
-                    socket.getInputStream().read(buffer);
-                    isAlive.put(socket.getInetAddress(), System.nanoTime());
-                    for (InetAddress i : ipServidores) {
-                        if ((System.nanoTime() - isAlive.get(i)) / 1000000000 > PainelDeControle.deltaTRespostaServidor) { //servidor caiu
-                            isAlive.remove(i);
-                            new Thread(new GerenciadorDeFalhas(i)).start(); //avisa erro
-                            ipServidores.remove(i);
+                while (true) {
+                    try (Socket socket = s.accept()) {
+                        byte[] buffer = new byte[PainelDeControle.TAMANHO_BUFFER];
+                        socket.getInputStream().read(buffer);
+                        isAlive.put(socket.getInetAddress(), System.nanoTime());
+                        for (InetAddress i : ipServidores) {
+                            if ((System.nanoTime() - isAlive.get(i)) / 1000000000 > PainelDeControle.deltaTRespostaServidor) { //servidor caiu
+                                isAlive.remove(i);
+                                new Thread(new GerenciadorDeFalhas(i)).start(); //avisa erro
+                                ipServidores.remove(i);
+                            }
                         }
                     }
                 }

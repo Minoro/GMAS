@@ -134,7 +134,6 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
                             try (Socket welcome = new Socket(ipUsuario, PainelDeControle.PORTA_MULTICAST)) {
                                 byte[] resposta = respostaUsuarioExistente.getBytes();
                                 welcome.getOutputStream().write(resposta);
-                                new Thread(new Heartbeat(welcome.getInetAddress(), PainelDeControle.PORTA_HEARTBEAT)).start();
                                 System.out.println("Usuário já existente na parada! Mensagem enviada a ele. " + ipUsuario.getHostAddress());
                             } catch (IOException e) {
                                 //faz nada
@@ -324,13 +323,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
                         } else if (mensagem.startsWith(PainelDeControle.EU_ESCOLHO_VOCE)) {
                             new Thread(new Heartbeat(conexao.getInetAddress(), PainelDeControle.PORTA_HEARTBEAT)).start();//inicia Heartbeat
                         }
-                    } catch (NotBoundException ex) {
-                        Logger.getLogger(SistemaArquivo.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (MalformedURLException ex) {
-                        Logger.getLogger(SistemaArquivo.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (RemoteException ex) {
-                        Logger.getLogger(SistemaArquivo.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (XPathExpressionException ex) {
+                    } catch (NotBoundException | MalformedURLException | RemoteException | XPathExpressionException ex) {
                         Logger.getLogger(SistemaArquivo.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
@@ -383,22 +376,12 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
 
         @Override
         public void run() {
-            /*try {
-             byte[] heartbeat = PainelDeControle.MENSAGEM_HEARTBEAT.getBytes();
-             while (true) {
-             DatagramPacket dp = new DatagramPacket(heartbeat, heartbeat.length, getIp(), getPort());
-             try (DatagramSocket ds = new DatagramSocket()) {
-             ds.send(dp);
-             }
-             }
-             } catch (IOException e) {
-             System.out.println(e);
-             }*/
             while (true) {
                 try (Socket send = new Socket(ip, port)) {
                     byte[] heartbeat = PainelDeControle.MENSAGEM_HEARTBEAT.getBytes();
                     send.getOutputStream().write(heartbeat);
                 } catch (IOException ex) {
+                    System.out.println("SAIU");
                     break;
                 }
             }

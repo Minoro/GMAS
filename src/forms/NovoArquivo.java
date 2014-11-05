@@ -117,7 +117,7 @@ public class NovoArquivo extends DefaultDialog {
         arquivo.setConteudo(conteudo_arquivo);
         try {
             PainelDeControle.middleware.criarArquivo(caminhoSelecionado, arquivo);
-        } catch (RemoteException | XPathExpressionException ex) {
+        } catch (RemoteException ex) {
             Logger.getLogger(NovoArquivo.class.getName()).log(Level.SEVERE, null, ex);
         }
 
