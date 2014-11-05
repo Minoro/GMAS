@@ -43,15 +43,15 @@ public class XMLInfoPanel extends JPanel {
 
     public static void alteraInfo(XMLTreeNode node) {
         Element no = node.getElement();
-        for (String string : atributos) {
-            String propriedade = string.replaceAll("([A-Z])", " $1").toUpperCase();
-            String valor = no.getAttribute(string);
+        for (String atributo : atributos) {
+            String propriedade = atributo.replaceAll("([A-Z])", " $1").toUpperCase();
+            String valor = no.getAttribute(atributo);
             if (valor.equals("")) {
                 //String para quando o valor do atributo está vazio
                 valor = "";
             }
 
-            map_jtf.get(string).setText(propriedade + ": " + valor);
+            map_jtf.get(atributo).setText(propriedade + ": " + valor);
         }
     }
 

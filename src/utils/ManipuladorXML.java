@@ -14,10 +14,13 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import cliente.InterfaceUsuario;
+import java.util.ArrayList;
+import java.util.List;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import servidor.SistemaArquivo;
 
 /**
  * Implementa operações simples para manipulação do XML
@@ -176,6 +179,19 @@ public class ManipuladorXML {
         StreamResult result = new StreamResult(new File(caminho));
         transformer.transform(source, result);
         return true;
+    }
+    
+    public static List<String> getNomesArquivosFisicos(Document xml) throws XPathExpressionException{
+        List<String> retorno = new ArrayList();
+        
+        NodeList nodelist = xml.getElementsByTagName(PainelDeControle.TAG_ARQUIVO);
+        for (int i = 0; i < nodelist.getLength(); i++) {
+            Node no = nodelist.item(i);
+            String nome = no.getAttributes().getNamedItem("nome").getNodeValue();
+            System.out.println(nome);
+            retorno.add(nome);
+        }
+        return retorno;
     }
 
     public String getNomeArquivoFisico(String caminho, Document xml) throws XPathExpressionException {
