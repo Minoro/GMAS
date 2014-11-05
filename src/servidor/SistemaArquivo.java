@@ -517,13 +517,18 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
             throws RemoteException, XPathExpressionException {
         Document xml = pedirXML(nomeUsuario);
 
-        if (!manipuladorXML.existeArquivo(caminhoOrigem, xml)) {
+        //verifica se o arquivo de origem existe e se não há arquivo com o mesmo
+        //nome no destino
+        if (!manipuladorXML.existeArquivo(caminhoOrigem, xml) 
+                || manipuladorXML.existeArquivo(caminhoDestino, xml)) {
             return false;
         }
-        // TODO
-        //alterar XML
+        
+        Arquivo arquivo = getArquivo(caminhoOrigem, nomeUsuario);
+        criarArquivo(caminhoDestino, arquivo, nomeUsuario);
+        deletarArquivo(caminhoOrigem, nomeUsuario);
 
-        return false;
+        return true;
     }
 
     @Override
