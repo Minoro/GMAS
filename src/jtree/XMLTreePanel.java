@@ -20,6 +20,7 @@ import javax.swing.tree.TreePath;
 import javax.xml.xpath.XPathExpressionException;
 
 import org.w3c.dom.Document;
+import utils.GMASEditor;
 
 import utils.PainelDeControle;
 
@@ -78,6 +79,8 @@ public class XMLTreePanel extends JPanel {
                         if (((XMLTreeNode) selPath.getLastPathComponent()).getNodeName().equals(PainelDeControle.TAG_ARQUIVO)) {
                             caminho = caminho.substring(0, caminho.length() - 1);
                         }
+                        String conteudo = PainelDeControle.middleware.lerArquivo(getCaminhoSelecionado(false));
+                        new GMASEditor(conteudo);
 
                         System.out.println("Double Click em " + caminho);
                     }

@@ -20,7 +20,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import servidor.SistemaArquivo;
 
 /**
  * Implementa operações simples para manipulação do XML
@@ -180,10 +179,10 @@ public class ManipuladorXML {
         transformer.transform(source, result);
         return true;
     }
-    
-    public static List<String> getNomesArquivosFisicos(Document xml) throws XPathExpressionException{
+
+    public static List<String> getNomesArquivosFisicos(Document xml) throws XPathExpressionException {
         List<String> retorno = new ArrayList();
-        
+
         NodeList nodelist = xml.getElementsByTagName(PainelDeControle.TAG_ARQUIVO);
         for (int i = 0; i < nodelist.getLength(); i++) {
             Node no = nodelist.item(i);
