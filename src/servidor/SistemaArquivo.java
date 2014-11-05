@@ -141,7 +141,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
                             }
                         }
                     } else if (mensagem.equals(PainelDeControle.USUARIOS_ARMAZENADOS)) {
-                        try (Socket resp = new Socket(messageIn.getAddress(), PainelDeControle.PORTA_SERVIDORES + 1)) {
+                        try (Socket resp = new Socket(messageIn.getAddress(), PainelDeControle.PORTA_ERROS)) {
                             String msg = "";
                             for (String u : getUsuarios()) {
                                 msg += u + ";";
@@ -206,7 +206,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
         @Override
         public void run() {
             try (MulticastSocket mSckt = new MulticastSocket();
-                    ServerSocket server = new ServerSocket(PainelDeControle.PORTA_SERVIDORES + 1)) { //escuta respostas dos nomes de usuarios armazenados
+                    ServerSocket server = new ServerSocket(PainelDeControle.PORTA_ERROS)) { //escuta respostas dos nomes de usuarios armazenados
                 //requisita aos outros servidores os usuarios que estes possuem
                 byte[] m = mensagem.getBytes();
                 DatagramPacket messageOut = new DatagramPacket(m, m.length, group, PainelDeControle.PORTA_MULTICAST);
