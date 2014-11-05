@@ -294,7 +294,6 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
                         } //envia o IP do novo servidor
                     }
                 }
-
             }
         }
     }
@@ -319,6 +318,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
 
                         } else if (mensagem.startsWith(PainelDeControle.FALHA_SERVIDOR)) { //falha detectada
                             String nomeSolicitante = mensagem.split("-")[1]; //nome do usuario (middleware) que detectou a falha
+                            System.out.println("Thread de tratamento de erros iniciada no Servidor");
                             new Thread(new ControleReplicacao(nomeSolicitante, conexao.getInetAddress())).start(); //dispara gerenciador de replicao
                         } else if (mensagem.startsWith(PainelDeControle.EU_ESCOLHO_VOCE)) {
                             new Thread(new Heartbeat(conexao.getInetAddress(), PainelDeControle.PORTA_HEARTBEAT)).start();//inicia Heartbeat

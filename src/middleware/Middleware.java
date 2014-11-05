@@ -111,6 +111,7 @@ public class Middleware {
             }
 
             if (servidoresArquivo.size() == 1) {
+                System.out.println("Falha detectada no MergeUsuario");
                 new Thread(new GerenciadorDeFalhas()).start();
             }
         }
@@ -221,6 +222,7 @@ public class Middleware {
                         for (InetAddress i : ipServidores) {
                             if ((System.nanoTime() - isAlive.get(i)) / 1000000000 > PainelDeControle.deltaTRespostaServidor) { //servidor caiu
                                 isAlive.remove(i);
+                                System.out.println("Falha detectada no ListenerHeartbeat");
                                 new Thread(new GerenciadorDeFalhas(i)).start(); //avisa erro
                                 ipServidores.remove(i);
                             }
@@ -283,9 +285,9 @@ public class Middleware {
                 //Adiciona o novo servidor ao Listener
                 listenerHeartBeat.adicionaNovoServidor(InetAddress.getByName(novoServidor));
 
-                try (Socket iniciaHearBeat = new Socket(novoServidor, PainelDeControle.PORTA_SERVIDORES)) {
+                try (Socket iniciaHeartBeat = new Socket(novoServidor, PainelDeControle.PORTA_SERVIDORES)) {
                     byte[] beat = PainelDeControle.EU_ESCOLHO_VOCE.getBytes();
-                    iniciaHearBeat.getOutputStream().write(beat);
+                    iniciaHeartBeat.getOutputStream().write(beat);
                 }
 
             } catch (IOException ex) {
