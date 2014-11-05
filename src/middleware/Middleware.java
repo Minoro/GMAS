@@ -62,8 +62,7 @@ public class Middleware {
 
     private void mergeUsuario(String multicastGroup, Boolean novoUsuario) throws UnknownHostException, IOException, RemoteException, XPathExpressionException {
         InetAddress group = InetAddress.getByName(multicastGroup);
-        try (MulticastSocket mSckt = new MulticastSocket();
-                DatagramSocket serverResp = new DatagramSocket(PainelDeControle.PORTA_MULTICAST)) { //usuario "escuta" na mesa porta do multicast
+        try (MulticastSocket mSckt = new MulticastSocket();) { //usuario "escuta" na mesa porta do multicast
             String mensagem;
             if (novoUsuario) {
                 mensagem = PainelDeControle.NOVO_USUARIO;

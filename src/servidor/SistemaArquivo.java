@@ -123,7 +123,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
                             System.out.println("Novo usuário na parada! Mensagem enviada a ele. " + ipUsuario.getHostAddress());
                         } catch (IOException e) {
                             //faz nada
-                            System.out.println("Tempo de resposta excedido.");
+                            System.out.println("Tempo de resposta excedido. 1");
                         }
 
                     } else if (mensagem.startsWith(PainelDeControle.USUARIO_EXISTENTE)) {
@@ -138,7 +138,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
                                 System.out.println("Usuário já existente na parada! Mensagem enviada a ele. " + ipUsuario.getHostAddress());
                             } catch (IOException e) {
                                 //faz nada
-                                System.out.println("Tempo de resposta excedido.");
+                                System.out.println("Tempo de resposta excedido. 2");
                             }
                         }
                     } else if (mensagem.equals(PainelDeControle.USUARIOS_ARMAZENADOS)) {
