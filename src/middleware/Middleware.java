@@ -1,5 +1,6 @@
 package middleware;
 
+import cliente.InterfaceUsuario;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -16,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import javax.xml.xpath.XPathExpressionException;
 import model.Arquivo;
 import servidor.SistemaArquivoInterface;
@@ -85,7 +87,7 @@ public class Middleware {
                     if ((tempoTeste - tempoInicio) / 1000000000.0 > PainelDeControle.deltaTRespostaMulticast) {
                         break;
                     }
-                    welcome.setSoTimeout(((int) PainelDeControle.deltaTRespostaMulticast)*1000);
+                    welcome.setSoTimeout(((int) PainelDeControle.deltaTRespostaMulticast) * 1000);
                     try (Socket resp = welcome.accept()) {
                         System.out.println("Esperando mensagem server");
                         byte[] resposta = new byte[PainelDeControle.TAMANHO_BUFFER];
@@ -93,15 +95,15 @@ public class Middleware {
                         //confirmação do servidor
                         servidoresArquivo.add(resp.getInetAddress());
                         i++;
-                    } catch(SocketTimeoutException e) {
+                    } catch (SocketTimeoutException e) {
                         break;
                     }
                 }
             }
-            if(novoUsuario) {
-                for(InetAddress ip : servidoresArquivo) {
-                    try(Socket con = new Socket(ip, PainelDeControle.PORTA_SERVIDORES)) {
-                        byte [] b = PainelDeControle.EU_ESCOLHO_VOCE.getBytes();
+            if (novoUsuario) {
+                for (InetAddress ip : servidoresArquivo) {
+                    try (Socket con = new Socket(ip, PainelDeControle.PORTA_SERVIDORES)) {
+                        byte[] b = PainelDeControle.EU_ESCOLHO_VOCE.getBytes();
                         con.getOutputStream().write(b);
                     }
                 }
@@ -128,34 +130,69 @@ public class Middleware {
         return "rmi://" + servidoresArquivo.get(indiceServidor).getHostAddress() + ":/teste";
     }
 
-    public boolean renomearArquivo(String caminho, String nome_digitado) throws RemoteException, XPathExpressionException {
-        return server.renomearArquivo(caminho, nome_digitado, PainelDeControle.username);
+    public boolean renomearArquivo(String caminho, String nome_digitado) throws RemoteException {
+        try {
+            return server.renomearArquivo(caminho, nome_digitado, PainelDeControle.username);
+        } catch (XPathExpressionException ex) {
+            JOptionPane.showMessageDialog(InterfaceUsuario.main, ex.getMessage());
+        }
+        return false;
     }
 
-    public boolean criarArquivo(String caminhoSelecionado, Arquivo arquivo) throws RemoteException, XPathExpressionException {
-        return server.criarArquivo(caminhoSelecionado, arquivo, PainelDeControle.username);
+    public boolean criarArquivo(String caminhoSelecionado, Arquivo arquivo) throws RemoteException {
+        try {
+            return server.criarArquivo(caminhoSelecionado, arquivo, PainelDeControle.username);
+        } catch (XPathExpressionException ex) {
+            JOptionPane.showMessageDialog(InterfaceUsuario.main, ex.getMessage());
+        }
+        return false;
     }
 
-    public boolean criarPasta(String caminhoSelecionado) throws RemoteException, XPathExpressionException {
-        return server.criarPasta(caminhoSelecionado, PainelDeControle.username);
+    public boolean criarPasta(String caminhoSelecionado) throws RemoteException {
+        try {
+            return server.criarPasta(caminhoSelecionado, PainelDeControle.username);
+        } catch (XPathExpressionException ex) {
+            JOptionPane.showMessageDialog(InterfaceUsuario.main, ex.getMessage());
+        }
+        return false;
     }
 
-    public boolean copiarArquivo(String caminhoOrigem, String caminhoDestino) throws RemoteException, XPathExpressionException{
-        return server.copiarArquivo(caminhoOrigem, caminhoDestino, PainelDeControle.username);
+    public boolean copiarArquivo(String caminhoOrigem, String caminhoDestino) throws RemoteException {
+        try {
+            return server.copiarArquivo(caminhoOrigem, caminhoDestino, PainelDeControle.username);
+        } catch (XPathExpressionException ex) {
+            JOptionPane.showMessageDialog(InterfaceUsuario.main, ex.getMessage());
+        }
+        return false;
     }
-    
-    public boolean deletarArquivo(String caminhoOrigem) throws RemoteException, XPathExpressionException{
-        return server.deletarArquivo(caminhoOrigem, PainelDeControle.username);
+
+    public boolean deletarArquivo(String caminhoOrigem) throws RemoteException {
+        try {
+            return server.deletarArquivo(caminhoOrigem, PainelDeControle.username);
+        } catch (XPathExpressionException ex) {
+            JOptionPane.showMessageDialog(InterfaceUsuario.main, ex.getMessage());
+        }
+        return false;
     }
-    
-    public boolean salvarArquivo(String caminho, String texto) throws RemoteException, XPathExpressionException{
-        return server.escreverArquivo(caminho, texto, PainelDeControle.username);
+
+    public boolean salvarArquivo(String caminho, String texto) throws RemoteException {
+        try {
+            return server.escreverArquivo(caminho, texto, PainelDeControle.username);
+        } catch (XPathExpressionException ex) {
+            JOptionPane.showMessageDialog(InterfaceUsuario.main, ex.getMessage());
+        }
+        return false;
     }
-    
-    public String lerArquivo(String caminho) throws RemoteException, XPathExpressionException{
-        return server.lerArquivo(caminho, PainelDeControle.username);
+
+    public String lerArquivo(String caminho) throws RemoteException {
+        try {
+            return server.lerArquivo(caminho, PainelDeControle.username);
+        } catch (XPathExpressionException ex) {
+            JOptionPane.showMessageDialog(InterfaceUsuario.main, ex.getMessage());
+        }
+        return null;
     }
-    
+
     /**
      *
      * @author Guilherme
@@ -176,35 +213,35 @@ public class Middleware {
         @Override
         public void run() {
             /*
-                try {
-                DatagramSocket s = new DatagramSocket(PainelDeControle.PORTA_HEARTBEAT);
+             try {
+             DatagramSocket s = new DatagramSocket(PainelDeControle.PORTA_HEARTBEAT);
 
-                while (true) {
-                    byte[] buffer = new byte[PainelDeControle.TAMANHO_BUFFER];
-                    DatagramPacket messageIn = new DatagramPacket(buffer, buffer.length);
+             while (true) {
+             byte[] buffer = new byte[PainelDeControle.TAMANHO_BUFFER];
+             DatagramPacket messageIn = new DatagramPacket(buffer, buffer.length);
 
-                    s.receive(messageIn);
-                    String mensagem = new String(messageIn.getData());
-                    mensagem = mensagem.substring(0, mensagem.indexOf("\0"));
-//                System.out.println("Mensagem recebida: " + mensagem);
-                    if (mensagem.equals(PainelDeControle.MENSAGEM_HEARTBEAT)) {
-                        isAlive.put(messageIn.getAddress(), System.nanoTime());
-                    }
+             s.receive(messageIn);
+             String mensagem = new String(messageIn.getData());
+             mensagem = mensagem.substring(0, mensagem.indexOf("\0"));
+             //                System.out.println("Mensagem recebida: " + mensagem);
+             if (mensagem.equals(PainelDeControle.MENSAGEM_HEARTBEAT)) {
+             isAlive.put(messageIn.getAddress(), System.nanoTime());
+             }
 
-                    for (InetAddress i : ipServidores) {
-                        if ((System.nanoTime() - isAlive.get(i)) / 1000000000 > PainelDeControle.deltaTRespostaServidor) { //servidor caiu
-                            isAlive.remove(i);
-                            new Thread(new GerenciadorDeFalhas(i)).start(); //avisa erro
-                            ipServidores.remove(i);
-                        }
-                    }
-                }
-            } catch (IOException ex) {
-                Logger.getLogger(ListenerHeartBeat.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            */
-            try(ServerSocket s = new ServerSocket(PainelDeControle.PORTA_HEARTBEAT)) {
-                try(Socket socket = s.accept()) {
+             for (InetAddress i : ipServidores) {
+             if ((System.nanoTime() - isAlive.get(i)) / 1000000000 > PainelDeControle.deltaTRespostaServidor) { //servidor caiu
+             isAlive.remove(i);
+             new Thread(new GerenciadorDeFalhas(i)).start(); //avisa erro
+             ipServidores.remove(i);
+             }
+             }
+             }
+             } catch (IOException ex) {
+             Logger.getLogger(ListenerHeartBeat.class.getName()).log(Level.SEVERE, null, ex);
+             }
+             */
+            try (ServerSocket s = new ServerSocket(PainelDeControle.PORTA_HEARTBEAT)) {
+                try (Socket socket = s.accept()) {
                     byte[] buffer = new byte[PainelDeControle.TAMANHO_BUFFER];
                     socket.getInputStream().read(buffer);
                     isAlive.put(socket.getInetAddress(), System.nanoTime());
@@ -215,7 +252,7 @@ public class Middleware {
                             ipServidores.remove(i);
                         }
                     }
-                } 
+                }
             } catch (IOException ex) {
                 System.out.println("Falha ao inicializar Listener Heartbeat");
             }
@@ -271,9 +308,9 @@ public class Middleware {
                 servidoresArquivo.add(InetAddress.getByName(novoServidor)); //adiciona o novo servidor
                 //Adiciona o novo servidor ao Listener
                 listenerHeartBeat.adicionaNovoServidor(InetAddress.getByName(novoServidor));
-                
-                try(Socket iniciaHearBeat = new Socket(novoServidor, PainelDeControle.PORTA_SERVIDORES)) {
-                    byte [] beat = PainelDeControle.EU_ESCOLHO_VOCE.getBytes();
+
+                try (Socket iniciaHearBeat = new Socket(novoServidor, PainelDeControle.PORTA_SERVIDORES)) {
+                    byte[] beat = PainelDeControle.EU_ESCOLHO_VOCE.getBytes();
                     iniciaHearBeat.getOutputStream().write(beat);
                 }
 

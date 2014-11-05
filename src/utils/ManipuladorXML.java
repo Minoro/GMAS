@@ -131,10 +131,10 @@ public class ManipuladorXML {
         Object exprResult = expr.evaluate(xml, XPathConstants.NODESET);
         NodeList node = (NodeList) exprResult;
         if (node.getLength() == 0) {
-            JOptionPane.showMessageDialog(InterfaceUsuario.main, "Não há nós a serem retornados com a seguinte expressão: " + expressao);
+            throw new XPathExpressionException("Não há nós a serem retornados com a seguinte expressão: " + expressao);
         }
         if (node.getLength() > 1) {
-            JOptionPane.showMessageDialog(InterfaceUsuario.main, "Mais de um nó foram encontrados com a seguinte expressão: " + expressao);
+            throw new XPathExpressionException("Mais de um nó foram encontrados com a seguinte expressão: " + expressao);
         }
         return node.item(0);
     }
@@ -153,10 +153,10 @@ public class ManipuladorXML {
         Object exprResult = expr.evaluate(xml, XPathConstants.NODESET);
         NodeList node = (NodeList) exprResult;
         if (node.getLength() == 0) {
-            JOptionPane.showMessageDialog(InterfaceUsuario.main, "Não há nós a serem retornados com a seguinte expressão: " + expressao);
+            throw new XPathExpressionException("Não há nós a serem retornados com a seguinte expressão: " + expressao);
         }
         if (node.getLength() > 1) {
-            JOptionPane.showMessageDialog(InterfaceUsuario.main, "Mais de um nó foram encontrados com a seguinte expressão: " + expressao);
+            throw new XPathExpressionException("Mais de um nó foram encontrados com a seguinte expressão: " + expressao);
         }
         return node.item(0);
     }
