@@ -33,8 +33,10 @@ import javax.xml.xpath.XPathExpressionException;
 
 import cliente.InterfaceUsuario;
 import java.net.DatagramSocket;
+import java.net.MalformedURLException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.rmi.NotBoundException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import model.Arquivo;
@@ -303,7 +305,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
      * servidores e avisos de falha, notificados pelo middleware (?)
      */
     private class MonitorServidores implements Runnable {
-
+        
         @Override
         public void run() {
             try (ServerSocket server = new ServerSocket(PainelDeControle.PORTA_SERVIDORES);) {
@@ -314,20 +316,45 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
                         String mensagem = new String(buffer);
                         mensagem = mensagem.substring(0, mensagem.indexOf("\0"));
                         if (mensagem.startsWith(PainelDeControle.FACA_BACKUP)) {
-                            //TODO -> chamar funcao de backup
-                            //if(naoexisteusuario)
-//                         
+                            realizarBackup(mensagem);
+                            
                         } else if (mensagem.startsWith(PainelDeControle.FALHA_SERVIDOR)) { //falha detectada
                             String nomeSolicitante = mensagem.split("-")[1]; //nome do usuario (middleware) que detectou a falha
                             new Thread(new ControleReplicacao(nomeSolicitante, conexao.getInetAddress())).start(); //dispara gerenciador de replicao
                         } else if(mensagem.startsWith(PainelDeControle.EU_ESCOLHO_VOCE)) {
                             new Thread(new Heartbeat(conexao.getInetAddress(), PainelDeControle.PORTA_HEARTBEAT)).start();//inicia Heartbeat
                         }
+                    } catch (NotBoundException ex) {
+                        Logger.getLogger(SistemaArquivo.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (MalformedURLException ex) {
+                        Logger.getLogger(SistemaArquivo.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (RemoteException ex) {
+                        Logger.getLogger(SistemaArquivo.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (XPathExpressionException ex) {
+                        Logger.getLogger(SistemaArquivo.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
             } catch (IOException ex) {
                 Logger.getLogger(SistemaArquivo.class.getName()).log(Level.SEVERE, null, ex);
             }
+        }
+        
+        private void realizarBackup(String mensagem) throws NotBoundException, MalformedURLException, RemoteException, XPathExpressionException{
+            SistemaArquivoInterface server;
+            List<Arquivo> arquivosBackup;
+            
+            String mensagemSeparada[] = mensagem.split("-");
+            String usuario = mensagemSeparada[1];
+            String ipServidor = mensagemSeparada[2];
+            String urlRMI = "rmi://" + ipServidor+ ":/teste";
+
+            server = (SistemaArquivoInterface) Naming.lookup(urlRMI);
+            arquivosBackup = server.backupArquivosUsuario(usuario);
+            
+            for (Arquivo arquivo : arquivosBackup) {
+                GerenciadorArquivos.salvarArquivo(arquivo, arquivo.getNome());
+            }
+            
         }
     }
 
