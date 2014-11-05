@@ -90,7 +90,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
         s.joinGroup(group);
         new Thread(new MulticastMonitor()).start();
     }
-
+    
     /**
      * @author mastelini
      *
@@ -569,6 +569,21 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
         String nomeArquivoServidor = manipuladorXML.getNomeArquivoFisico(caminho, xml);
         Arquivo arquivo = GerenciadorArquivos.abrirArquivo(nomeArquivoServidor);
         return arquivo;
+    }
+    
+    @Override
+    public List<Arquivo> backupArquivosUsuario(String nomeUsuario) throws RemoteException, XPathExpressionException {
+        List<Arquivo> backup = new ArrayList<>();
+        
+        Document xml = pedirXML(nomeUsuario);
+        List<String> nomeArquivosUsuario = manipuladorXML.getNomesArquivosFisicos(xml);
+        
+        for (String nomeArquivo : nomeArquivosUsuario) {
+            Arquivo arquivo = GerenciadorArquivos.abrirArquivo(nomeArquivo);
+            backup.add(arquivo);
+        }
+        
+        return backup;
     }
 
     public List<String> getUsuarios() {

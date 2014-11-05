@@ -3,6 +3,7 @@ package servidor;
 import model.Arquivo;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.util.List;
 import javax.xml.xpath.XPathExpressionException;
 import org.w3c.dom.Document;
 
@@ -142,6 +143,16 @@ public interface SistemaArquivoInterface extends Remote {
      */
     Arquivo getArquivo(String caminho, String nomeUsuario) throws RemoteException, XPathExpressionException;
 
+    /**
+     * 
+     * @param usuario String -nome do usuario que se deseja realizar o backup
+     * @return List<Arquivo> - retorna uma lista com objetos do tipo Arquivo, com os
+     *                          arquivos do usuario
+     * @throws RemoteException
+     * @throws XPathExpressionException 
+     */
+    List<Arquivo> backupArquivosUsuario(String nomeUsuario) throws RemoteException, XPathExpressionException;
+    
     /**
      *
      * @param nomeUsuario String - nome do usuario que se deseja o xml
