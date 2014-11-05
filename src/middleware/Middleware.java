@@ -204,18 +204,20 @@ public class Middleware {
             }
             */
             try(ServerSocket s = new ServerSocket(PainelDeControle.PORTA_HEARTBEAT)) {
-                try(Socket socket = s.accept()) {
-                    byte[] buffer = new byte[PainelDeControle.TAMANHO_BUFFER];
-                    socket.getInputStream().read(buffer);
-                    isAlive.put(socket.getInetAddress(), System.nanoTime());
-                    for (InetAddress i : ipServidores) {
-                        if ((System.nanoTime() - isAlive.get(i)) / 1000000000 > PainelDeControle.deltaTRespostaServidor) { //servidor caiu
-                            isAlive.remove(i);
-                            new Thread(new GerenciadorDeFalhas(i)).start(); //avisa erro
-                            ipServidores.remove(i);
+                while(true) {
+                    try(Socket socket = s.accept()) {
+                        byte[] buffer = new byte[PainelDeControle.TAMANHO_BUFFER];
+                        socket.getInputStream().read(buffer);
+                        isAlive.put(socket.getInetAddress(), System.nanoTime());
+                        for (InetAddress i : ipServidores) {
+                            if ((System.nanoTime() - isAlive.get(i)) / 1000000000 > PainelDeControle.deltaTRespostaServidor) { //servidor caiu
+                                isAlive.remove(i);
+                                new Thread(new GerenciadorDeFalhas(i)).start(); //avisa erro
+                                ipServidores.remove(i);
+                            }
                         }
-                    }
-                } 
+                    } 
+                }
             } catch (IOException ex) {
                 System.out.println("Falha ao inicializar Listener Heartbeat");
             }

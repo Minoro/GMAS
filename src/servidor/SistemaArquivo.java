@@ -399,6 +399,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
                     byte[] heartbeat = PainelDeControle.MENSAGEM_HEARTBEAT.getBytes();
                     send.getOutputStream().write(heartbeat);
                 } catch (IOException ex) {
+                    System.out.println("SAIU");
                     break;
                 }
             }
