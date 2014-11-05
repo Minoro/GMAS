@@ -79,7 +79,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
         s.joinGroup(group);
         new Thread(new MulticastMonitor()).start();
     }
-
+    
     /**
      * @author mastelini
      *
@@ -517,13 +517,18 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
             throws RemoteException, XPathExpressionException {
         Document xml = pedirXML(nomeUsuario);
 
-        if (!manipuladorXML.existeArquivo(caminhoOrigem, xml)) {
+        //verifica se o arquivo de origem existe e se não há arquivo com o mesmo
+        //nome no destino
+        if (!manipuladorXML.existeArquivo(caminhoOrigem, xml) 
+                || manipuladorXML.existeArquivo(caminhoDestino, xml)) {
             return false;
         }
-        // TODO
-        //alterar XML
+        
+        Arquivo arquivo = getArquivo(caminhoOrigem, nomeUsuario);
+        criarArquivo(caminhoDestino, arquivo, nomeUsuario);
+        deletarArquivo(caminhoOrigem, nomeUsuario);
 
-        return false;
+        return true;
     }
 
     @Override
@@ -595,6 +600,21 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
         String nomeArquivoServidor = manipuladorXML.getNomeArquivoFisico(caminho, xml);
         Arquivo arquivo = GerenciadorArquivos.abrirArquivo(nomeArquivoServidor);
         return arquivo;
+    }
+    
+    @Override
+    public List<Arquivo> backupArquivosUsuario(String nomeUsuario) throws RemoteException, XPathExpressionException {
+        List<Arquivo> backup = new ArrayList<>();
+        
+        Document xml = pedirXML(nomeUsuario);
+        List<String> nomeArquivosUsuario = manipuladorXML.getNomesArquivosFisicos(xml);
+        
+        for (String nomeArquivo : nomeArquivosUsuario) {
+            Arquivo arquivo = GerenciadorArquivos.abrirArquivo(nomeArquivo);
+            backup.add(arquivo);
+        }
+        
+        return backup;
     }
 
     public List<String> getUsuarios() {
