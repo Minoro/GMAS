@@ -33,6 +33,8 @@ import javax.xml.transform.TransformerException;
 import javax.xml.xpath.XPathExpressionException;
 
 import cliente.InterfaceUsuario;
+import java.net.Socket;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import model.Arquivo;
 
@@ -46,10 +48,10 @@ import utils.PainelDeControle;
 
 public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquivoInterface {
 
-    private ManipuladorXML manipuladorXML;
+    private final ManipuladorXML manipuladorXML;
 
-    private MulticastSocket s;
-    private InetAddress group;
+    private final MulticastSocket s;
+    private final InetAddress group;
     private static final long serialVersionUID = 1L;
 
     public static void main(String[] args) {
@@ -68,19 +70,6 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
 
     /*public SistemaArquivo() {
      //para testes sem servidor
-     }*/
-
-    /*private boolean existePasta(String caminho) throws XPathExpressionException {
-     String expressao = montaExpressao(caminho, true);
-
-     XPath xpath = XPathFactory.newInstance().newXPath();
-     XPathExpression expr = xpath.compile(expressao);
-     Object exprResult = expr.evaluate(xml, XPathConstants.NODESET);
-     NodeList node = (NodeList) exprResult;
-     if (node.getLength() != 0) {
-     return true;
-     }
-     return false;
      }*/
     protected SistemaArquivo() throws RemoteException, IOException {
         super();
@@ -112,7 +101,6 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
 
         @Override
         public void run() {
-            System.out.println("Thread para receber mensagem de boas vindas iniciou!");
             while (true) {
                 byte[] buffer = new byte[PainelDeControle.TAMANHO_BUFFER];
                 DatagramPacket messageIn = new DatagramPacket(buffer, buffer.length);
@@ -133,8 +121,17 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
                         ds.close();
 
                     } else if (mensagem.startsWith(PainelDeControle.USUARIO_EXISTENTE)) {
-                        System.out.println("Usuário já existente! " + ipUsuario.getHostAddress());
-                        System.out.println("FALTA IMPLEMENTAR");
+                        String nomeUsuario = mensagem.split("-")[1];
+                        File arq = new File(PainelDeControle.PASTA_XML + nomeUsuario + ".xml"); //procura pela raiz (xml) do usuario
+                        if (arq.exists()) {
+                            String respostaUsuarioExistente = PainelDeControle.RESPOSTA_USUARIO_EXISTENTE;
+                            byte[] resposta = respostaUsuarioExistente.getBytes();
+                            DatagramPacket dp = new DatagramPacket(resposta, resposta.length, ipUsuario, PainelDeControle.PORTA_MULTICAST); //usuario escuta na mesma porta do multicast
+                            DatagramSocket ds = new DatagramSocket();
+                            ds.send(dp);
+                            System.out.println("Usário já existente na parada! Mensagem enviada a ele. " + ipUsuario.getHostAddress());
+                            ds.close();
+                        }
                     } else if (mensagem.equals(PainelDeControle.USUARIOS_ARMAZENADOS)) {
                         try (DatagramSocket resp = new DatagramSocket()) {
                             String msg = "";
@@ -178,17 +175,22 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
 
         private String mensagem;
         private long tempoInicio, tempoTeste;
-        private HashMap<String, Integer> contagemUsuarios;
+        private final HashMap<String, Integer> contagemUsuarios;
         private HashMap<String, String> servidor_X_usuario;
-        private List<String> respostas;
-        private List<String> usuariosExistentes, servidoresExistentes;
+        private final List<String> respostas;
+        private final List<String> usuariosExistentes, servidoresExistentes;
+        private String middlewareSolicitante;
+        private InetAddress endMiddleware;
 
-        public ControleReplicacao() {
+        //FAZER RESPONDER AO MIDDLEWARE QUE O AVISOU DA FALHA QUEM É O NOVO SERVIDOR DE ARQUIVOS
+        public ControleReplicacao(String middlewareSolicitante, InetAddress endMiddleware) {
             mensagem = PainelDeControle.USUARIOS_ARMAZENADOS;
             contagemUsuarios = new HashMap<>();
             respostas = new LinkedList<>();
             usuariosExistentes = new LinkedList<>();
             servidoresExistentes = new LinkedList<>();
+            this.middlewareSolicitante = middlewareSolicitante;
+            this.endMiddleware = endMiddleware;
         }
 
         @Override
@@ -254,6 +256,9 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
          * Escolhe de maneira aleatória um dos servidores para realizar o backup
          * dos dados de um usuário e envia uma mensagem solicitando essa ação.
          *
+         * Envia ao middleware que detectou o erro o IP do novo servidor
+         * relacionado a este (através de TCP).
+         *
          * @throws SocketException
          * @throws UnknownHostException
          * @throws IOException
@@ -289,14 +294,20 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
                             mensagem = new String(messageIn.getData());
                             mensagem = mensagem.substring(0, mensagem.indexOf("\0")); //elimina caracteres inuteis
                             if (mensagem.equals(PainelDeControle.CONFIRMACAO_BACKUP)) {
-                                //tratar falha na resposta nos outros servidores
                                 pararSolicitacao = true; //resposta recebida
                                 break;
                             }
                         }
                     }
                     ds.close();
+                    //envia para o middleware solicitante o IP do novo servidor deste
+                    if (u.equals(middlewareSolicitante)) {
+                        Socket resp = new Socket(endMiddleware, PainelDeControle.PORTA_RESOLUCAO_FALHA);
+                        resp.getOutputStream().write(servidoresExistentes.get(indServidor).getBytes()); //envia o IP do novo servidor
+                        resp.close();
+                    }
                 }
+
             }
         }
     }
@@ -305,7 +316,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
      * Classe que escuta requisições de backup de dados feita pelos outros
      * servidores e avisos de falha, notificados pelo middleware (?)
      */
-    private class MonitorInterServidores implements Runnable {
+    private class MonitorServidores implements Runnable {
 
         @Override
         public void run() {
@@ -321,8 +332,16 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
 //                        if(naoexisteusuario)
                         String msg = PainelDeControle.CONFIRMACAO_BACKUP;
                         byte[] m = msg.getBytes();
-                        DatagramPacket resposta = new DatagramPacket(m, m.length, group, PainelDeControle.PORTA_SERVIDORES + 1);
+                        DatagramPacket resposta = new DatagramPacket(m, m.length, messageIn.getAddress(), PainelDeControle.PORTA_SERVIDORES + 1);
                         server.send(resposta); //envia confirmacao de backup
+                    } else if (mensagem.startsWith(PainelDeControle.FALHA_SERVIDOR)) { //falha detectada
+                        String nomeSolicitante = mensagem.split("-")[1]; //nome do usuario (middleware) que detectou a falha
+                        new Thread(new ControleReplicacao(nomeSolicitante, messageIn.getAddress())).start(); //dispara gerenciador de replicao
+                        String msg = PainelDeControle.MENSAGEM_CONFIRMACAO;
+                        byte[] m = msg.getBytes();
+                        DatagramPacket resposta = new DatagramPacket(m, m.length, messageIn.getAddress(), PainelDeControle.PORTA_SERVIDORES);
+                        server.send(resposta); //envia confirmacao de backup
+
                     }
                 }
             } catch (IOException ex) {
@@ -348,12 +367,16 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
             //faz o parsing do XML inserindo o caminho e o nome do arquivo
             Node ultima_pasta = manipuladorXML.pegaUltimaPasta(expressao, xml);
             Element newelement = xml.createElement(PainelDeControle.TAG_ARQUIVO);
-            //TODO
-            //Arrumar atributos do XML
-            System.out.println("ARRUMAR ATRIBUTOS DO XML AO CRIAR UM NOVO ARQUIVO");
-            newelement.setAttribute("dataCriacao", new Date().toString());
+            
+            SimpleDateFormat sdf = new SimpleDateFormat("dd-mm-YYYY HH:MM");
+            String dataAgora = sdf.format(new Date());
+            String tamanho = arquivo.getConteudo().length() + "";
+            newelement.setAttribute("dataCriacao", dataAgora);
+            newelement.setAttribute("dataUltimaModificacao", dataAgora);
+            newelement.setAttribute("tamanho", tamanho);
             newelement.setAttribute("nome", nomeArquivoServidor);
             newelement.setTextContent(nomeArquivo);
+            
             ultima_pasta.appendChild(newelement);
 
             manipuladorXML.salvarXML(xml, nomeUsuario);
@@ -381,11 +404,14 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
             //faz o parsing do XML inserindo o caminho e o nome do arquivo
             Node ultima_pasta = manipuladorXML.pegaUltimaPasta(expressao, xml);
             Element newelement = xml.createElement(PainelDeControle.TAG_PASTA);
-            System.out.println("ARRUMAR ATRIBUTOS DO XML AO CRIAR UMA NOVA PASTA");
-            newelement.setAttribute("dataCriacao", new Date().toString());
-            //usar atributo nome do XML para armazenar o nome físico do arquivo, com o objetivo de saber qual arquivo físico abrir
-            newelement.setAttribute("nome", nomePasta);
+            
+            SimpleDateFormat sdf = new SimpleDateFormat("dd-mm-YYYY HH:MM");
+            String dataAgora = sdf.format(new Date());
+            newelement.setAttribute("dataCriacao", dataAgora);
+            newelement.setAttribute("dataUltimaModificacao", dataAgora);
+            newelement.setAttribute("tamanho", "0");
             newelement.setTextContent(nomePasta);
+            
             ultima_pasta.appendChild(newelement);
             manipuladorXML.salvarXML(xml, nomeUsuario);
             //verifica se o caminho existe no XML, se não existir retorna falso (vellone pergunta: ?)
@@ -595,7 +621,6 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
                 usuario = usuario.substring(0, usuario.indexOf("."));
                 usuarios.add(usuario);
                 System.out.println("Listando usuários = " + usuario);
-            } else {
             }
         }
         return usuarios;

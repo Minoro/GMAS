@@ -5,10 +5,15 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.net.UnknownHostException;
 import java.rmi.RemoteException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.xpath.XPathExpressionException;
 import model.Arquivo;
 import servidor.SistemaArquivoInterface;
@@ -27,6 +32,7 @@ public class Middleware {
      * Lista dos Servidores de arquivos que a aplicação esta utilizando
      */
     private List<InetAddress> servidoresArquivo;
+    private ListenerHeartBeat listenerHeartBeat;
     public SistemaArquivoInterface server;
 
     /**
@@ -55,7 +61,7 @@ public class Middleware {
     private void mergeUsuario(String multicastGroup, Boolean novoUsuario) throws UnknownHostException, IOException, RemoteException, XPathExpressionException {
         InetAddress group = InetAddress.getByName(multicastGroup);
         try (MulticastSocket mSckt = new MulticastSocket();
-                DatagramSocket server = new DatagramSocket(PainelDeControle.PORTA_MULTICAST)) {
+                DatagramSocket serverResp = new DatagramSocket(PainelDeControle.PORTA_MULTICAST)) { //usuario "escuta" na mesa porta do multicast
             String mensagem;
             if (novoUsuario) {
                 mensagem = PainelDeControle.NOVO_USUARIO;
@@ -66,17 +72,33 @@ public class Middleware {
             DatagramPacket messageOut = new DatagramPacket(m, m.length, group, PainelDeControle.PORTA_MULTICAST);
             mSckt.send(messageOut);
 
-            //recebe a confirmação dos 2 primeiros servidores de arquivo
-//            for (int i = 0; i < 2; i++) {
-//                while (true) {
-            System.out.println("Esperando mensagem server");
-            byte[] resposta = new byte[PainelDeControle.TAMANHO_BUFFER];
-            DatagramPacket receivePacket = new DatagramPacket(resposta, resposta.length);
-            server.receive(receivePacket);
-            //confirmação do servidor
-            servidoresArquivo.add(receivePacket.getAddress());
-//                }
-//            }
+            long tempoInicio, tempoTeste;
+            int i = 0;
+            tempoInicio = System.nanoTime();
+            while (true) {
+                if (i == 2) {
+                    break;
+                }
+                tempoTeste = System.nanoTime();
+                //N segundos aguardando respostas => Definido na classe Painel de controle
+                if ((tempoTeste - tempoInicio) / 1000000000.0 > PainelDeControle.deltaTRespostaMulticast) {
+                    break;
+                }
+                System.out.println("Esperando mensagem server");
+                byte[] resposta = new byte[PainelDeControle.TAMANHO_BUFFER];
+                DatagramPacket receivePacket = new DatagramPacket(resposta, resposta.length);
+                serverResp.receive(receivePacket);
+                String resp = new String(receivePacket.getData());
+                //confirmação do servidor
+                if (resp.equals(PainelDeControle.RESPOSTA_USUARIO_EXISTENTE)) {
+                    servidoresArquivo.add(receivePacket.getAddress());
+                    i++;
+                }
+            }
+            if(servidoresArquivo.size() == 1)
+                new Thread(new GerenciadorDeFalhas()).start();
+            listenerHeartBeat = new ListenerHeartBeat(servidoresArquivo);
+            new Thread(listenerHeartBeat).start(); //inicia listener de Heartbeat
         }
     }
 
@@ -104,5 +126,119 @@ public class Middleware {
 
     public boolean criarPasta(String caminhoSelecionado) throws RemoteException, XPathExpressionException {
         return server.criarPasta(caminhoSelecionado, PainelDeControle.username);
+    }
+
+    /**
+     *
+     * @author Guilherme
+     */
+    private class ListenerHeartBeat implements Runnable {
+
+        private List<InetAddress> ipServidores;
+        private Map<InetAddress, Long> isAlive;
+
+        public ListenerHeartBeat(List<InetAddress> ipServidores) {
+            this.ipServidores = ipServidores;
+            for (InetAddress i : ipServidores) {
+                isAlive.put(i, System.nanoTime()); //para controle de tempo de resposta
+            }
+        }
+
+        @Override
+        public void run() {
+            try {
+                DatagramSocket s = new DatagramSocket(PainelDeControle.PORTA_HEARTBEAT);
+
+                while (true) {
+                    byte[] buffer = new byte[PainelDeControle.TAMANHO_BUFFER];
+                    DatagramPacket messageIn = new DatagramPacket(buffer, buffer.length);
+
+                    s.receive(messageIn);
+                    String mensagem = new String(messageIn.getData());
+                    mensagem = mensagem.substring(0, mensagem.indexOf("\0"));
+//                System.out.println("Mensagem recebida: " + mensagem);
+                    if (mensagem.equals(PainelDeControle.MENSAGEM_HEARTBEAT)) {
+                        isAlive.put(messageIn.getAddress(), System.nanoTime());
+                    }
+
+                    for (InetAddress i : ipServidores) {
+                        if ((System.nanoTime() - isAlive.get(i)) / 1000000000 > PainelDeControle.deltaTRespostaServidor) { //servidor caiu
+                            isAlive.remove(i);
+                            new Thread(new GerenciadorDeFalhas(i)).start(); //avisa erro
+                            ipServidores.remove(i);
+                        }
+                    }
+                }
+            } catch (IOException ex) {
+                Logger.getLogger(ListenerHeartBeat.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+        public void adicionaNovoServidor(InetAddress novoServidor) { //sera que ocorre algum conflito?
+            ipServidores.add(novoServidor);
+            isAlive.put(novoServidor, System.nanoTime());
+        }
+    }
+
+    private void removeServidorFalho(InetAddress exS) {
+        servidoresArquivo.remove(exS);
+    }
+
+    /**
+     * Classe que notifica a existencia de falhas a um dos servidores e recebe a
+     * resposta do gerenciador eleito com o IP do novo servidor de arquivos do
+     * Cliente (middleware) em questão
+     *
+     * @author Mastelini
+     */
+    private class GerenciadorDeFalhas implements Runnable {
+
+        private InetAddress servidorNotificacao;
+
+        public GerenciadorDeFalhas(InetAddress servidorFalho) {
+            removeServidorFalho(servidorFalho); //remove da lista de servidores ativos
+            servidorNotificacao = servidoresArquivo.get(0); //o unico servidor que resta
+        }
+        
+        public GerenciadorDeFalhas() {
+            servidorNotificacao = servidoresArquivo.get(0); //o unico servidor que resta
+        }
+
+        @Override
+        public void run() {
+            try (ServerSocket tcpServer = new ServerSocket(PainelDeControle.PORTA_RESOLUCAO_FALHA)) {
+                //laco de envio com resposta
+                String msg = PainelDeControle.FALHA_SERVIDOR + "-" + PainelDeControle.username;
+                while (true) {
+                    byte[] resposta = msg.getBytes();
+                    DatagramPacket dp = new DatagramPacket(resposta, resposta.length, servidorNotificacao, PainelDeControle.PORTA_SERVIDORES);
+                    DatagramSocket ds = new DatagramSocket();
+                    //envio da mensagem
+                    ds.send(dp);
+                    ds = new DatagramSocket(PainelDeControle.PORTA_SERVIDORES);
+                    byte[] buffer = new byte[PainelDeControle.TAMANHO_BUFFER];
+                    DatagramPacket messageIn = new DatagramPacket(buffer, buffer.length);
+                    ds.receive(messageIn);
+                    String r = new String(messageIn.getData());
+                    if(r.startsWith(PainelDeControle.MENSAGEM_CONFIRMACAO)) //tratar sincronismo???
+                        break;
+                }
+
+                Socket respostaServidor = tcpServer.accept();
+                byte[] b = new byte[PainelDeControle.TAMANHO_BUFFER];
+                respostaServidor.getInputStream().read(b);
+
+                String novoServidor = new String(b);
+                novoServidor = novoServidor.substring(0, novoServidor.indexOf("\0"));
+
+                servidoresArquivo.add(InetAddress.getByName(novoServidor)); //adiciona o novo servidor
+                //Adiciona o novo servidor ao Listener
+                listenerHeartBeat.adicionaNovoServidor(InetAddress.getByName(novoServidor));
+
+            } catch (IOException ex) {
+                Logger.getLogger(Middleware.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
     }
 }
