@@ -145,6 +145,10 @@ public class Middleware {
         return server.deletarArquivo(caminhoOrigem, PainelDeControle.username);
     }
     
+    public boolean salvarArquivo(String caminho, String texto){
+        return server.escreverArquivo(caminho, texto, PainelDeControle.username);
+    }
+    
     /**
      *
      * @author Guilherme
