@@ -137,6 +137,14 @@ public class Middleware {
         return server.criarPasta(caminhoSelecionado, PainelDeControle.username);
     }
 
+    public boolean copiarArquivo(String caminhoOrigem, String caminhoDestino) throws RemoteException, XPathExpressionException{
+        return server.copiarArquivo(caminhoOrigem, caminhoDestino, PainelDeControle.username);
+    }
+    
+    public boolean deletarArquivo(String caminhoOrigem) throws RemoteException, XPathExpressionException{
+        return server.deletarArquivo(caminhoOrigem, PainelDeControle.username);
+    }
+    
     /**
      *
      * @author Guilherme

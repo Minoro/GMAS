@@ -38,7 +38,7 @@ public class PainelDeControle {
     public static Middleware middleware;
     public static String username;
     public static Document xml;
-    public static final String MENSAGEM_HEARTBEAT = "<3";
+    public static final String MENSAGEM_HEARTBEAT = "<Katuki3";
     public static final int PORTA_HEARTBEAT = 5555;
     public static final int PORTA_RESOLUCAO_FALHA = 5556;
     public static final String MENSAGEM_CONFIRMACAO = "OK";

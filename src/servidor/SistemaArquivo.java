@@ -35,6 +35,7 @@ import cliente.InterfaceUsuario;
 import java.net.DatagramSocket;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import model.Arquivo;
 
@@ -80,7 +81,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
         new Thread(new MulticastMonitor()).start();
         new Thread(new MonitorServidores()).start();
     }
-
+    
     /**
      * @author mastelini
      *
@@ -386,12 +387,16 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
             //faz o parsing do XML inserindo o caminho e o nome do arquivo
             Node ultima_pasta = manipuladorXML.pegaUltimaPasta(expressao, xml);
             Element newelement = xml.createElement(PainelDeControle.TAG_ARQUIVO);
-            //TODO
-            //Arrumar atributos do XML
-            System.out.println("ARRUMAR ATRIBUTOS DO XML AO CRIAR UM NOVO ARQUIVO");
-            newelement.setAttribute("dataCriacao", new Date().toString());
+            
+            SimpleDateFormat sdf = new SimpleDateFormat("dd-mm-YYYY HH:MM");
+            String dataAgora = sdf.format(new Date());
+            String tamanho = arquivo.getConteudo().length() + "";
+            newelement.setAttribute("dataCriacao", dataAgora);
+            newelement.setAttribute("dataUltimaModificacao", dataAgora);
+            newelement.setAttribute("tamanho", tamanho);
             newelement.setAttribute("nome", nomeArquivoServidor);
             newelement.setTextContent(nomeArquivo);
+            
             ultima_pasta.appendChild(newelement);
 
             manipuladorXML.salvarXML(xml, nomeUsuario);
@@ -419,12 +424,14 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
             //faz o parsing do XML inserindo o caminho e o nome do arquivo
             Node ultima_pasta = manipuladorXML.pegaUltimaPasta(expressao, xml);
             Element newelement = xml.createElement(PainelDeControle.TAG_PASTA);
-            //TODO
-            System.out.println("ARRUMAR ATRIBUTOS DO XML AO CRIAR UMA NOVA PASTA");
-            newelement.setAttribute("dataCriacao", new Date().toString());
-            //usar atributo nome do XML para armazenar o nome físico do arquivo, com o objetivo de saber qual arquivo físico abrir
-            newelement.setAttribute("nome", nomePasta);
+            
+            SimpleDateFormat sdf = new SimpleDateFormat("dd-mm-YYYY HH:MM");
+            String dataAgora = sdf.format(new Date());
+            newelement.setAttribute("dataCriacao", dataAgora);
+            newelement.setAttribute("dataUltimaModificacao", dataAgora);
+            newelement.setAttribute("tamanho", "0");
             newelement.setTextContent(nomePasta);
+            
             ultima_pasta.appendChild(newelement);
             manipuladorXML.salvarXML(xml, nomeUsuario);
             //verifica se o caminho existe no XML, se não existir retorna falso (vellone pergunta: ?)
@@ -530,13 +537,18 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
             throws RemoteException, XPathExpressionException {
         Document xml = pedirXML(nomeUsuario);
 
-        if (!manipuladorXML.existeArquivo(caminhoOrigem, xml)) {
+        //verifica se o arquivo de origem existe e se não há arquivo com o mesmo
+        //nome no destino
+        if (!manipuladorXML.existeArquivo(caminhoOrigem, xml) 
+                || manipuladorXML.existeArquivo(caminhoDestino, xml)) {
             return false;
         }
-        // TODO
-        //alterar XML
+        
+        Arquivo arquivo = getArquivo(caminhoOrigem, nomeUsuario);
+        criarArquivo(caminhoDestino, arquivo, nomeUsuario);
+        deletarArquivo(caminhoOrigem, nomeUsuario);
 
-        return false;
+        return true;
     }
 
     @Override
@@ -608,6 +620,21 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
         String nomeArquivoServidor = manipuladorXML.getNomeArquivoFisico(caminho, xml);
         Arquivo arquivo = GerenciadorArquivos.abrirArquivo(nomeArquivoServidor);
         return arquivo;
+    }
+    
+    @Override
+    public List<Arquivo> backupArquivosUsuario(String nomeUsuario) throws RemoteException, XPathExpressionException {
+        List<Arquivo> backup = new ArrayList<>();
+        
+        Document xml = pedirXML(nomeUsuario);
+        List<String> nomeArquivosUsuario = manipuladorXML.getNomesArquivosFisicos(xml);
+        
+        for (String nomeArquivo : nomeArquivosUsuario) {
+            Arquivo arquivo = GerenciadorArquivos.abrirArquivo(nomeArquivo);
+            backup.add(arquivo);
+        }
+        
+        return backup;
     }
 
     public List<String> getUsuarios() {

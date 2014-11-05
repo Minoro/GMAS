@@ -109,9 +109,6 @@ public class GerenciadorArquivos {
             atributo = bufferedReader.readLine();
             arquivo.setTamanho(Float.parseFloat(atributo));
 
-            atributo = bufferedReader.readLine();
-            arquivo.setProprietario(atributo);
-
             //passa para o formato de data
             atributo = bufferedReader.readLine();
             Calendar data = Calendar.getInstance();
