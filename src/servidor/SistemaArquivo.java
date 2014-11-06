@@ -32,11 +32,11 @@ import javax.xml.transform.TransformerException;
 import javax.xml.xpath.XPathExpressionException;
 
 import cliente.InterfaceUsuario;
-import java.net.DatagramSocket;
 import java.net.MalformedURLException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.rmi.NotBoundException;
+import java.rmi.registry.LocateRegistry;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import model.Arquivo;
@@ -64,6 +64,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
             Policy.setPolicy(new MyPolicy());
             System.setSecurityManager(new RMISecurityManager());
 
+            LocateRegistry.createRegistry(1099);
             SistemaArquivo sistemaArquivo = new SistemaArquivo();
             Naming.rebind("rmi://:/teste", sistemaArquivo);
         } catch (IOException ex) {
