@@ -57,6 +57,7 @@ public class Middleware {
      * @throws java.net.UnknownHostException
      * @throws java.rmi.RemoteException
      * @throws javax.xml.xpath.XPathExpressionException
+     * @throws java.rmi.NotBoundException
      */
     //Adicionar arquivo de persistencia de servidores.
     public Middleware(String multicastGroup, String nomeUsuario, Boolean novoUsuario) throws IOException, UnknownHostException, RemoteException, XPathExpressionException, NotBoundException {
@@ -130,9 +131,7 @@ public class Middleware {
             try {
                 SistemaArquivoInterface sistemaArquivoServidor = (SistemaArquivoInterface) Naming.lookup(getURLServidorRMI(i));
                 servidoresRemotos.add(sistemaArquivoServidor);
-            } catch (MalformedURLException ex) {
-                Logger.getLogger(Middleware.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (RemoteException ex) {
+            } catch (MalformedURLException | RemoteException ex) {
                 Logger.getLogger(Middleware.class.getName()).log(Level.SEVERE, null, ex);
             }
             i++;
@@ -326,18 +325,13 @@ public class Middleware {
                 servidoresArquivo.add(InetAddress.getByName(novoServidor)); //adiciona o novo servidor
                 //Adiciona o novo servidor ao Listener
                 listenerHeartBeat.adicionaNovoServidor(InetAddress.getByName(novoServidor));
-
+                carregaServidoresRMI();
                 try (Socket iniciaHeartBeat = new Socket(novoServidor, PainelDeControle.PORTA_SERVIDORES)) {
                     byte[] beat = PainelDeControle.EU_ESCOLHO_VOCE.getBytes();
                     iniciaHeartBeat.getOutputStream().write(beat);
                 }
 
-            } catch (IOException ex) {
-                Logger.getLogger(Middleware.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            try {
-                carregaServidoresRMI();
-            } catch (NotBoundException ex) {
+            } catch (IOException | NotBoundException ex) {
                 Logger.getLogger(Middleware.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
