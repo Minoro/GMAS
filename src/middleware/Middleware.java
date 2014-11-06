@@ -41,7 +41,7 @@ public class Middleware {
     private List<InetAddress> servidoresArquivo;
     private ListenerHeartBeat listenerHeartBeat;
     public SistemaArquivoInterface server;
-    
+
     public List<SistemaArquivoInterface> servidoresRemotos;
 
     /**
@@ -70,7 +70,7 @@ public class Middleware {
 
     private void mergeUsuario(String multicastGroup, Boolean novoUsuario) throws UnknownHostException, IOException, RemoteException, XPathExpressionException {
         InetAddress group = InetAddress.getByName(multicastGroup);
-        try (MulticastSocket mSckt = new MulticastSocket();) { //usuario "escuta" na mesa porta do multicast
+        try (MulticastSocket mSckt = new MulticastSocket();) { //usuario "escuta" na mesma porta do multicast
             String mensagem;
             if (novoUsuario) {
                 mensagem = PainelDeControle.NOVO_USUARIO;
@@ -116,7 +116,7 @@ public class Middleware {
                     con.getOutputStream().write(b);
                 }
             }
-            
+
             if (servidoresArquivo.size() == 1) {
                 System.out.println("Falha detectada no MergeUsuario");
                 new Thread(new GerenciadorDeFalhas()).start();
@@ -124,9 +124,9 @@ public class Middleware {
         }
     }
 
-    private void carregaServidoresRMI() throws NotBoundException{
+    private void carregaServidoresRMI() throws NotBoundException {
         servidoresRemotos = new ArrayList<>();
-        for (int i = 0; i< servidoresArquivo.size(); i++) {
+        for (int i = 0; i < servidoresArquivo.size(); i++) {
             try {
                 SistemaArquivoInterface sistemaArquivoServidor = (SistemaArquivoInterface) Naming.lookup(getURLServidorRMI(i));
                 servidoresRemotos.add(sistemaArquivoServidor);
@@ -135,7 +135,7 @@ public class Middleware {
             }
         }
     }
-    
+
     /**
      * Retorna a URL RMI de um dos servidores relacionados ao cliente em
      * questão.
@@ -176,11 +176,11 @@ public class Middleware {
 
     public boolean criarPasta(String caminhoSelecionado) throws RemoteException {
         try {
-        for (SistemaArquivoInterface serverRemoto : servidoresRemotos) {
-            serverRemoto.criarPasta(caminhoSelecionado, PainelDeControle.username);
-        }
-        return true;
-        
+            for (SistemaArquivoInterface serverRemoto : servidoresRemotos) {
+                serverRemoto.criarPasta(caminhoSelecionado, PainelDeControle.username);
+            }
+            return true;
+
         } catch (XPathExpressionException ex) {
             JOptionPane.showMessageDialog(InterfaceUsuario.main, ex.getMessage());
         }
@@ -333,6 +333,59 @@ public class Middleware {
                 Logger.getLogger(Middleware.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+    }
 
+    /**
+     * Classe que periodicamente solicita via Multicast os IPS dos servidores de
+     * arquivos de um determinado cliente (middleware)
+     *
+     * @author Mastelini
+     */
+    private class MantenedorServidores implements Runnable {
+
+        @Override
+        public void run() {
+            try {
+                InetAddress group = InetAddress.getByName(PainelDeControle.IP_MULTICAST);
+
+                try (MulticastSocket mSckt = new MulticastSocket();) { //usuario "escuta" na mesma porta do multicast
+                    String mensagem = PainelDeControle.USUARIO_EXISTENTE + "-" + PainelDeControle.username;
+
+                    byte[] m = mensagem.getBytes();
+                    DatagramPacket messageOut = new DatagramPacket(m, m.length, group, PainelDeControle.PORTA_MULTICAST);
+                    mSckt.send(messageOut);
+                    try (ServerSocket welcome = new ServerSocket(PainelDeControle.PORTA_MULTICAST)) {
+                        long tempoInicio, tempoTeste;
+                        int i = 0;
+                        tempoInicio = System.nanoTime();
+                        while (true) {
+                            if (i == 2) {
+                                break;
+                            }
+                            tempoTeste = System.nanoTime();
+                            //N segundos aguardando respostas => Definido na classe Painel de controle
+                            if ((tempoTeste - tempoInicio) / 1000000000 > PainelDeControle.deltaTRespostaMulticast) {
+                                break;
+                            }
+                            welcome.setSoTimeout((PainelDeControle.deltaTRespostaMulticast) * 1000);
+                            try (Socket resp = welcome.accept()) {
+                                System.out.println("Esperando mensagem server");
+                                byte[] resposta = new byte[PainelDeControle.TAMANHO_BUFFER];
+                                resp.getInputStream().read(resposta);
+                                //confirmação do servidor
+                                servidoresArquivo.add(resp.getInetAddress());
+                                i++;
+                            } catch (SocketTimeoutException e) {
+                                break;
+                            }
+                        }
+                    }
+                } catch (IOException ex) {
+                    Logger.getLogger(Middleware.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            } catch (UnknownHostException ex) {
+                Logger.getLogger(Middleware.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     }
 }
