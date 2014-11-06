@@ -90,10 +90,10 @@ public class Middleware {
                     }
                     tempoTeste = System.nanoTime();
                     //N segundos aguardando respostas => Definido na classe Painel de controle
-                    if ((tempoTeste - tempoInicio) / 1000000000.0 > PainelDeControle.deltaTRespostaMulticast) {
+                    if ((tempoTeste - tempoInicio) / 1000000000 > PainelDeControle.deltaTRespostaMulticast) {
                         break;
                     }
-                    welcome.setSoTimeout(((int) PainelDeControle.deltaTRespostaMulticast) * 100000);
+                    welcome.setSoTimeout((PainelDeControle.deltaTRespostaMulticast) * 1000);
                     try (Socket resp = welcome.accept()) {
                         System.out.println("Esperando mensagem server");
                         byte[] resposta = new byte[PainelDeControle.TAMANHO_BUFFER];

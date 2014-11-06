@@ -219,7 +219,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
                 while (true) {
                     tempoTeste = System.nanoTime();
                     //N segundos aguardando respostas => Definido na classe Painel de controle
-                    if ((tempoTeste - tempoInicio) / 1000000000.0 > PainelDeControle.deltaTRespostaMulticast) {
+                    if ((tempoTeste - tempoInicio) / 1000000000 > PainelDeControle.deltaTRespostaMulticast) {
                         break;
                     }
                     try (Socket recebimento = server.accept()) {

@@ -34,8 +34,8 @@ public class PainelDeControle {
     public static final String PASTA_RAIZ = HOME + SEPARADOR + "raiz";
     public static String PASTA_XML = PASTA_RAIZ + SEPARADOR + "xml" + SEPARADOR;
     public static String PASTA_ICONES = PASTA_RAIZ + SEPARADOR + "icones" + SEPARADOR;
-    public static final double deltaTRespostaServidor = calibrarRede();
-    public static final double deltaTRespostaMulticast = 3 * deltaTRespostaServidor;
+    public static final int deltaTRespostaServidor = calibrarRede();
+    public static final int deltaTRespostaMulticast = 3 * deltaTRespostaServidor;
     public static Middleware middleware;
     public static String username;
     public static Document xml;
@@ -51,9 +51,9 @@ public class PainelDeControle {
      *
      * @return Valor de calibração da rede
      */
-    public static double calibrarRede() {
+    public static int calibrarRede() {
         //TODO
-        return 1.0;
+        return 10;
     }
 
 }
