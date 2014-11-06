@@ -23,6 +23,7 @@ import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.xml.xpath.XPathExpressionException;
 import model.Arquivo;
+import org.w3c.dom.Document;
 import servidor.SistemaArquivoInterface;
 
 import utils.PainelDeControle;
@@ -41,7 +42,7 @@ public class Middleware {
     private List<InetAddress> servidoresArquivo;
     private ListenerHeartBeat listenerHeartBeat;
     public SistemaArquivoInterface server;
-    
+
     public List<SistemaArquivoInterface> servidoresRemotos;
 
     /**
@@ -66,6 +67,8 @@ public class Middleware {
         PainelDeControle.username = nomeUsuario;
         mergeUsuario(multicastGroup, novoUsuario);
         carregaServidoresRMI();
+        server = (SistemaArquivoInterface) Naming.lookup(PainelDeControle.middleware.getURLServidorRMI(0));
+        PainelDeControle.xml = PainelDeControle.middleware.pedirXML();
     }
 
     private void mergeUsuario(String multicastGroup, Boolean novoUsuario) throws UnknownHostException, IOException, RemoteException, XPathExpressionException {
@@ -116,7 +119,7 @@ public class Middleware {
                     con.getOutputStream().write(b);
                 }
             }
-            
+
             if (servidoresArquivo.size() == 1) {
                 System.out.println("Falha detectada no MergeUsuario");
                 new Thread(new GerenciadorDeFalhas()).start();
@@ -124,9 +127,9 @@ public class Middleware {
         }
     }
 
-    private void carregaServidoresRMI() throws NotBoundException{
+    private void carregaServidoresRMI() throws NotBoundException {
         servidoresRemotos = new ArrayList<>();
-        for (int i = 0; i< servidoresArquivo.size(); i++) {
+        for (int i = 0; i < servidoresArquivo.size(); i++) {
             try {
                 SistemaArquivoInterface sistemaArquivoServidor = (SistemaArquivoInterface) Naming.lookup(getURLServidorRMI(i));
                 servidoresRemotos.add(sistemaArquivoServidor);
@@ -135,7 +138,7 @@ public class Middleware {
             }
         }
     }
-    
+
     /**
      * Retorna a URL RMI de um dos servidores relacionados ao cliente em
      * questão.
@@ -176,11 +179,11 @@ public class Middleware {
 
     public boolean criarPasta(String caminhoSelecionado) throws RemoteException {
         try {
-        for (SistemaArquivoInterface serverRemoto : servidoresRemotos) {
-            serverRemoto.criarPasta(caminhoSelecionado, PainelDeControle.username);
-        }
-        return true;
-        
+            for (SistemaArquivoInterface serverRemoto : servidoresRemotos) {
+                serverRemoto.criarPasta(caminhoSelecionado, PainelDeControle.username);
+            }
+            return true;
+
         } catch (XPathExpressionException ex) {
             JOptionPane.showMessageDialog(InterfaceUsuario.main, ex.getMessage());
         }
@@ -226,6 +229,19 @@ public class Middleware {
     public String lerArquivo(String caminho) throws RemoteException {
         try {
             return server.lerArquivo(caminho, PainelDeControle.username);
+        } catch (XPathExpressionException ex) {
+            JOptionPane.showMessageDialog(InterfaceUsuario.main, ex.getMessage());
+        }
+        return null;
+    }
+
+    public Document pedirXML() throws RemoteException {
+        Document r = null;
+        try {
+            for (SistemaArquivoInterface serverRemoto : servidoresRemotos) {
+                r = serverRemoto.pedirXML(PainelDeControle.username);
+            }
+            return r;
         } catch (XPathExpressionException ex) {
             JOptionPane.showMessageDialog(InterfaceUsuario.main, ex.getMessage());
         }
