@@ -60,12 +60,12 @@ public class Middleware {
      * @throws javax.xml.xpath.XPathExpressionException
      */
     //Adicionar arquivo de persistencia de servidores.
-    public Middleware(String multicastGroup, String nomeUsuario, Boolean novoUsuario) throws IOException, UnknownHostException, RemoteException, XPathExpressionException {
+    public Middleware(String multicastGroup, String nomeUsuario, Boolean novoUsuario) throws IOException, UnknownHostException, RemoteException, XPathExpressionException, NotBoundException {
         PainelDeControle.username = nomeUsuario;
         servidoresArquivo = new LinkedList<>();
         PainelDeControle.username = nomeUsuario;
         mergeUsuario(multicastGroup, novoUsuario);
-
+        carregaServidoresRMI();
     }
 
     private void mergeUsuario(String multicastGroup, Boolean novoUsuario) throws UnknownHostException, IOException, RemoteException, XPathExpressionException {
@@ -168,7 +168,7 @@ public class Middleware {
     public boolean criarArquivo(String caminhoSelecionado, Arquivo arquivo) throws RemoteException {
         try {
             for (SistemaArquivoInterface serverRemoto : servidoresRemotos) {
-                return serverRemoto.criarArquivo(caminhoSelecionado, arquivo, PainelDeControle.username);
+                serverRemoto.criarArquivo(caminhoSelecionado, arquivo, PainelDeControle.username);
             }
             return true;
         } catch (XPathExpressionException ex) {
@@ -333,6 +333,11 @@ public class Middleware {
                 }
 
             } catch (IOException ex) {
+                Logger.getLogger(Middleware.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            try {
+                carregaServidoresRMI();
+            } catch (NotBoundException ex) {
                 Logger.getLogger(Middleware.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
