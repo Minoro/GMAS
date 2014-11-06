@@ -41,6 +41,7 @@ public class Middleware {
      */
     private List<InetAddress> servidoresArquivo;
     private ListenerHeartBeat listenerHeartBeat;
+    private MantenedorServidores mantenedorServidores;
     public SistemaArquivoInterface server;
 
     public List<SistemaArquivoInterface> servidoresRemotos;
@@ -109,6 +110,7 @@ public class Middleware {
                     }
                 }
             }
+            //verificar sincronismo:
             listenerHeartBeat = new ListenerHeartBeat(servidoresArquivo);
             new Thread(listenerHeartBeat).start(); //inicia listener de Heartbeat
 
@@ -119,11 +121,13 @@ public class Middleware {
                     con.getOutputStream().write(b);
                 }
             }
-
+            //
             if (servidoresArquivo.size() == 1) {
                 System.out.println("Falha detectada no MergeUsuario");
                 new Thread(new GerenciadorDeFalhas()).start();
             }
+            mantenedorServidores = new MantenedorServidores();
+            new Thread(mantenedorServidores).start(); //inicia atualizador de enderecos de servidor
         }
     }
 
@@ -323,29 +327,12 @@ public class Middleware {
         public void run() {
             try (ServerSocket tcpServer = new ServerSocket(PainelDeControle.PORTA_RESOLUCAO_FALHA)) {
                 //laco de envio com resposta
-                String msg = PainelDeControle.FALHA_SERVIDOR + "-" + PainelDeControle.username;
+                String msg = PainelDeControle.FALHA_SERVIDOR;
                 try (Socket solicitacao = new Socket(servidorNotificacao, PainelDeControle.PORTA_SERVIDORES)) {
                     byte[] resposta = msg.getBytes();
                     solicitacao.getOutputStream().write(resposta);
                 }
-
-                Socket respostaServidor = tcpServer.accept();
-                byte[] b = new byte[PainelDeControle.TAMANHO_BUFFER];
-                respostaServidor.getInputStream().read(b);
-
-                String novoServidor = new String(b);
-                novoServidor = novoServidor.substring(0, novoServidor.indexOf("\0"));
-
-                servidoresArquivo.add(InetAddress.getByName(novoServidor)); //adiciona o novo servidor
-                //Adiciona o novo servidor ao Listener
-                listenerHeartBeat.adicionaNovoServidor(InetAddress.getByName(novoServidor));
-                carregaServidoresRMI();
-                try (Socket iniciaHeartBeat = new Socket(novoServidor, PainelDeControle.PORTA_SERVIDORES)) {
-                    byte[] beat = PainelDeControle.EU_ESCOLHO_VOCE.getBytes();
-                    iniciaHeartBeat.getOutputStream().write(beat);
-                }
-
-            } catch (IOException | NotBoundException ex) {
+            } catch (IOException ex) {
                 Logger.getLogger(Middleware.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
@@ -358,49 +345,87 @@ public class Middleware {
      * @author Mastelini
      */
     private class MantenedorServidores implements Runnable {
+        private final List<InetAddress> tempIPServidores;
+
+        public MantenedorServidores() {
+            this.tempIPServidores = new LinkedList<>();
+        }
 
         @Override
         public void run() {
-            try {
+            while(true) {
+                getIPsServidoresArquivo();
+                try {
+                    Thread.sleep(PainelDeControle.deltaTRespostaServidor * 1000); //aguarda um intervalo de tempo para atualizar a lista de servidores
+                } catch (InterruptedException ex) {
+                    //Logger.getLogger(Middleware.class.getName()).log(Level.SEVERE, null, ex);
+                    //NAO FAZ NADA
+                }
+            }
+        }
+
+        private void getIPsServidoresArquivo() {
+            try (MulticastSocket mSckt = new MulticastSocket();) { //usuario "escuta" na mesma porta do multicast
                 InetAddress group = InetAddress.getByName(PainelDeControle.IP_MULTICAST);
+                String mensagem = PainelDeControle.USUARIO_EXISTENTE + "-" + PainelDeControle.username;
 
-                try (MulticastSocket mSckt = new MulticastSocket();) { //usuario "escuta" na mesma porta do multicast
-                    String mensagem = PainelDeControle.USUARIO_EXISTENTE + "-" + PainelDeControle.username;
-
-                    byte[] m = mensagem.getBytes();
-                    DatagramPacket messageOut = new DatagramPacket(m, m.length, group, PainelDeControle.PORTA_MULTICAST);
-                    mSckt.send(messageOut);
-                    try (ServerSocket welcome = new ServerSocket(PainelDeControle.PORTA_MULTICAST)) {
-                        long tempoInicio, tempoTeste;
-                        int i = 0;
-                        tempoInicio = System.nanoTime();
-                        while (true) {
-                            if (i == 2) {
-                                break;
-                            }
-                            tempoTeste = System.nanoTime();
-                            //N segundos aguardando respostas => Definido na classe Painel de controle
-                            if ((tempoTeste - tempoInicio) / 1000000000 > PainelDeControle.deltaTRespostaMulticast) {
-                                break;
-                            }
-                            welcome.setSoTimeout((PainelDeControle.deltaTRespostaMulticast) * 1000);
-                            try (Socket resp = welcome.accept()) {
-                                System.out.println("Esperando mensagem server");
-                                byte[] resposta = new byte[PainelDeControle.TAMANHO_BUFFER];
-                                resp.getInputStream().read(resposta);
-                                //confirmação do servidor
-                                servidoresArquivo.add(resp.getInetAddress());
-                                i++;
-                            } catch (SocketTimeoutException e) {
-                                break;
-                            }
+                byte[] m = mensagem.getBytes();
+                DatagramPacket messageOut = new DatagramPacket(m, m.length, group, PainelDeControle.PORTA_MULTICAST);
+                mSckt.send(messageOut);
+                try (ServerSocket welcome = new ServerSocket(PainelDeControle.PORTA_MULTICAST)) {
+                    long tempoInicio, tempoTeste;
+                    int i = 0;
+                    tempoInicio = System.nanoTime();
+                    while (true) {
+                        if (i == 2) {
+                            break;
+                        }
+                        tempoTeste = System.nanoTime();
+                        //N segundos aguardando respostas => Definido na classe Painel de controle
+                        if ((tempoTeste - tempoInicio) / 1000000000 > PainelDeControle.deltaTRespostaMulticast) {
+                            break;
+                        }
+                        welcome.setSoTimeout((PainelDeControle.deltaTRespostaMulticast) * 1000);
+                        try (Socket resp = welcome.accept()) {
+                            byte[] resposta = new byte[PainelDeControle.TAMANHO_BUFFER];
+                            resp.getInputStream().read(resposta);
+                            //confirmação do servidor
+                            tempIPServidores.add(resp.getInetAddress());
+                            i++;
+                        } catch (SocketTimeoutException e) {
+                            break;
                         }
                     }
-                } catch (IOException ex) {
-                    Logger.getLogger(Middleware.class.getName()).log(Level.SEVERE, null, ex);
+                    mergeListaServidores(tempIPServidores);
                 }
-            } catch (UnknownHostException ex) {
+            } catch (IOException ex) {
                 Logger.getLogger(Middleware.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+        private void mergeListaServidores(List<InetAddress> IPServidores) {
+            
+            for(InetAddress IP : IPServidores) {
+                boolean found = false;
+                for(InetAddress IP2 : servidoresArquivo) {
+                    if(IP.equals(IP2)) {
+                        found = true;
+                        break;
+                    }
+                }
+                if(!found) {
+                    try {
+                        servidoresArquivo.add(IP);
+                        listenerHeartBeat.adicionaNovoServidor(IP);
+                        carregaServidoresRMI();
+                        try (Socket iniciaHeartBeat = new Socket(IP, PainelDeControle.PORTA_SERVIDORES)) {
+                            byte[] beat = PainelDeControle.EU_ESCOLHO_VOCE.getBytes();
+                            iniciaHeartBeat.getOutputStream().write(beat);
+                        }
+                    }   catch (IOException | NotBoundException ex) { //E AGORA? O QUE FAZER?
+                        Logger.getLogger(Middleware.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
             }
         }
     }

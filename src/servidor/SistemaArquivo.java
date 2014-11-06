@@ -103,7 +103,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
      *
      */
     private class MulticastMonitor implements Runnable {
-
+        private boolean locked = false;
         @Override
         public void run() {
             while (true) {
@@ -142,18 +142,22 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
                             }
                         }
                     } else if (mensagem.equals(PainelDeControle.USUARIOS_ARMAZENADOS)) {
-                        try (Socket resp = new Socket(messageIn.getAddress(), PainelDeControle.PORTA_ERROS)) {
-                            String msg = "";
-                            for (String u : getUsuarios()) {
-                                msg += u + ";";
+                        if(!locked) {
+                            locked = true;
+                            try (Socket resp = new Socket(messageIn.getAddress(), PainelDeControle.PORTA_ERROS)) {
+                                String msg = "";
+                                for (String u : getUsuarios()) {
+                                    msg += u + ";";
+                                }
+                                byte[] m = msg.getBytes();
+                                resp.getOutputStream().write(m);
+                            } catch (IOException e) {
+                                //do nothing
+                                System.out.println("Tempo excedido");
                             }
-                            byte[] m = msg.getBytes();
-                            resp.getOutputStream().write(m);
-                        } catch (IOException e) {
-                            //do nothing
-                            System.out.println("Tempo excedido");
                         }
-
+                    } else if (mensagem.equals(PainelDeControle.CONFIRMACAO_BACKUP)) {
+                        locked = false; //destrava a opcao de chamadas de backup
                     }
                 } catch (IOException e) {
                     System.out.println(e);
@@ -190,18 +194,13 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
         private HashMap<String, String> servidor_X_usuario;
         private final List<String> respostas;
         private final List<String> usuariosExistentes, servidoresExistentes;
-        private final String middlewareSolicitante;
-        private final InetAddress endMiddleware;
 
-        //FAZER RESPONDER AO MIDDLEWARE QUE O AVISOU DA FALHA QUEM É O NOVO SERVIDOR DE ARQUIVOS
-        public ControleReplicacao(String middlewareSolicitante, InetAddress endMiddleware) {
+        public ControleReplicacao() {
             mensagem = PainelDeControle.USUARIOS_ARMAZENADOS;
             contagemUsuarios = new HashMap<>();
             respostas = new LinkedList<>();
             usuariosExistentes = new LinkedList<>();
             servidoresExistentes = new LinkedList<>();
-            this.middlewareSolicitante = middlewareSolicitante;
-            this.endMiddleware = endMiddleware;
         }
 
         @Override
@@ -236,6 +235,12 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
                     processaUsuarios();
                     delegaBackup();
                 }
+                mensagem = PainelDeControle.CONFIRMACAO_BACKUP;
+                m = mensagem.getBytes();
+                messageOut = new DatagramPacket(m, m.length, group, PainelDeControle.PORTA_MULTICAST);
+                mSckt.send(messageOut); //envia confirmacao de backup e "destrava" tratamento de erros
+                
+                
             } catch (IOException ex) {
                 Logger.getLogger(SistemaArquivo.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -292,12 +297,12 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
                         backup.getOutputStream().write(solicitacao); //requisita a execucao de backup
                     }
 
-                    //envia para o middleware solicitante o IP do novo servidor deste
+                    /*//envia para o middleware solicitante o IP do novo servidor deste
                     if (u.equals(middlewareSolicitante)) {
                         try (Socket resp = new Socket(endMiddleware, PainelDeControle.PORTA_RESOLUCAO_FALHA)) {
                             resp.getOutputStream().write(servidoresExistentes.get(indServidor).getBytes()); //envia o IP do novo servidor
                         } //envia o IP do novo servidor
-                    }
+                    }*/
                 }
             }
         }
@@ -322,9 +327,8 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
                             realizarBackup(mensagem);
 
                         } else if (mensagem.startsWith(PainelDeControle.FALHA_SERVIDOR)) { //falha detectada
-                            String nomeSolicitante = mensagem.split("-")[1]; //nome do usuario (middleware) que detectou a falha
                             System.out.println("Thread de tratamento de erros iniciada no Servidor");
-                            new Thread(new ControleReplicacao(nomeSolicitante, conexao.getInetAddress())).start(); //dispara gerenciador de replicao
+                            new Thread(new ControleReplicacao()).start(); //dispara gerenciador de replicao
                         } else if (mensagem.startsWith(PainelDeControle.EU_ESCOLHO_VOCE)) {
                             new Thread(new Heartbeat(conexao.getInetAddress(), PainelDeControle.PORTA_HEARTBEAT)).start();//inicia Heartbeat
                         }
