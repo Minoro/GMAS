@@ -206,6 +206,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
 
         @Override
         public void run() {
+            int contadorRespostas = 0;
             try (MulticastSocket mSckt = new MulticastSocket();
                     ServerSocket server = new ServerSocket(PainelDeControle.PORTA_ERROS)) { //escuta respostas dos nomes de usuarios armazenados
                 //requisita aos outros servidores os usuarios que estes possuem
@@ -228,10 +229,13 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
                         mensagem = mensagem.substring(0, mensagem.indexOf("\0")); //elimina caracteres inuteis
                         mensagem += "::" + recebimento.getInetAddress(); //concatena o IP do servidor
                         respostas.add(mensagem);
+                        contadorRespostas++;
                     }
                 }
-                processaUsuarios();
-                delegaBackup();
+                if(contadorRespostas > 1) {
+                    processaUsuarios();
+                    delegaBackup();
+                }
             } catch (IOException ex) {
                 Logger.getLogger(SistemaArquivo.class.getName()).log(Level.SEVERE, null, ex);
             }
