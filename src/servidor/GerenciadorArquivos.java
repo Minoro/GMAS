@@ -77,7 +77,7 @@ public class GerenciadorArquivos {
             FileWriter fw;
             fw = new FileWriter(file.getAbsoluteFile());
             BufferedWriter bw = new BufferedWriter(fw);
-            bw.write(arquivo.toString());//salva as informações no arquivo no disco
+            bw.write(arquivo.getConteudo());//salva as informações no arquivo no disco
             bw.close();
 
         } catch (IOException e) {
