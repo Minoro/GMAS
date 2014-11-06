@@ -124,18 +124,14 @@ public class Middleware {
     }
 
     private void carregaServidoresRMI() throws NotBoundException{
-        int i = 0;
         servidoresRemotos = new ArrayList<>();
-        for (InetAddress inetAddress : servidoresArquivo) {
+        for (int i = 0; i< servidoresArquivo.size(); i++) {
             try {
                 SistemaArquivoInterface sistemaArquivoServidor = (SistemaArquivoInterface) Naming.lookup(getURLServidorRMI(i));
                 servidoresRemotos.add(sistemaArquivoServidor);
-            } catch (MalformedURLException ex) {
-                Logger.getLogger(Middleware.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (RemoteException ex) {
+            } catch (MalformedURLException | RemoteException ex) {
                 Logger.getLogger(Middleware.class.getName()).log(Level.SEVERE, null, ex);
             }
-            i++;
         }
     }
     
