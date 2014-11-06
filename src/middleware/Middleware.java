@@ -1,6 +1,7 @@
 package middleware;
 
 import cliente.InterfaceUsuario;
+import com.sun.javafx.scene.control.skin.VirtualFlow;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -14,6 +15,7 @@ import java.net.UnknownHostException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -126,6 +128,7 @@ public class Middleware {
 
     private void carregaServidoresRMI() throws NotBoundException{
         int i = 0;
+        servidoresRemotos = new ArrayList<>();
         for (InetAddress inetAddress : servidoresArquivo) {
             try {
                 SistemaArquivoInterface sistemaArquivoServidor = (SistemaArquivoInterface) Naming.lookup(getURLServidorRMI(i));
