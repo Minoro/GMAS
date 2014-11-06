@@ -29,9 +29,9 @@ public class GerenciadorArquivos {
         String randomName;
         UUID uuid = UUID.randomUUID();
 
-        randomName = uuid.toString().substring(0, 32);
+        randomName = uuid.toString().substring(0, 32) + ".gemas";
 
-        File file = new File(System.getProperty("user.dir") + "/raiz/" + randomName + ".agms");
+        File file = new File(System.getProperty("user.dir") + "/raiz/" + randomName);
         if (!file.exists()) {
             try {
                 file.createNewFile();
