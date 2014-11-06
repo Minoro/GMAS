@@ -65,7 +65,6 @@ public class Middleware {
     public Middleware(String multicastGroup, String nomeUsuario, Boolean novoUsuario) throws IOException, UnknownHostException, RemoteException, XPathExpressionException, NotBoundException {
         PainelDeControle.username = nomeUsuario;
         servidoresArquivo = new LinkedList<>();
-        PainelDeControle.username = nomeUsuario;
         mergeUsuario(multicastGroup, novoUsuario);
         carregaServidoresRMI();
         server = (SistemaArquivoInterface) Naming.lookup(PainelDeControle.middleware.getURLServidorRMI(0));

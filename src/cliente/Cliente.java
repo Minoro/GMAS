@@ -115,20 +115,10 @@ public class Cliente extends javax.swing.JFrame {
         String IPMulticast = multicast.getText();
         Boolean novoUsuario = usuarioNovo.isSelected();
         try {
-            try {
-                PainelDeControle.middleware = new Middleware(IPMulticast, nomeUser, novoUsuario);
-            } catch (UnknownHostException ex) {
-                Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (RemoteException ex) {
-                Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (NotBoundException ex) {
-                Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        } catch (IOException ex) {
+            PainelDeControle.middleware = new Middleware(IPMulticast, nomeUser, novoUsuario);
+        } catch (IOException | XPathExpressionException | NotBoundException ex) {
             Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
             System.exit(0);
-        } catch (XPathExpressionException ex) {
-            Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
         }
         new InterfaceUsuario();
         dispose();
