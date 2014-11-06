@@ -5,13 +5,17 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.MalformedURLException;
 import java.net.MulticastSocket;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
+import java.rmi.Naming;
+import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +42,8 @@ public class Middleware {
     private List<InetAddress> servidoresArquivo;
     private ListenerHeartBeat listenerHeartBeat;
     public SistemaArquivoInterface server;
+    
+    public List<SistemaArquivoInterface> servidoresRemotos;
 
     /**
      * Construtor da Classe de Middleware. A partir do endereço de um grupo
@@ -118,11 +124,26 @@ public class Middleware {
         }
     }
 
+    private void carregaServidoresRMI() throws NotBoundException{
+        int i = 0;
+        for (InetAddress inetAddress : servidoresArquivo) {
+            try {
+                SistemaArquivoInterface sistemaArquivoServidor = (SistemaArquivoInterface) Naming.lookup(getURLServidorRMI(i));
+                servidoresRemotos.add(sistemaArquivoServidor);
+            } catch (MalformedURLException ex) {
+                Logger.getLogger(Middleware.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (RemoteException ex) {
+                Logger.getLogger(Middleware.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            i++;
+        }
+    }
+    
     /**
      * Retorna a URL RMI de um dos servidores relacionados ao cliente em
      * questão.
      *
-     * @param indiceServidor indice do servidor para recuperação de IP
+     * @param indiceServidor int - indice do servidor para recuperação de IP
      * @return URL RMI do servidor de arquivo de índice "indiceServidor"
      */
     public String getURLServidorRMI(int indiceServidor) {
@@ -134,7 +155,10 @@ public class Middleware {
 
     public boolean renomearArquivo(String caminho, String nome_digitado) throws RemoteException {
         try {
-            return server.renomearArquivo(caminho, nome_digitado, PainelDeControle.username);
+            for (SistemaArquivoInterface serverRemoto : servidoresRemotos) {
+                serverRemoto.renomearArquivo(caminho, nome_digitado, PainelDeControle.username);
+            }
+            return true;
         } catch (XPathExpressionException ex) {
             JOptionPane.showMessageDialog(InterfaceUsuario.main, ex.getMessage());
         }
@@ -143,7 +167,10 @@ public class Middleware {
 
     public boolean criarArquivo(String caminhoSelecionado, Arquivo arquivo) throws RemoteException {
         try {
-            return server.criarArquivo(caminhoSelecionado, arquivo, PainelDeControle.username);
+            for (SistemaArquivoInterface serverRemoto : servidoresRemotos) {
+                return serverRemoto.criarArquivo(caminhoSelecionado, arquivo, PainelDeControle.username);
+            }
+            return true;
         } catch (XPathExpressionException ex) {
             JOptionPane.showMessageDialog(InterfaceUsuario.main, ex.getMessage());
         }
@@ -152,7 +179,11 @@ public class Middleware {
 
     public boolean criarPasta(String caminhoSelecionado) throws RemoteException {
         try {
-            return server.criarPasta(caminhoSelecionado, PainelDeControle.username);
+        for (SistemaArquivoInterface serverRemoto : servidoresRemotos) {
+            serverRemoto.criarPasta(caminhoSelecionado, PainelDeControle.username);
+        }
+        return true;
+        
         } catch (XPathExpressionException ex) {
             JOptionPane.showMessageDialog(InterfaceUsuario.main, ex.getMessage());
         }
@@ -161,7 +192,10 @@ public class Middleware {
 
     public boolean copiarArquivo(String caminhoOrigem, String caminhoDestino) throws RemoteException {
         try {
-            return server.copiarArquivo(caminhoOrigem, caminhoDestino, PainelDeControle.username);
+            for (SistemaArquivoInterface serverRemoto : servidoresRemotos) {
+                serverRemoto.copiarArquivo(caminhoOrigem, caminhoDestino, PainelDeControle.username);
+            }
+            return true;
         } catch (XPathExpressionException ex) {
             JOptionPane.showMessageDialog(InterfaceUsuario.main, ex.getMessage());
         }
@@ -170,7 +204,10 @@ public class Middleware {
 
     public boolean deletarArquivo(String caminhoOrigem) throws RemoteException {
         try {
-            return server.deletarArquivo(caminhoOrigem, PainelDeControle.username);
+            for (SistemaArquivoInterface serverRemoto : servidoresRemotos) {
+                server.deletarArquivo(caminhoOrigem, PainelDeControle.username);
+            }
+            return true;
         } catch (XPathExpressionException ex) {
             JOptionPane.showMessageDialog(InterfaceUsuario.main, ex.getMessage());
         }
@@ -179,7 +216,10 @@ public class Middleware {
 
     public boolean salvarArquivo(String caminho, String texto) throws RemoteException {
         try {
-            return server.escreverArquivo(caminho, texto, PainelDeControle.username);
+            for (SistemaArquivoInterface serverRemoto : servidoresRemotos) {
+                serverRemoto.escreverArquivo(caminho, texto, PainelDeControle.username);
+            }
+            return true;
         } catch (XPathExpressionException ex) {
             JOptionPane.showMessageDialog(InterfaceUsuario.main, ex.getMessage());
         }
