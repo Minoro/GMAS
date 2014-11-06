@@ -23,6 +23,7 @@ import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.xml.xpath.XPathExpressionException;
 import model.Arquivo;
+import org.w3c.dom.Document;
 import servidor.SistemaArquivoInterface;
 
 import utils.PainelDeControle;
@@ -66,6 +67,8 @@ public class Middleware {
         PainelDeControle.username = nomeUsuario;
         mergeUsuario(multicastGroup, novoUsuario);
         carregaServidoresRMI();
+        server = (SistemaArquivoInterface) Naming.lookup(PainelDeControle.middleware.getURLServidorRMI(0));
+        PainelDeControle.xml = PainelDeControle.middleware.pedirXML();
     }
 
     private void mergeUsuario(String multicastGroup, Boolean novoUsuario) throws UnknownHostException, IOException, RemoteException, XPathExpressionException {
@@ -226,6 +229,19 @@ public class Middleware {
     public String lerArquivo(String caminho) throws RemoteException {
         try {
             return server.lerArquivo(caminho, PainelDeControle.username);
+        } catch (XPathExpressionException ex) {
+            JOptionPane.showMessageDialog(InterfaceUsuario.main, ex.getMessage());
+        }
+        return null;
+    }
+
+    public Document pedirXML() throws RemoteException {
+        Document r = null;
+        try {
+            for (SistemaArquivoInterface serverRemoto : servidoresRemotos) {
+                r = serverRemoto.pedirXML(PainelDeControle.username);
+            }
+            return r;
         } catch (XPathExpressionException ex) {
             JOptionPane.showMessageDialog(InterfaceUsuario.main, ex.getMessage());
         }

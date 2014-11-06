@@ -2,6 +2,9 @@ package utils;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -49,7 +52,15 @@ public class GMASEditor extends JFrame {
         setContentPane(content);
         setJMenuBar(menuBar);
 
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+                dispose();
+            }
+        }
+        );
+
         setTitle("GMAS Editor");
         pack();
         setLocationRelativeTo(null);
