@@ -6,6 +6,9 @@
 package cliente;
 
 import java.io.IOException;
+import java.net.UnknownHostException;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -112,7 +115,15 @@ public class Cliente extends javax.swing.JFrame {
         String IPMulticast = multicast.getText();
         Boolean novoUsuario = usuarioNovo.isSelected();
         try {
-            PainelDeControle.middleware = new Middleware(IPMulticast, nomeUser, novoUsuario);
+            try {
+                PainelDeControle.middleware = new Middleware(IPMulticast, nomeUser, novoUsuario);
+            } catch (UnknownHostException ex) {
+                Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (RemoteException ex) {
+                Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (NotBoundException ex) {
+                Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
+            }
         } catch (IOException ex) {
             Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
             System.exit(0);
