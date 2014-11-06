@@ -6,7 +6,6 @@ import java.rmi.RemoteException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
-import javax.xml.xpath.XPathExpressionException;
 import jtree.XMLTreePanel;
 
 /**

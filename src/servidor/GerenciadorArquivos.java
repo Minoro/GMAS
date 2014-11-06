@@ -102,22 +102,7 @@ public class GerenciadorArquivos {
             FileReader fr = new FileReader(file.getAbsoluteFile());
             BufferedReader bufferedReader = new BufferedReader(fr);
 
-            String atributo;
-            atributo = bufferedReader.readLine();
-            arquivo.setNome(atributo);
-
-            atributo = bufferedReader.readLine();
-            arquivo.setTamanho(Float.parseFloat(atributo));
-
-            //passa para o formato de data
-            atributo = bufferedReader.readLine();
-            Calendar data = Calendar.getInstance();
-            data.setTimeInMillis(Long.parseLong(atributo));
-            arquivo.setDataCriacao(data.getTime());
-
-            atributo = bufferedReader.readLine();
-            data.setTimeInMillis(Long.parseLong(atributo));
-            arquivo.setDataUltimaModificacao(data.getTime());
+            String atributo = "";
 
             String conteudo = bufferedReader.readLine();
             while (conteudo != null) {
