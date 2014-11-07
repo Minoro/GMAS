@@ -389,14 +389,28 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
 
         @Override
         public void run() {
-            while (true) {
-                try (Socket send = new Socket(ip, port)) {
+            int contadorFalhas = 0;
+            try (Socket send = new Socket(ip, port)) {
+                while (true) {
                     byte[] heartbeat = PainelDeControle.MENSAGEM_HEARTBEAT.getBytes();
-                    send.getOutputStream().write(heartbeat);
-                } catch (IOException ex) {
-                    System.out.println("SAIU");
-                    break;
+                    try {
+                        send.getOutputStream().write(heartbeat);
+                        contadorFalhas = 0;
+                        try {
+                            Thread.sleep((long) (1000*(PainelDeControle.deltaTRespostaServidor/2.0)));
+                        } catch (InterruptedException ex) {
+                            //Falha no Sleep, não faz nada
+                        }
+                    } catch(IOException e) {
+                        contadorFalhas++;
+                        if(contadorFalhas == 3) {
+                            throw new IOException();
+                        }
+                    }
                 }
+            } catch (IOException ex) {
+                //3 falhas detectadas ao enviar HeartBeat
+                System.out.println("THREAD DE HEARTBEAT FINALIZADA. CLIENTE SAIU");
             }
         }
     }
@@ -574,7 +588,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
                 || manipuladorXML.existeArquivo(caminhoDestino, xml)) {
             return false;
         }
-        
+
         //monta expressao do arquivo de origem baseado no caminho e recupera o NODE
         String expressaoOrigem = manipuladorXML.montarExpressaoArquivo(caminhoOrigem);
         Node arquivoOrigem = manipuladorXML.pegaUltimoNode(expressaoOrigem, xml);
