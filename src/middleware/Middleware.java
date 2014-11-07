@@ -94,7 +94,7 @@ public class Middleware {
                     if ((tempoTeste - tempoInicio) / 1000000000 > PainelDeControle.deltaTRespostaMulticast) {
                         break;
                     }
-                    welcome.setSoTimeout((PainelDeControle.deltaTRespostaMulticast) * 1000);
+                    welcome.setSoTimeout((PainelDeControle.deltaTRespostaMulticast) * 100); //bloqueia por (tempo em milisegundos de espera multicast)/10
                     try (Socket resp = welcome.accept()) {
                         System.out.println("Esperando mensagem server");
                         byte[] resposta = new byte[PainelDeControle.TAMANHO_BUFFER];
