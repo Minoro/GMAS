@@ -32,6 +32,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.xpath.XPathExpressionException;
 
 import cliente.InterfaceUsuario;
+import forms.CopiarArquivo;
 import java.net.MalformedURLException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -39,6 +40,8 @@ import java.rmi.NotBoundException;
 import java.rmi.registry.LocateRegistry;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import jtree.XMLTreeNode;
+import jtree.XMLTreePanel;
 import model.Arquivo;
 
 import org.w3c.dom.Document;
@@ -103,7 +106,9 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
      *
      */
     private class MulticastMonitor implements Runnable {
+
         private boolean locked = false;
+
         @Override
         public void run() {
             while (true) {
@@ -142,7 +147,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
                             }
                         }
                     } else if (mensagem.equals(PainelDeControle.USUARIOS_ARMAZENADOS)) {
-                        if(!locked) {
+                        if (!locked) {
                             locked = true;
                             try (Socket resp = new Socket(messageIn.getAddress(), PainelDeControle.PORTA_ERROS)) {
                                 String msg = "";
@@ -231,7 +236,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
                         contadorRespostas++;
                     }
                 }
-                if(contadorRespostas > 1) {
+                if (contadorRespostas > 1) {
                     processaUsuarios();
                     delegaBackup();
                 }
@@ -239,8 +244,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
                 m = mensagem.getBytes();
                 messageOut = new DatagramPacket(m, m.length, group, PainelDeControle.PORTA_MULTICAST);
                 mSckt.send(messageOut); //envia confirmacao de backup e "destrava" tratamento de erros
-                
-                
+
             } catch (IOException ex) {
                 Logger.getLogger(SistemaArquivo.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -298,11 +302,11 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
                     }
 
                     /*//envia para o middleware solicitante o IP do novo servidor deste
-                    if (u.equals(middlewareSolicitante)) {
-                        try (Socket resp = new Socket(endMiddleware, PainelDeControle.PORTA_RESOLUCAO_FALHA)) {
-                            resp.getOutputStream().write(servidoresExistentes.get(indServidor).getBytes()); //envia o IP do novo servidor
-                        } //envia o IP do novo servidor
-                    }*/
+                     if (u.equals(middlewareSolicitante)) {
+                     try (Socket resp = new Socket(endMiddleware, PainelDeControle.PORTA_RESOLUCAO_FALHA)) {
+                     resp.getOutputStream().write(servidoresExistentes.get(indServidor).getBytes()); //envia o IP do novo servidor
+                     } //envia o IP do novo servidor
+                     }*/
                 }
             }
         }
@@ -570,6 +574,24 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
                 || manipuladorXML.existeArquivo(caminhoDestino, xml)) {
             return false;
         }
+        
+        //monta expressao do arquivo de origem baseado no caminho e recupera o NODE
+        String expressaoOrigem = manipuladorXML.montarExpressaoArquivo(caminhoOrigem);
+        Node arquivoOrigem = manipuladorXML.pegaUltimoNode(expressaoOrigem, xml);
+
+        //caso o caminho destino termine com '.txt', retira-se o último elemento(arquivo) do caminho
+        if (caminhoDestino.endsWith(".txt")) {
+            caminhoDestino = caminhoDestino.substring(0, caminhoDestino.lastIndexOf("/"));
+        }
+        String expressaoDestino = manipuladorXML.montarExpressaoPasta(caminhoDestino);
+        Node pasta = manipuladorXML.pegaUltimaPasta(expressaoDestino, xml);
+        pasta.appendChild(arquivoOrigem);
+
+        try {
+            manipuladorXML.salvarXML(xml, nomeUsuario);
+        } catch (TransformerException ex) {
+            Logger.getLogger(SistemaArquivo.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
         Arquivo arquivo = getArquivo(caminhoOrigem, nomeUsuario);
         criarArquivo(caminhoDestino, arquivo, nomeUsuario);
@@ -583,9 +605,33 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
             throws RemoteException, XPathExpressionException {
         Document xml = pedirXML(nomeUsuario);
 
-        if (!manipuladorXML.existeArquivo(caminhoOrigem, xml)) {
+        if (!manipuladorXML.existeArquivo(caminhoOrigem, xml)
+                || manipuladorXML.existeArquivo(caminhoDestino, xml)) {
             return false;
         }
+        //monta expressao do arquivo de origem baseado no caminho e recupera o NODE
+        String expressaoOrigem = manipuladorXML.montarExpressaoArquivo(caminhoOrigem);
+        Node arquivoOrigem = manipuladorXML.pegaUltimoNode(expressaoOrigem, xml);
+
+        //caso o caminho destino termine com '.txt', retira-se o último elemento(arquivo) do caminho
+        if (caminhoDestino.endsWith(".txt")) {
+            caminhoDestino = caminhoDestino.substring(0, caminhoDestino.lastIndexOf("/"));
+        }
+        String expressaoDestino = manipuladorXML.montarExpressaoPasta(caminhoDestino);
+        Node pasta = manipuladorXML.pegaUltimaPasta(expressaoDestino, xml);
+
+        //clona o arquivo antigo e coloca o nome fantasia do arquivo origem no arquivo destino
+        Node arquivoNovo = arquivoOrigem.cloneNode(false);
+        arquivoNovo.setTextContent(arquivoOrigem.getTextContent());
+
+        pasta.appendChild(arquivoNovo);
+
+        try {
+            manipuladorXML.salvarXML(xml, nomeUsuario);
+        } catch (TransformerException ex) {
+            Logger.getLogger(SistemaArquivo.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
         //carrega arquivo a ser copiado
         Arquivo arquivoCopiado = getArquivo(caminhoOrigem, nomeUsuario);
 

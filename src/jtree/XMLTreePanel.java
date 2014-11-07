@@ -132,7 +132,7 @@ public class XMLTreePanel extends JPanel {
         }
         // Retira o nome da raiz, pois a função montaExpressao já inclui a raiz por padrão
         caminho = caminho.substring(caminho.indexOf("/") + 1, caminho.length());
-        System.out.println("Caminho do item selecionado: " + caminho);
+        System.out.println("Caminho do item selecionado: " + caminho + ".");
         return caminho;
     }
 
@@ -141,8 +141,8 @@ public class XMLTreePanel extends JPanel {
      */
     public static void atualizaArvore() {
         try {
-            PainelDeControle.xml = PainelDeControle.middleware.server.pedirXML(PainelDeControle.username);
-        } catch (RemoteException | XPathExpressionException ex) {
+            PainelDeControle.xml = PainelDeControle.middleware.pedirXML();
+        } catch (RemoteException ex) {
             Logger.getLogger(XMLTreePanel.class.getName()).log(Level.SEVERE, null, ex);
         }
         tree.updateUI();

@@ -19,6 +19,10 @@ public class DefaultDialog extends JDialog {
 
     }
 
+    /**
+     * Método personalizado para fechar a janela e atualizar a árvore de
+     * hierarquia automaticamente
+     */
     protected void close() {
         XMLTreePanel.atualizaArvore();
         WindowEvent winClosingEvent = new WindowEvent(this, WindowEvent.WINDOW_CLOSING);

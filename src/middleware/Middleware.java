@@ -68,7 +68,7 @@ public class Middleware {
         mergeUsuario(multicastGroup, novoUsuario);
         carregaServidoresRMI();
         server = (SistemaArquivoInterface) Naming.lookup(PainelDeControle.middleware.getURLServidorRMI(0));
-        PainelDeControle.xml = PainelDeControle.middleware.pedirXML();
+        PainelDeControle.xml = pedirXML();
     }
 
     private void mergeUsuario(String multicastGroup, Boolean novoUsuario) throws UnknownHostException, IOException, RemoteException, XPathExpressionException {

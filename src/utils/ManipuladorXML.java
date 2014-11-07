@@ -96,6 +96,10 @@ public class ManipuladorXML {
         String[] list = caminho.split("/");
         String expressao = "/raiz/";
 
+        if (!caminho.contains("/")) {
+            System.out.println("RAIZ selecionada!");
+            return expressao.substring(0, expressao.length() - 1);
+        }
         for (int i = 0; i < list.length; i++) {
             String string = list[i];
             if (pasta || i != list.length - 1) {
@@ -108,7 +112,7 @@ public class ManipuladorXML {
         if (pasta) {
             expressao = expressao.substring(0, expressao.lastIndexOf("/"));
         }
-        System.out.println("Expressão gerada: " + expressao);
+        System.out.println("Expressão gerada: " + expressao + ".");
         return expressao;
     }
 

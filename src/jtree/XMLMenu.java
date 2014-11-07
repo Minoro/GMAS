@@ -37,14 +37,7 @@ public class XMLMenu extends JMenuBar {
 
             @Override
             public void mousePressed(MouseEvent e) {
-                XMLTreeNode node = XMLTreePanel.node_selecionado;
-                if (!node.getNodeName().equals(PainelDeControle.TAG_ARQUIVO)) {
-                    JOptionPane.showMessageDialog(InterfaceUsuario.main, "Não é possível copiar uma " + node.getNodeName());
-                    return;
-                }
-                CopiarArquivo copiaArquivo = new CopiarArquivo(InterfaceUsuario.main, false);
-                JOptionPane.showMessageDialog(InterfaceUsuario.main, "Selecione o destino da cópia do arquivo e clique em OK");
-
+                new CopiarArquivo(InterfaceUsuario.main, false);
             }
         });
         menu.add(item);
@@ -55,8 +48,7 @@ public class XMLMenu extends JMenuBar {
 
             @Override
             public void mousePressed(MouseEvent e) {
-                Renomear renomear = new Renomear(InterfaceUsuario.main, true);
-                renomear.setVisible(true);
+                new Renomear(InterfaceUsuario.main, true);
             }
         });
         menu.add(item);
@@ -67,8 +59,7 @@ public class XMLMenu extends JMenuBar {
 
             @Override
             public void mousePressed(MouseEvent e) {
-                NovoArquivo na = new NovoArquivo(InterfaceUsuario.main, true);
-                na.setVisible(true);
+                new NovoArquivo(InterfaceUsuario.main, true);
             }
         });
         menu.add(item);
@@ -79,8 +70,7 @@ public class XMLMenu extends JMenuBar {
 
             @Override
             public void mousePressed(MouseEvent e) {
-                NovaPasta np = new NovaPasta(InterfaceUsuario.main, true);
-                np.setVisible(true);
+                new NovaPasta(InterfaceUsuario.main, true);
             }
         });
         menu.add(item);

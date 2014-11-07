@@ -9,7 +9,6 @@ import java.rmi.RemoteException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
-import javax.xml.xpath.XPathExpressionException;
 import cliente.InterfaceUsuario;
 import jtree.XMLTreeNode;
 import jtree.XMLTreePanel;
@@ -41,6 +40,7 @@ public class Renomear extends DefaultDialog {
             this.close();
         }
         nome.setText(node.toString());
+        setVisible(true);
     }
 
     /**

@@ -25,6 +25,7 @@ public class NovaPasta extends DefaultDialog {
     public NovaPasta(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        setVisible(true);
     }
 
     /**

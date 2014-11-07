@@ -5,11 +5,16 @@
  */
 package forms;
 
+import cliente.InterfaceUsuario;
+import java.rmi.RemoteException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+import javax.xml.transform.TransformerException;
 import javax.xml.xpath.XPathExpressionException;
 import jtree.XMLTreeNode;
 import jtree.XMLTreePanel;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import utils.ManipuladorXML;
 import utils.PainelDeControle;
@@ -20,12 +25,24 @@ import utils.PainelDeControle;
  */
 public class CopiarArquivo extends DefaultDialog {
 
+    String arquivoCopiado;
+
     /**
      * Creates new form CopiarArquivo
      */
     public CopiarArquivo(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
+        
+        String tipoNoSelecionado = XMLTreePanel.node_selecionado.getNodeName();
+        if (!tipoNoSelecionado.equals(PainelDeControle.TAG_ARQUIVO)) {
+            JOptionPane.showMessageDialog(InterfaceUsuario.main, "Não é possível copiar uma " + tipoNoSelecionado);
+            return;
+        }
+        arquivoCopiado = XMLTreePanel.getCaminhoSelecionado(false);
+        JOptionPane.showMessageDialog(InterfaceUsuario.main, "Selecione o destino da cópia do arquivo e clique em OK");
+
         initComponents();
+        setVisible(true);
     }
 
     /**
@@ -63,21 +80,15 @@ public class CopiarArquivo extends DefaultDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
-        ManipuladorXML manipulador = new ManipuladorXML();
-        XMLTreeNode node = XMLTreePanel.node_selecionado;
-        String caminho = XMLTreePanel.getCaminhoSelecionado(false);
-        String expressao;
-        if (node.getNodeName().equals(PainelDeControle.TAG_ARQUIVO)) {
-            expressao = manipulador.montarExpressaoArquivo(caminho);
-        } else {
-            expressao = manipulador.montarExpressaoPasta(caminho);
-        }
+        ManipuladorXML manipuladorXML = new ManipuladorXML();
+        String caminhoDestino = XMLTreePanel.getCaminhoSelecionado(false);
+
         try {
-            Node pasta = manipulador.pegaUltimaPasta(expressao, PainelDeControle.xml);
-            pasta.appendChild(pasta);
-        } catch (XPathExpressionException ex) {
+            PainelDeControle.middleware.copiarArquivo(arquivoCopiado, caminhoDestino);
+        } catch (RemoteException ex) {
             Logger.getLogger(CopiarArquivo.class.getName()).log(Level.SEVERE, null, ex);
         }
+        close();
     }//GEN-LAST:event_jButton1MouseClicked
 
     /**
