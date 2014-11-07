@@ -32,7 +32,6 @@ import javax.xml.transform.TransformerException;
 import javax.xml.xpath.XPathExpressionException;
 
 import cliente.InterfaceUsuario;
-import forms.CopiarArquivo;
 import java.net.MalformedURLException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -40,8 +39,6 @@ import java.rmi.NotBoundException;
 import java.rmi.registry.LocateRegistry;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import jtree.XMLTreeNode;
-import jtree.XMLTreePanel;
 import model.Arquivo;
 
 import org.w3c.dom.Document;
@@ -521,10 +518,17 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
         String nomeArquivoServidor = manipuladorXML.getNomeArquivoFisico(caminho, xml);
         GerenciadorArquivos.apagarArquivo(nomeArquivoServidor);
 
-        /**
-         * TODO opcional - Retona o nome do arquivo (fisico) apagado para então
-         * apagar pelo gerenciador de arquivo apaga do xml
-         */
+        String expressao = "/raiz//arquivo[@nome='" + nomeArquivoServidor + "']";
+        Node arquivo = manipuladorXML.pegaUltimoNode(expressao, xml);
+        Node pastaPai = arquivo.getParentNode();
+        pastaPai.removeChild(arquivo);
+        
+        try {
+            manipuladorXML.salvarXML(xml, nomeUsuario);
+        } catch (TransformerException ex) {
+            Logger.getLogger(SistemaArquivo.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
         return true;
     }
 
@@ -561,6 +565,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
         } catch (TransformerException ex) {
             Logger.getLogger(SistemaArquivo.class
                     .getName()).log(Level.SEVERE, null, ex);
+            return false;
         }
         return true;
     }
@@ -597,6 +602,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
             manipuladorXML.salvarXML(xml, nomeUsuario);
         } catch (TransformerException ex) {
             Logger.getLogger(SistemaArquivo.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
         }
 
         Arquivo arquivo = getArquivo(caminhoOrigem, nomeUsuario);
@@ -630,6 +636,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
             manipuladorXML.salvarXML(xml, nomeUsuario);
         } catch (TransformerException ex) {
             Logger.getLogger(SistemaArquivo.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
         }
 
         //carrega arquivo a ser copiado
@@ -650,7 +657,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
         arquivoNovo.getAttributes().getNamedItem("nome").setTextContent(nomeArquivoServidor);
         arquivoNovo.getAttributes().getNamedItem("dataCriacao").setTextContent(dataAgora);
         arquivoNovo.getAttributes().getNamedItem("dataUltimaModificacao").setTextContent(dataAgora);
-        
+
         pasta.appendChild(arquivoNovo);
         return GerenciadorArquivos.salvarArquivo(arquivoCopiado, nomeArquivoServidor);
     }
@@ -687,6 +694,13 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
         String dataAgora = sdf.format(new Date());
         nodeArquivo.getAttributes().getNamedItem("dataUltimaModificacao").setTextContent(dataAgora);
         
+        try {
+            manipuladorXML.salvarXML(xml, nomeUsuario);
+        } catch (TransformerException ex) {
+            Logger.getLogger(SistemaArquivo.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+
         String nomeArquivoServidor = manipuladorXML.getNomeArquivoFisico(caminho, xml);
         Arquivo arquivo = GerenciadorArquivos.abrirArquivo(nomeArquivoServidor);
 

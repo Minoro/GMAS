@@ -220,7 +220,7 @@ public class Middleware {
     public boolean deletarArquivo(String caminhoOrigem) throws RemoteException {
         try {
             for (SistemaArquivoInterface serverRemoto : servidoresRemotos) {
-                server.deletarArquivo(caminhoOrigem, PainelDeControle.username);
+                serverRemoto.deletarArquivo(caminhoOrigem, PainelDeControle.username);
             }
             return true;
         } catch (XPathExpressionException ex) {

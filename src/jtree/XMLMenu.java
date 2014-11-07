@@ -12,6 +12,9 @@ import forms.NovoArquivo;
 import forms.Renomear;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.rmi.RemoteException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -71,6 +74,31 @@ public class XMLMenu extends JMenuBar {
             @Override
             public void mousePressed(MouseEvent e) {
                 new NovaPasta(InterfaceUsuario.main, true);
+            }
+        });
+        menu.add(item);
+
+        item = new JMenuItem("Excluir Arquivo");
+        item.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                XMLTreeNode arquivo = XMLTreePanel.node_selecionado;
+                String caminho = XMLTreePanel.getCaminhoSelecionado(false);
+                int resposta = JOptionPane.showConfirmDialog(
+                        InterfaceUsuario.main,
+                        "Deseja realmente apagar este arquivo " + arquivo.toString() + "(" + caminho + ") ?",
+                        "Confirmação",
+                        JOptionPane.YES_NO_OPTION
+                );
+                if (resposta == JOptionPane.YES_OPTION) {
+                    try {
+                        PainelDeControle.middleware.deletarArquivo(caminho);
+                    } catch (RemoteException ex) {
+                        Logger.getLogger(XMLMenu.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+                XMLTreePanel.atualizaArvore();
             }
         });
         menu.add(item);
