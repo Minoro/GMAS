@@ -204,6 +204,18 @@ public class Middleware {
         }
         return false;
     }
+    
+    public boolean moverArquivo(String caminhoOrigem, String caminhoDestino) throws RemoteException {
+        try {
+            for (SistemaArquivoInterface serverRemoto : servidoresRemotos) {
+                serverRemoto.moverArquivo(caminhoOrigem, caminhoDestino, PainelDeControle.username);
+            }
+            return true;
+        } catch (XPathExpressionException ex) {
+            JOptionPane.showMessageDialog(InterfaceUsuario.main, ex.getMessage());
+        }
+        return false;
+    }
 
     public boolean deletarArquivo(String caminhoOrigem) throws RemoteException {
         try {
