@@ -18,16 +18,16 @@ import utils.PainelDeControle;
  *
  * @author Matheus
  */
-public class CopiarArquivo extends DefaultDialog {
+public class MoverArquivo extends DefaultDialog {
 
     String arquivoCopiado;
 
     /**
-     * Creates new form CopiarArquivo
+     * Creates new form MoverArquivo
      */
-    public CopiarArquivo(java.awt.Frame parent, boolean modal) {
+    public MoverArquivo(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
-        
+
         String tipoNoSelecionado = XMLTreePanel.node_selecionado.getNodeName();
         if (!tipoNoSelecionado.equals(PainelDeControle.TAG_ARQUIVO)) {
             JOptionPane.showMessageDialog(InterfaceUsuario.main, "Não é possível copiar uma " + tipoNoSelecionado);
@@ -78,12 +78,13 @@ public class CopiarArquivo extends DefaultDialog {
         String caminhoDestino = XMLTreePanel.getCaminhoSelecionado(false);
 
         try {
-            PainelDeControle.middleware.copiarArquivo(arquivoCopiado, caminhoDestino);
+            PainelDeControle.middleware.moverArquivo(arquivoCopiado, caminhoDestino);
         } catch (RemoteException ex) {
             Logger.getLogger(CopiarArquivo.class.getName()).log(Level.SEVERE, null, ex);
         }
         close();
     }//GEN-LAST:event_jButton1MouseClicked
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     // End of variables declaration//GEN-END:variables

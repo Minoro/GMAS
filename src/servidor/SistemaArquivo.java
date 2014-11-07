@@ -547,7 +547,6 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
             throws RemoteException, XPathExpressionException {
         Document xml = pedirXML(nomeUsuario);
 
-        //TODO
         //Alterar XML
         String expressao;
         if (caminhoOrigem.endsWith(".txt")) {
@@ -567,9 +566,12 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
         Node node = manipuladorXML.pegaUltimoNode(expressao, xml);
 
         node.setTextContent(novoNome);
+        //atualiza data de modificacao
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-mm-YYYY HH:MM");
+        String dataAgora = sdf.format(new Date());
+        node.getAttributes().getNamedItem("dataUltimaModificacao").setTextContent(dataAgora);
         try {
             manipuladorXML.salvarXML(xml, nomeUsuario);
-
         } catch (TransformerException ex) {
             Logger.getLogger(SistemaArquivo.class
                     .getName()).log(Level.SEVERE, null, ex);
@@ -599,6 +601,10 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
         }
         String expressaoDestino = manipuladorXML.montarExpressaoPasta(caminhoDestino);
         Node pasta = manipuladorXML.pegaUltimaPasta(expressaoDestino, xml);
+        //atualiza dataUltimaModificacao para 'agora'
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-mm-YYYY HH:MM");
+        String dataAgora = sdf.format(new Date());
+        arquivoOrigem.getAttributes().getNamedItem("dataUltimaModificacao").setTextContent(dataAgora);
         pasta.appendChild(arquivoOrigem);
 
         try {
@@ -634,12 +640,6 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
         String expressaoDestino = manipuladorXML.montarExpressaoPasta(caminhoDestino);
         Node pasta = manipuladorXML.pegaUltimaPasta(expressaoDestino, xml);
 
-        //clona o arquivo antigo e coloca o nome fantasia do arquivo origem no arquivo destino
-        Node arquivoNovo = arquivoOrigem.cloneNode(false);
-        arquivoNovo.setTextContent(arquivoOrigem.getTextContent());
-
-        pasta.appendChild(arquivoNovo);
-
         try {
             manipuladorXML.salvarXML(xml, nomeUsuario);
         } catch (TransformerException ex) {
@@ -655,6 +655,17 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
         }
 
         String nomeArquivoServidor = manipuladorXML.getNomeArquivoFisico(caminhoDestino, xml);//nome do arquivo fisico copiado
+        //clona o arquivo antigo e coloca o nome fantasia do arquivo origem no arquivo destino
+        Node arquivoNovo = arquivoOrigem.cloneNode(false);
+        arquivoNovo.setTextContent(arquivoOrigem.getTextContent());
+        //atualiza dataUltimaModificacao para 'agora'
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-mm-YYYY HH:MM");
+        String dataAgora = sdf.format(new Date());
+        arquivoNovo.getAttributes().getNamedItem("nome").setTextContent(nomeArquivoServidor);
+        arquivoNovo.getAttributes().getNamedItem("dataCriacao").setTextContent(dataAgora);
+        arquivoNovo.getAttributes().getNamedItem("dataUltimaModificacao").setTextContent(dataAgora);
+        
+        pasta.appendChild(arquivoNovo);
         return GerenciadorArquivos.salvarArquivo(arquivoCopiado, nomeArquivoServidor);
     }
 
@@ -667,7 +678,6 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
             return null;
         }
         String nomeArquivoServidor = manipuladorXML.getNomeArquivoFisico(caminho, xml);
-//        Element arquivoNode =(Element) pegaUltimoNode(montaExpressao(caminho, false));
 
         Arquivo arquivo = GerenciadorArquivos.abrirArquivo(nomeArquivoServidor);
         String conteudo = arquivo.getConteudo();
@@ -684,6 +694,13 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
         if (!manipuladorXML.existeArquivo(caminho, xml)) {
             return false;
         }
+        String expressaoDestino = manipuladorXML.montarExpressaoPasta(caminho);
+        Node nodeArquivo = manipuladorXML.pegaUltimoNode(expressaoDestino, xml);
+        //atualiza dataUltimaModificacao para 'agora'
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-mm-YYYY HH:MM");
+        String dataAgora = sdf.format(new Date());
+        nodeArquivo.getAttributes().getNamedItem("dataUltimaModificacao").setTextContent(dataAgora);
+        
         String nomeArquivoServidor = manipuladorXML.getNomeArquivoFisico(caminho, xml);
         Arquivo arquivo = GerenciadorArquivos.abrirArquivo(nomeArquivoServidor);
 
