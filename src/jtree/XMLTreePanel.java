@@ -144,6 +144,6 @@ public class XMLTreePanel extends JPanel {
         } catch (RemoteException ex) {
             Logger.getLogger(XMLTreePanel.class.getName()).log(Level.SEVERE, null, ex);
         }
-        tree.updateUI();
+        InterfaceUsuario.panel.setDocument(PainelDeControle.xml);
     }
 }

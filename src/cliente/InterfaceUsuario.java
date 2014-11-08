@@ -12,20 +12,19 @@ import utils.PainelDeControle;
 public class InterfaceUsuario extends JFrame {
 
     private static final long serialVersionUID = 1L;
-    //    public static SistemaArquivo server;
     public static InterfaceUsuario main;
+    public static XMLTreePanel panel;
 
     public static void main(String[] args) {
         main = new InterfaceUsuario();
     }
 
     public InterfaceUsuario() {
-        Document document = PainelDeControle.xml;
-        XMLTreePanel panel = new XMLTreePanel();
+        panel = new XMLTreePanel();
         XMLInfoPanel info = new XMLInfoPanel();
         XMLMenu menu = new XMLMenu();
 
-        panel.setDocument(document);
+        panel.setDocument(PainelDeControle.xml);
         getContentPane().add(panel, "West");
         getContentPane().add(info, "Center");
         setJMenuBar(menu);

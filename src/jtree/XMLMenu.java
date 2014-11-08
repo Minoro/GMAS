@@ -7,6 +7,7 @@ package jtree;
 
 import cliente.InterfaceUsuario;
 import forms.CopiarArquivo;
+import forms.MoverArquivo;
 import forms.NovaPasta;
 import forms.NovoArquivo;
 import forms.Renomear;
@@ -41,6 +42,16 @@ public class XMLMenu extends JMenuBar {
             @Override
             public void mousePressed(MouseEvent e) {
                 new CopiarArquivo(InterfaceUsuario.main, false);
+            }
+        });
+        menu.add(item);
+        
+        item = new JMenuItem("Mover Arquivo");
+        item.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                new MoverArquivo(InterfaceUsuario.main, false);
             }
         });
         menu.add(item);

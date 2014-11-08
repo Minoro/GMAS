@@ -1,5 +1,6 @@
 package middleware;
 
+import cliente.Cliente;
 import cliente.InterfaceUsuario;
 import java.io.IOException;
 import java.io.InputStream;
@@ -115,6 +116,10 @@ public class Middleware {
                 }
             }
 
+            if (servidoresArquivo.size() == 0) {
+                JOptionPane.showMessageDialog(InterfaceUsuario.main, "Não foram encontrados servidores para o usuário");
+                System.exit(0);
+            }
             if (servidoresArquivo.size() == 1) {
                 System.out.println("Falha detectada no MergeUsuario");
                 new Thread(new NotificadorDeFalhas()).start();
@@ -188,6 +193,8 @@ public class Middleware {
     }
 
     public boolean copiarArquivo(String caminhoOrigem, String caminhoDestino) throws RemoteException {
+        System.out.println("Origem: " + caminhoOrigem);
+        System.out.println("Destino: " + caminhoDestino);
         try {
             for (SistemaArquivoInterface serverRemoto : servidoresRemotos) {
                 serverRemoto.copiarArquivo(caminhoOrigem, caminhoDestino, PainelDeControle.username);

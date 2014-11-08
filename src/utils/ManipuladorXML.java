@@ -95,7 +95,7 @@ public class ManipuladorXML {
     private String montaExpressao(String caminho, boolean pasta) {
         String[] list = caminho.split("/");
 
-        String expressao = "/raiz/";
+        String expressao = "/" + PainelDeControle.TAG_RAIZ + "/";
 
 //        if (!caminho.contains("/")) {
 //            System.out.println("RAIZ selecionada!");

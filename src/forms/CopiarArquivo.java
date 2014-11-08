@@ -74,6 +74,11 @@ public class CopiarArquivo extends DefaultDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
+        String tipoNoSelecionado = XMLTreePanel.node_selecionado.getNodeName();
+        if (!tipoNoSelecionado.equals(PainelDeControle.TAG_PASTA)) {
+            JOptionPane.showMessageDialog(InterfaceUsuario.main, "Selecione uma pasta destino para copiar o arquivo!!");
+            return;
+        }
         String caminhoDestino = XMLTreePanel.getCaminhoSelecionado(false);
 
         try {
