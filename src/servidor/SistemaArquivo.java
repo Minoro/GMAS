@@ -661,8 +661,10 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
         if (!criarArquivo(caminhoDestino, arquivoCopiado, nomeUsuario)) {
             return false;//erro ao copiar o arquivo
         }
+        
+        Arquivo arquivo = getArquivo(caminhoOrigem, nomeUsuario);
 
-        String nomeArquivoServidor = manipuladorXML.getNomeArquivoFisico(caminhoDestino, xml);//nome do arquivo fisico copiado
+        String nomeArquivoServidor = GerenciadorArquivos.criarArquivo(arquivo);
         //clona o arquivo antigo e coloca o nome fantasia do arquivo origem no arquivo destino
         Node arquivoNovo = arquivoOrigem.cloneNode(false);
         arquivoNovo.setTextContent(arquivoOrigem.getTextContent());
