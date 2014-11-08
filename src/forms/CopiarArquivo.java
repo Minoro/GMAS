@@ -75,13 +75,6 @@ public class CopiarArquivo extends DefaultDialog {
 
     private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
         String caminhoDestino = XMLTreePanel.getCaminhoSelecionado(false);
-        if(caminhoDestino.endsWith(".txt/")){
-            caminhoDestino = caminhoDestino.substring(0, caminhoDestino.lastIndexOf("/"));
-            caminhoDestino = caminhoDestino.substring(0, caminhoDestino.lastIndexOf("/"));
-        }
-        if(arquivoCopiado.endsWith(".txt/")){
-            arquivoCopiado = arquivoCopiado.substring(0, arquivoCopiado.lastIndexOf("/"));
-        }
 
         try {
             PainelDeControle.middleware.copiarArquivo(arquivoCopiado, caminhoDestino);

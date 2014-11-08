@@ -7,7 +7,6 @@ package jtree;
 
 import cliente.InterfaceUsuario;
 import forms.CopiarArquivo;
-import forms.MoverArquivo;
 import forms.NovaPasta;
 import forms.NovoArquivo;
 import forms.Renomear;
@@ -35,17 +34,6 @@ public class XMLMenu extends JMenuBar {
 
         menu = new JMenu("Ações");
 
-        item = new JMenuItem("Mover Arquivo");
-        item.addMouseListener(new MouseAdapter() {
-            String nome_da_pasta;
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-                new MoverArquivo(InterfaceUsuario.main, false);
-            }
-        });
-        menu.add(item);
-        
         item = new JMenuItem("Copiar Arquivo");
         item.addMouseListener(new MouseAdapter() {
             String nome_da_pasta;
