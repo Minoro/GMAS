@@ -8,7 +8,6 @@ import javax.swing.JFrame;
 import jtree.XMLInfoPanel;
 import jtree.XMLMenu;
 import jtree.XMLTreePanel;
-import org.w3c.dom.Document;
 import utils.PainelDeControle;
 
 public class InterfaceUsuario extends JFrame {

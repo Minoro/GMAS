@@ -631,8 +631,10 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
             throws RemoteException, XPathExpressionException {
         Document xml = pedirXML(nomeUsuario);
 
+        String novoCaminho = caminhoDestino + caminhoOrigem.substring(caminhoOrigem.lastIndexOf("/"), caminhoOrigem.length());
+        System.out.println("Caminho do novo arquivo =" + novoCaminho);
         if (!manipuladorXML.existeArquivo(caminhoOrigem, xml)
-                || manipuladorXML.existeArquivo(caminhoDestino, xml)) {
+                || manipuladorXML.existeArquivo(novoCaminho, xml)) {
             return false;
         }
         //monta expressao do arquivo de origem baseado no caminho e recupera o NODE
