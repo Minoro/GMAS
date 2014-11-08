@@ -640,12 +640,8 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
         String expressaoOrigem = manipuladorXML.montarExpressaoArquivo(caminhoOrigem);
         Node arquivoOrigem = manipuladorXML.pegaUltimoNode(expressaoOrigem, xml);
 
-        //caso o caminho destino termine com '.txt', retira-se o último elemento(arquivo) do caminho
-        if (caminhoDestino.endsWith(".txt")) {
-            caminhoDestino = caminhoDestino.substring(0, caminhoDestino.lastIndexOf("/"));
-        }
         String expressaoDestino = manipuladorXML.montarExpressaoPasta(caminhoDestino);
-        Node pasta = manipuladorXML.pegaUltimaPasta(expressaoDestino, xml);
+        Node pasta = manipuladorXML.pegaUltimoNode(expressaoDestino, xml);
 
         //carrega arquivo a ser copiado
         Arquivo arquivoCopiado = getArquivo(caminhoOrigem, nomeUsuario);

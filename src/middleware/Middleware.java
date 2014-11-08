@@ -193,6 +193,8 @@ public class Middleware {
     }
 
     public boolean copiarArquivo(String caminhoOrigem, String caminhoDestino) throws RemoteException {
+        caminhoOrigem = caminhoOrigem.substring(0, caminhoOrigem.length() - 1);
+        caminhoDestino = caminhoDestino.substring(0, caminhoDestino.length() - 1);
         System.out.println("Origem: " + caminhoOrigem);
         System.out.println("Destino: " + caminhoDestino);
         try {
