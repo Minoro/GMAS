@@ -32,10 +32,10 @@ public class Vellone extends JFrame {
 
     public Vellone() throws HeadlessException {
         String usernameTeste = "vellone";
-        
+
         PainelDeControle.xml = pedirXML(usernameTeste);
         PainelDeControle.username = usernameTeste;
-        
+
         Document document = PainelDeControle.xml;
         XMLTreePanel panel = new XMLTreePanel();
         XMLInfoPanel info = new XMLInfoPanel();

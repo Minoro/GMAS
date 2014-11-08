@@ -394,13 +394,13 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
                         send.getOutputStream().write(heartbeat);
                         contadorFalhas = 0;
                         try {
-                            Thread.sleep((long) (1000*(PainelDeControle.deltaTRespostaServidor/2.0)));
+                            Thread.sleep((long) (1000 * (PainelDeControle.deltaTRespostaServidor / 2.0)));
                         } catch (InterruptedException ex) {
                             //Falha no Sleep, não faz nada
                         }
-                    } catch(IOException e) {
+                    } catch (IOException e) {
                         contadorFalhas++;
-                        if(contadorFalhas == 3) {
+                        if (contadorFalhas == 3) {
                             throw new IOException();
                         }
                     }
@@ -536,7 +536,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
         Node arquivo = manipuladorXML.pegaUltimoNode(expressao, xml);
         Node pastaPai = arquivo.getParentNode();
         pastaPai.removeChild(arquivo);
-        
+
         try {
             manipuladorXML.salvarXML(xml, nomeUsuario);
         } catch (TransformerException ex) {
@@ -707,7 +707,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
         SimpleDateFormat sdf = new SimpleDateFormat("dd-mm-YYYY HH:MM");
         String dataAgora = sdf.format(new Date());
         nodeArquivo.getAttributes().getNamedItem("dataUltimaModificacao").setTextContent(dataAgora);
-        
+
         try {
             manipuladorXML.salvarXML(xml, nomeUsuario);
         } catch (TransformerException ex) {

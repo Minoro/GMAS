@@ -6,9 +6,7 @@
 package cliente;
 
 import java.io.IOException;
-import java.net.UnknownHostException;
 import java.rmi.NotBoundException;
-import java.rmi.RemoteException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;

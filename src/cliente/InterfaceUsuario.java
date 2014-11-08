@@ -1,23 +1,12 @@
 package cliente;
 
 import java.awt.Dimension;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.swing.JFrame;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import jtree.XMLInfoPanel;
 import jtree.XMLMenu;
 import jtree.XMLTreePanel;
 import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
-import servidor.SistemaArquivo;
 import utils.PainelDeControle;
 
 public class InterfaceUsuario extends JFrame {

@@ -17,7 +17,6 @@ import javax.swing.JTree;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreePath;
-import javax.xml.xpath.XPathExpressionException;
 
 import org.w3c.dom.Document;
 import utils.GMASEditor;

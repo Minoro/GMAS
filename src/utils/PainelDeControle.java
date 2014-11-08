@@ -43,7 +43,6 @@ public class PainelDeControle {
     public static final int PORTA_HEARTBEAT = 5555;
     public static final int PORTA_RESOLUCAO_FALHA = 5556;
     public static final String MENSAGEM_CONFIRMACAO = "OK";
-    
 
     /**
      * Método que define um valor delta de tempo para aceitação de respostas ou

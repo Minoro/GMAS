@@ -59,7 +59,6 @@ public class Middleware {
      * @throws javax.xml.xpath.XPathExpressionException
      * @throws java.rmi.NotBoundException
      */
-
     public Middleware(String multicastGroup, String nomeUsuario, Boolean novoUsuario) throws IOException, UnknownHostException, RemoteException, XPathExpressionException, NotBoundException {
         PainelDeControle.username = nomeUsuario;
         servidoresArquivo = new LinkedList<>();
@@ -107,7 +106,7 @@ public class Middleware {
                     }
                 }
             }
-            
+
             new Thread(new ServidorConexaoHeartBeat()).start(); //inicia Servidor de conexoes para Heartbeat
 
             for (InetAddress ip : servidoresArquivo) {
@@ -117,7 +116,7 @@ public class Middleware {
                     con.getOutputStream().write(b);
                 }
             }
-            
+
             if (servidoresArquivo.size() == 1) {
                 System.out.println("Falha detectada no MergeUsuario");
                 new Thread(new NotificadorDeFalhas()).start();
@@ -201,7 +200,7 @@ public class Middleware {
         }
         return false;
     }
-    
+
     public boolean moverArquivo(String caminhoOrigem, String caminhoDestino) throws RemoteException {
         try {
             for (SistemaArquivoInterface serverRemoto : servidoresRemotos) {
@@ -259,18 +258,20 @@ public class Middleware {
         }
         return null;
     }
-    
+
     private void removeServidorFalho(InetAddress exS) {
         servidoresArquivo.remove(exS);
     }
 
     /**
-     * Classe que recebe conexões para a transmissão de Heartbeats. 
-     * Para cada nova conexão dispara uma thread ListenerHeartBeat, que escuta as mensagens enviadas dos servidores
-     * 
+     * Classe que recebe conexões para a transmissão de Heartbeats. Para cada
+     * nova conexão dispara uma thread ListenerHeartBeat, que escuta as
+     * mensagens enviadas dos servidores
+     *
      * @author Guilherme
      */
     private class ServidorConexaoHeartBeat implements Runnable {
+
         @Override
         public void run() {
             try (ServerSocket s = new ServerSocket(PainelDeControle.PORTA_HEARTBEAT)) {
@@ -284,16 +285,18 @@ public class Middleware {
             }
         }
     }
-    
+
     /**
-     * Classe que escuta as mensagens de HeartBeat vindas do servidor e dispara a notificação de erros caso
-     * o servidor que está escutando falhe.
-     * 
+     * Classe que escuta as mensagens de HeartBeat vindas do servidor e dispara
+     * a notificação de erros caso o servidor que está escutando falhe.
+     *
      * @author Mastelini
      */
     private class ListenerHeartBeat implements Runnable {
+
         private Socket conexaoServidor;
         private InputStream in;
+
         public ListenerHeartBeat(Socket conexaoServidor) {
             this.conexaoServidor = conexaoServidor;
         }
@@ -302,17 +305,17 @@ public class Middleware {
         public void run() {
             int contadorFalhas = 0;
             try {
-                conexaoServidor.setSoTimeout(PainelDeControle.deltaTRespostaServidor*2); //define timeout de espera para mensagens de leitura
+                conexaoServidor.setSoTimeout(PainelDeControle.deltaTRespostaServidor * 2); //define timeout de espera para mensagens de leitura
                 in = conexaoServidor.getInputStream();
-                while(true) {
-                    byte [] buffer = new byte[PainelDeControle.TAMANHO_BUFFER];
+                while (true) {
+                    byte[] buffer = new byte[PainelDeControle.TAMANHO_BUFFER];
                     in.read(buffer); //le HeartBeat
                     contadorFalhas = 0;
                 }
             } catch (IOException ex) {
                 contadorFalhas++;
-                
-                if(contadorFalhas == 3) { //servidor caiu
+
+                if (contadorFalhas == 3) { //servidor caiu
                     System.out.println("Falha de servidor detectada no Listener do HeartBeat");
                     new Thread(new NotificadorDeFalhas(conexaoServidor.getInetAddress())).start();
                 }
@@ -321,8 +324,9 @@ public class Middleware {
     }
 
     /**
-     * Classe que notifica a existencia de falhas a um dos servidores podendo remover o IP do servidor falho caso este
-     * seja passado como parâmetro do Construtor
+     * Classe que notifica a existencia de falhas a um dos servidores podendo
+     * remover o IP do servidor falho caso este seja passado como parâmetro do
+     * Construtor
      *
      * @author Mastelini
      */
@@ -361,6 +365,7 @@ public class Middleware {
      * @author Mastelini
      */
     private class MantenedorServidores implements Runnable {
+
         private final List<InetAddress> tempIPServidores;
 
         public MantenedorServidores() {
@@ -369,10 +374,10 @@ public class Middleware {
 
         @Override
         public void run() {
-            while(true) {
+            while (true) {
                 getIPsServidoresArquivo();
                 try {
-                    Thread.sleep(2*PainelDeControle.deltaTRespostaServidor * 1000); //aguarda um intervalo de tempo para atualizar a lista de servidores
+                    Thread.sleep(2 * PainelDeControle.deltaTRespostaServidor * 1000); //aguarda um intervalo de tempo para atualizar a lista de servidores
                 } catch (InterruptedException ex) {
                     //Logger.getLogger(Middleware.class.getName()).log(Level.SEVERE, null, ex);
                     //NAO FAZ NADA
@@ -420,16 +425,16 @@ public class Middleware {
         }
 
         private void mergeListaServidores(List<InetAddress> IPServidores) {
-            
-            for(InetAddress IP : IPServidores) {
+
+            for (InetAddress IP : IPServidores) {
                 boolean found = false;
-                for(InetAddress IP2 : servidoresArquivo) {
-                    if(IP.equals(IP2)) {
+                for (InetAddress IP2 : servidoresArquivo) {
+                    if (IP.equals(IP2)) {
                         found = true;
                         break;
                     }
                 }
-                if(!found) {
+                if (!found) {
                     try {
                         servidoresArquivo.add(IP);
                         carregaServidoresRMI();
@@ -437,7 +442,7 @@ public class Middleware {
                             byte[] beat = PainelDeControle.EU_ESCOLHO_VOCE.getBytes();
                             iniciaHeartBeat.getOutputStream().write(beat);
                         }
-                    }   catch (IOException | NotBoundException ex) { //E AGORA? O QUE FAZER?
+                    } catch (IOException | NotBoundException ex) { //E AGORA? O QUE FAZER?
                         Logger.getLogger(Middleware.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }

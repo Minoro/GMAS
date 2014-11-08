@@ -11,7 +11,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import jtree.XMLTreePanel;
-import utils.ManipuladorXML;
 import utils.PainelDeControle;
 
 /**
@@ -27,7 +26,7 @@ public class CopiarArquivo extends DefaultDialog {
      */
     public CopiarArquivo(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
-        
+
         String tipoNoSelecionado = XMLTreePanel.node_selecionado.getNodeName();
         if (!tipoNoSelecionado.equals(PainelDeControle.TAG_ARQUIVO)) {
             JOptionPane.showMessageDialog(InterfaceUsuario.main, "Não é possível copiar uma " + tipoNoSelecionado);
