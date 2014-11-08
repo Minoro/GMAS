@@ -438,7 +438,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
             newelement.setAttribute("dataUltimaModificacao", dataAgora);
             newelement.setAttribute("tamanho", tamanho);
             newelement.setAttribute("nome", nomeArquivoServidor);
-            newelement.setTextContent(nomeArquivo);
+            newelement.getAttributes().getNamedItem("nomeFantasia").setTextContent(nomeArquivo);
 
             ultima_pasta.appendChild(newelement);
 
@@ -473,7 +473,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
             newelement.setAttribute("dataCriacao", dataAgora);
             newelement.setAttribute("dataUltimaModificacao", dataAgora);
             newelement.setAttribute("tamanho", "0");
-            newelement.setTextContent(nomePasta);
+            newelement.getAttributes().getNamedItem("nomeFantasia").setTextContent(nomePasta);
 
             ultima_pasta.appendChild(newelement);
             manipuladorXML.salvarXML(xml, nomeUsuario);
@@ -570,13 +570,8 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
 
         Node node = manipuladorXML.pegaUltimoNode(expressao, xml);
 
-        NodeList filhos = node.getChildNodes();
-        node.setTextContent(novoNome);
-        for (int i = 0; i < filhos.getLength(); i++) {
-            System.out.println(filhos.item(i).getNodeName() + filhos.item(i).toString());
-            node.appendChild(filhos.item(i));
-            
-        }
+        
+        node.getAttributes().getNamedItem("nomeFantasia").setTextContent(novoNome);
         //atualiza data de modificacao
         SimpleDateFormat sdf = new SimpleDateFormat("dd-mm-YYYY HH:MM");
         String dataAgora = sdf.format(new Date());
@@ -665,7 +660,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
         String nomeArquivoServidor = manipuladorXML.getNomeArquivoFisico(caminhoDestino, xml);//nome do arquivo fisico copiado
         //clona o arquivo antigo e coloca o nome fantasia do arquivo origem no arquivo destino
         Node arquivoNovo = arquivoOrigem.cloneNode(false);
-        arquivoNovo.setTextContent(arquivoOrigem.getTextContent());
+        arquivoNovo.getAttributes().getNamedItem("nomeFantasia").setTextContent(arquivoOrigem.getAttributes().getNamedItem("nomeFantasia").getTextContent());
         //atualiza dataUltimaModificacao para 'agora'
         SimpleDateFormat sdf = new SimpleDateFormat("dd-mm-YYYY HH:MM");
         String dataAgora = sdf.format(new Date());

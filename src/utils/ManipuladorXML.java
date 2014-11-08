@@ -105,9 +105,9 @@ public class ManipuladorXML {
         for (int i = 1; i < list.length; i++) {
             String string = list[i];
             if (pasta || i != list.length - 1) {
-                expressao += "/pasta[text()='" + string + "']";
+                expressao += "/pasta[@nomeFantasia='" + string + "']";
             } else {
-                expressao += "/arquivo[text()='" + string + "']";
+                expressao += "/arquivo[@nomeFantasia='" + string + "']";
             }
         }
 

@@ -22,13 +22,7 @@ public class XMLTreeNode {
      * @return String
      */
     public String toString() {
-        NodeList list = element.getChildNodes();
-        for (int i = 0; i < list.getLength(); i++) {
-            if (list.item(i) instanceof Text) {
-                return ((Text) list.item(i)).getTextContent();
-            }
-        }
-        return "";
+        return element.getAttribute("nomeFantasia");
     }
 
     public String getNodeName() {
