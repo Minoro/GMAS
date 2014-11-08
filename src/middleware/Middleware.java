@@ -132,12 +132,17 @@ public class Middleware {
     private void carregaServidoresRMI() throws NotBoundException {
         servidoresRemotos = new ArrayList<>();
         for (int i = 0; i < servidoresArquivo.size(); i++) {
+            SistemaArquivoInterface sistemaArquivoServidor = null;
             try {
-                SistemaArquivoInterface sistemaArquivoServidor = (SistemaArquivoInterface) Naming.lookup(getURLServidorRMI(i));
-                servidoresRemotos.add(sistemaArquivoServidor);
-            } catch (MalformedURLException | RemoteException ex) {
+                sistemaArquivoServidor = (SistemaArquivoInterface) Naming.lookup(getURLServidorRMI(i));
+            } catch (MalformedURLException ex) {
                 Logger.getLogger(Middleware.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (RemoteException ex) {
+                servidoresArquivo.remove(i);
+                i = 0;
+                continue;
             }
+            servidoresRemotos.add(sistemaArquivoServidor);
         }
     }
 
@@ -159,7 +164,7 @@ public class Middleware {
         try {
             for (SistemaArquivoInterface serverRemoto : servidoresRemotos) {
                 boolean resultado = serverRemoto.renomearArquivo(caminho, nome_digitado, PainelDeControle.username);
-                if(!resultado){
+                if (!resultado) {
                     return false;
                 }
             }
@@ -174,7 +179,7 @@ public class Middleware {
         try {
             for (SistemaArquivoInterface serverRemoto : servidoresRemotos) {
                 boolean resultado = serverRemoto.criarArquivo(caminhoSelecionado, arquivo, PainelDeControle.username);
-                if(!resultado){
+                if (!resultado) {
                     return false;
                 }
             }
@@ -189,7 +194,7 @@ public class Middleware {
         try {
             for (SistemaArquivoInterface serverRemoto : servidoresRemotos) {
                 boolean resultado = serverRemoto.criarPasta(caminhoSelecionado, PainelDeControle.username);
-                if(!resultado){
+                if (!resultado) {
                     return false;
                 }
             }
@@ -205,7 +210,7 @@ public class Middleware {
         try {
             for (SistemaArquivoInterface serverRemoto : servidoresRemotos) {
                 boolean resultado = serverRemoto.copiarArquivo(caminhoOrigem, caminhoDestino, PainelDeControle.username);
-                if(!resultado){
+                if (!resultado) {
                     return false;
                 }
             }
@@ -220,7 +225,7 @@ public class Middleware {
         try {
             for (SistemaArquivoInterface serverRemoto : servidoresRemotos) {
                 boolean resultado = serverRemoto.moverArquivo(caminhoOrigem, caminhoDestino, PainelDeControle.username);
-                if(!resultado){
+                if (!resultado) {
                     return false;
                 }
             }
@@ -235,7 +240,7 @@ public class Middleware {
         try {
             for (SistemaArquivoInterface serverRemoto : servidoresRemotos) {
                 boolean resultado = serverRemoto.deletarArquivo(caminhoOrigem, PainelDeControle.username);
-                if(!resultado){
+                if (!resultado) {
                     return false;
                 }
             }
@@ -250,7 +255,7 @@ public class Middleware {
         try {
             for (SistemaArquivoInterface serverRemoto : servidoresRemotos) {
                 boolean resultado = serverRemoto.escreverArquivo(caminho, texto, PainelDeControle.username);
-                if(!resultado){
+                if (!resultado) {
                     return false;
                 }
             }
@@ -301,6 +306,7 @@ public class Middleware {
             try (ServerSocket s = new ServerSocket(PainelDeControle.PORTA_HEARTBEAT)) {
                 while (true) {
                     Socket novoServidor = s.accept();
+                    System.out.println("Iniciando listener!aeeeeeeee ki legaul");
                     new Thread(new ListenerHeartBeat(novoServidor)).start();
                 }
             } catch (IOException ex) {
@@ -334,7 +340,10 @@ public class Middleware {
                 while (true) {
                     try {
                         byte[] buffer = new byte[PainelDeControle.TAMANHO_BUFFER];
-                        in.read(buffer); //le HeartBeat
+                        int i = in.read(buffer); //le HeartBeat
+                        if (i == -1) {
+                            throw new IOException();
+                        }
                         contadorFalhas = 0;
                     } catch (IOException e) {
                         contadorFalhas++;
@@ -347,6 +356,7 @@ public class Middleware {
                     }
                 }
             } catch (IOException ex) {
+                System.out.println("Nao peguei input stream");
             }
         }
     }
@@ -394,10 +404,10 @@ public class Middleware {
      */
     private class MantenedorServidores implements Runnable {
 
-        private final List<InetAddress> tempIPServidores;
+        private List<InetAddress> tempIPServidores;
 
         public MantenedorServidores() {
-            this.tempIPServidores = new LinkedList<>();
+            this.tempIPServidores = new LinkedList();
         }
 
         @Override
@@ -426,6 +436,7 @@ public class Middleware {
                     int i = 0;
                     tempoInicio = System.nanoTime();
                     while (true) {
+                        tempIPServidores = new LinkedList();
                         if (i == 2) {
                             break;
                         }

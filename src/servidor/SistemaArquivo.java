@@ -153,6 +153,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
                                 }
                                 byte[] m = msg.getBytes();
                                 resp.getOutputStream().write(m);
+                                System.out.println("MENSAGEM ENVIADA!!!" + msg);
                             } catch (IOException e) {
                                 //do nothing
                                 System.out.println("Tempo excedido");
@@ -207,6 +208,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
 
         @Override
         public void run() {
+            System.out.println("Começando a replicar!");
             int contadorRespostas = 0;
             try (MulticastSocket mSckt = new MulticastSocket();
                     ServerSocket server = new ServerSocket(PainelDeControle.PORTA_ERROS)) { //escuta respostas dos nomes de usuarios armazenados
@@ -227,6 +229,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
                         byte[] buffer = new byte[PainelDeControle.TAMANHO_BUFFER];
                         recebimento.getInputStream().read(buffer);
                         mensagem = new String(buffer);
+                        System.out.println("Recebi resposta para replicação de " + recebimento.getInetAddress().getHostAddress() + "! " + mensagem);
                         mensagem = mensagem.substring(0, mensagem.indexOf("\0")); //elimina caracteres inuteis
                         mensagem += "::" + recebimento.getInetAddress(); //concatena o IP do servidor
                         respostas.add(mensagem);
