@@ -394,7 +394,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
                         send.getOutputStream().write(heartbeat);
                         contadorFalhas = 0;
                         try {
-                            Thread.sleep((long) (1000 * (PainelDeControle.deltaTRespostaServidor / 2.0)));
+                            Thread.sleep((long) (100 * (PainelDeControle.deltaTRespostaServidor / 2.0)));
                         } catch (InterruptedException ex) {
                             //Falha no Sleep, não faz nada
                         }
