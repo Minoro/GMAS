@@ -231,9 +231,18 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
                         mensagem = new String(buffer);
                         System.out.println("Recebi resposta para replicação de " + recebimento.getInetAddress().getHostAddress() + "! " + mensagem);
                         mensagem = mensagem.substring(0, mensagem.indexOf("\0")); //elimina caracteres inuteis
-                        mensagem += "::" + recebimento.getInetAddress(); //concatena o IP do servidor
-                        respostas.add(mensagem);
+                        //PROVISORIO
+                        servidoresExistentes.add(recebimento.getInetAddress().getHostAddress());
+                        if (mensagem.length() > 0) {
+                            mensagem += "::" + recebimento.getInetAddress().getHostAddress(); //concatena o IP do servidor
+                            respostas.add(mensagem);
+                        }
                         contadorRespostas++;
+                        if (contadorRespostas == 2) {
+                            //TODO provisório!!!
+                            //ver como fazer com timeout
+                            break;
+                        }
                     }
                 }
                 if (contadorRespostas > 1) {
@@ -261,7 +270,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
                 r = msg.split("::");
                 aux = r[1]; //salva nome(IP) do servidor
                 r = r[0].split(";");
-                servidoresExistentes.add(aux);
+//                servidoresExistentes.add(aux);
                 for (int i = 0; i < r.length; i++) {
                     Integer value = contagemUsuarios.get(r[i]);
                     if (value == null) {
@@ -299,6 +308,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
                     try (Socket backup = new Socket(InetAddress.getByName(servidoresExistentes.get(indServidor)), PainelDeControle.PORTA_SERVIDORES)) {
                         byte[] solicitacao = msg.getBytes();
                         backup.getOutputStream().write(solicitacao); //requisita a execucao de backup
+                        System.out.println("Mensagem de backup enviada para " + InetAddress.getByName(servidoresExistentes.get(indServidor)) + new String(solicitacao));
                     }
 
                     /*//envia para o middleware solicitante o IP do novo servidor deste
