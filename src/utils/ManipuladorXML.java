@@ -95,7 +95,7 @@ public class ManipuladorXML {
     private String montaExpressao(String caminho, boolean pasta) {
         String[] list = caminho.split("/");
 
-        String expressao = "/" + PainelDeControle.TAG_RAIZ + "/";
+        String expressao = "/" + PainelDeControle.TAG_RAIZ;
 
 //        if (!caminho.contains("/")) {
 //            System.out.println("RAIZ selecionada!");
@@ -105,15 +105,12 @@ public class ManipuladorXML {
         for (int i = 1; i < list.length; i++) {
             String string = list[i];
             if (pasta || i != list.length - 1) {
-                expressao += "pasta[text()='" + string + "']/";
+                expressao += "/pasta[text()='" + string + "']";
             } else {
-                expressao += "arquivo[text()='" + string + "']";
+                expressao += "/arquivo[text()='" + string + "']";
             }
         }
 
-        if (pasta) {
-            expressao = expressao.substring(0, expressao.lastIndexOf("/"));
-        }
         System.out.println("Expressão gerada: " + expressao + ".");
         return expressao;
     }

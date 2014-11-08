@@ -81,7 +81,10 @@ public class Arquivo implements Serializable {
     }
 
     public String getConteudo() {
-        return conteudo;
+        if (conteudo != null) {
+            return conteudo;
+        }
+        return "";
     }
 
     public void setConteudo(String conteudo) {

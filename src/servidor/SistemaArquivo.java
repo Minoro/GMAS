@@ -564,7 +564,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
             if (!manipuladorXML.existePasta(caminhoOrigem, xml)) {
                 return false;
             }
-            expressao = manipuladorXML.montarExpressaoArquivo(caminhoOrigem);
+            expressao = manipuladorXML.montarExpressaoPasta(caminhoOrigem);
         }
 
         Node node = manipuladorXML.pegaUltimoNode(expressao, xml);

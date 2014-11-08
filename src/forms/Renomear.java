@@ -105,7 +105,6 @@ public class Renomear extends DefaultDialog {
             nome_digitado += ".txt";
         }
         System.out.println("Caminho do arquivo/pasta: " + caminho);
-        System.out.println("Novo nome: " + nome_digitado);
         //Se for renomear algo que nao é um arquivo, e colocar extensao de arquivo, nao deixa.
         if (!caminho.endsWith(".txt") && nome_digitado.endsWith(".txt")) {
             JOptionPane.showMessageDialog(InterfaceUsuario.main, "Você não pode adicionar uma extensão de arquivo (.txt) em uma pasta");
