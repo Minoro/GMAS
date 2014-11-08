@@ -437,7 +437,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
             newelement.setAttribute("dataUltimaModificacao", dataAgora);
             newelement.setAttribute("tamanho", tamanho);
             newelement.setAttribute("nome", nomeArquivoServidor);
-            newelement.getAttributes().getNamedItem("nomeFantasia").setTextContent(nomeArquivo);
+            newelement.setAttribute("nomeFantasia", nomeArquivo);
 
             ultima_pasta.appendChild(newelement);
 
@@ -472,7 +472,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
             newelement.setAttribute("dataCriacao", dataAgora);
             newelement.setAttribute("dataUltimaModificacao", dataAgora);
             newelement.setAttribute("tamanho", "0");
-            newelement.getAttributes().getNamedItem("nomeFantasia").setTextContent(nomePasta);
+            newelement.setAttribute("nomeFantasia", nomePasta);
 
             ultima_pasta.appendChild(newelement);
             manipuladorXML.salvarXML(xml, nomeUsuario);
@@ -658,13 +658,13 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
         String nomeArquivoServidor = manipuladorXML.getNomeArquivoFisico(caminhoDestino, xml);//nome do arquivo fisico copiado
         //clona o arquivo antigo e coloca o nome fantasia do arquivo origem no arquivo destino
         Node arquivoNovo = arquivoOrigem.cloneNode(false);
-        arquivoNovo.getAttributes().getNamedItem("nomeFantasia").setTextContent(arquivoOrigem.getAttributes().getNamedItem("nomeFantasia").getTextContent());
         //atualiza dataUltimaModificacao para 'agora'
         SimpleDateFormat sdf = new SimpleDateFormat("dd-mm-YYYY HH:MM");
         String dataAgora = sdf.format(new Date());
         arquivoNovo.getAttributes().getNamedItem("nome").setTextContent(nomeArquivoServidor);
         arquivoNovo.getAttributes().getNamedItem("dataCriacao").setTextContent(dataAgora);
         arquivoNovo.getAttributes().getNamedItem("dataUltimaModificacao").setTextContent(dataAgora);
+        arquivoNovo.getAttributes().getNamedItem("nomeFantasia").setTextContent(arquivoOrigem.getAttributes().getNamedItem("nomeFantasia").getTextContent());
 
         pasta.appendChild(arquivoNovo);
         try {
