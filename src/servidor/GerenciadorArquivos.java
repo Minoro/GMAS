@@ -105,10 +105,9 @@ public class GerenciadorArquivos {
 
             String conteudo = bufferedReader.readLine();
             while (conteudo != null) {
-                atributo += "\n" + conteudo;
+                atributo += conteudo;
                 conteudo = bufferedReader.readLine();
             }
-
             arquivo.setConteudo(atributo);
 
             bufferedReader.close();
