@@ -99,6 +99,8 @@ public class Middleware {
                         //confirmação do servidor
                         servidoresArquivo.add(resp.getInetAddress());
                         i++;
+                    } catch (SocketTimeoutException ex) {
+                        //faz nada e continua execução
                     }
                 }
             }
@@ -373,7 +375,7 @@ public class Middleware {
             while (true) {
                 getIPsServidoresArquivo();
                 try {
-                    Thread.sleep(2 * PainelDeControle.deltaTRespostaServidor * 1000); //aguarda um intervalo de tempo para atualizar a lista de servidores
+                    Thread.sleep(4 * PainelDeControle.deltaTRespostaServidor * 1000); //aguarda um intervalo de tempo para atualizar a lista de servidores
                 } catch (InterruptedException ex) {
                     //Logger.getLogger(Middleware.class.getName()).log(Level.SEVERE, null, ex);
                     //NAO FAZ NADA
