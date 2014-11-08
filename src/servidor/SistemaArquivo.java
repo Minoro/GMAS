@@ -44,7 +44,6 @@ import model.Arquivo;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 import utils.ManipuladorXML;
 
@@ -499,7 +498,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
                 FileWriter fw;
                 fw = new FileWriter(file.getAbsoluteFile());
                 BufferedWriter bw = new BufferedWriter(fw);
-                bw.write("<raiz>" + nomeUsuario + "</raiz>");//salva as informações no arquivo no disco
+                bw.write("<raiz nomeFantasia='" + nomeUsuario + "'></raiz>");//salva as informações no arquivo no disco
                 bw.close();
 
             } catch (IOException ex) {
@@ -570,7 +569,6 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
 
         Node node = manipuladorXML.pegaUltimoNode(expressao, xml);
 
-        
         node.getAttributes().getNamedItem("nomeFantasia").setTextContent(novoNome);
         //atualiza data de modificacao
         SimpleDateFormat sdf = new SimpleDateFormat("dd-mm-YYYY HH:MM");
