@@ -647,12 +647,6 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
         String expressaoDestino = manipuladorXML.montarExpressaoPasta(caminhoDestino);
         Node pasta = manipuladorXML.pegaUltimaPasta(expressaoDestino, xml);
 
-        try {
-            manipuladorXML.salvarXML(xml, nomeUsuario);
-        } catch (TransformerException ex) {
-            Logger.getLogger(SistemaArquivo.class.getName()).log(Level.SEVERE, null, ex);
-            return false;
-        }
 
         //carrega arquivo a ser copiado
         Arquivo arquivoCopiado = getArquivo(caminhoOrigem, nomeUsuario);
@@ -676,6 +670,12 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
         arquivoNovo.getAttributes().getNamedItem("dataUltimaModificacao").setTextContent(dataAgora);
 
         pasta.appendChild(arquivoNovo);
+        try {
+            manipuladorXML.salvarXML(xml, nomeUsuario);
+        } catch (TransformerException ex) {
+            Logger.getLogger(SistemaArquivo.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
         return GerenciadorArquivos.salvarArquivo(arquivoCopiado, nomeArquivoServidor);
     }
 
