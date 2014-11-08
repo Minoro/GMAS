@@ -94,13 +94,15 @@ public class ManipuladorXML {
      */
     private String montaExpressao(String caminho, boolean pasta) {
         String[] list = caminho.split("/");
+
         String expressao = "/raiz/";
 
-        if (!caminho.contains("/")) {
-            System.out.println("RAIZ selecionada!");
-            return expressao.substring(0, expressao.length() - 1);
-        }
-        for (int i = 0; i < list.length; i++) {
+//        if (!caminho.contains("/")) {
+//            System.out.println("RAIZ selecionada!");
+//            return expressao.substring(0, expressao.length() - 1);
+//        }
+        //começa em 1 pois a primeira posição é a raiz e ela ja foi adicionada por padrao na expressao
+        for (int i = 1; i < list.length; i++) {
             String string = list[i];
             if (pasta || i != list.length - 1) {
                 expressao += "pasta[text()='" + string + "']/";

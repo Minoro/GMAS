@@ -114,7 +114,7 @@ public class XMLTreePanel extends JPanel {
      */
     public static String getCaminhoSelecionado(boolean excluirUltimo) {
         TreePath tp = tree.getSelectionPath();
-        String caminho = "";
+        String caminho = "raiz/";
         if (tp != null) {
             Object[] no = (Object[]) tp.getPath();
             //Monta a 'url' do elemento que está selecionado
