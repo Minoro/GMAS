@@ -303,20 +303,24 @@ public class Middleware {
         public void run() {
             int contadorFalhas = 0;
             try {
-                conexaoServidor.setSoTimeout(PainelDeControle.deltaTRespostaServidor * 2); //define timeout de espera para mensagens de leitura
+                conexaoServidor.setSoTimeout(1000 * PainelDeControle.deltaTRespostaServidor * 2); //define timeout de espera para mensagens de leitura
                 in = conexaoServidor.getInputStream();
                 while (true) {
-                    byte[] buffer = new byte[PainelDeControle.TAMANHO_BUFFER];
-                    in.read(buffer); //le HeartBeat
-                    contadorFalhas = 0;
+                    try {
+                        byte[] buffer = new byte[PainelDeControle.TAMANHO_BUFFER];
+                        in.read(buffer); //le HeartBeat
+                        contadorFalhas = 0;
+                    } catch (IOException e) {
+                        contadorFalhas++;
+                        System.out.println("Falhas detectadas: " + contadorFalhas);
+                        if (contadorFalhas == 3) { //servidor caiu
+                            System.out.println("Falha de servidor detectada no Listener do HeartBeat");
+                            new Thread(new NotificadorDeFalhas(conexaoServidor.getInetAddress())).start();
+                            break;
+                        }
+                    }
                 }
             } catch (IOException ex) {
-                contadorFalhas++;
-
-                if (contadorFalhas == 3) { //servidor caiu
-                    System.out.println("Falha de servidor detectada no Listener do HeartBeat");
-                    new Thread(new NotificadorDeFalhas(conexaoServidor.getInetAddress())).start();
-                }
             }
         }
     }
