@@ -701,7 +701,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
         if (!manipuladorXML.existeArquivo(caminho, xml)) {
             return false;
         }
-        String expressaoDestino = manipuladorXML.montarExpressaoPasta(caminho);
+        String expressaoDestino = manipuladorXML.montarExpressaoArquivo(caminho);
         Node nodeArquivo = manipuladorXML.pegaUltimoNode(expressaoDestino, xml);
         //atualiza dataUltimaModificacao para 'agora'
         SimpleDateFormat sdf = new SimpleDateFormat("dd-mm-YYYY HH:MM");
