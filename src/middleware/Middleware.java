@@ -302,7 +302,7 @@ public class Middleware {
         public void run() {
             int contadorFalhas = 0;
             try {
-                conexaoServidor.setSoTimeout(PainelDeControle.deltaTRespostaServidor*2); //define timeout de espera para mensagens de leitura
+                conexaoServidor.setSoTimeout(1000*PainelDeControle.deltaTRespostaServidor*2); //define timeout de espera para mensagens de leitura
                 in = conexaoServidor.getInputStream();
                 while(true) {
                     byte [] buffer = new byte[PainelDeControle.TAMANHO_BUFFER];
