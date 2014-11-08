@@ -40,7 +40,6 @@ public class Middleware {
      */
     private List<InetAddress> servidoresArquivo;
     private MantenedorServidores mantenedorServidores;
-    public SistemaArquivoInterface server;
 
     public List<SistemaArquivoInterface> servidoresRemotos;
 
@@ -64,7 +63,6 @@ public class Middleware {
         servidoresArquivo = new LinkedList<>();
         mergeUsuario(multicastGroup, novoUsuario);
         carregaServidoresRMI();
-        //server = (SistemaArquivoInterface) Naming.lookup(PainelDeControle.middleware.getURLServidorRMI(0));
         PainelDeControle.xml = pedirXML();
     }
 
@@ -237,7 +235,7 @@ public class Middleware {
 
     public String lerArquivo(String caminho) throws RemoteException {
         try {
-            return server.lerArquivo(caminho, PainelDeControle.username);
+            return servidoresRemotos.get(0).lerArquivo(caminho, PainelDeControle.username);
         } catch (XPathExpressionException ex) {
             JOptionPane.showMessageDialog(InterfaceUsuario.main, ex.getMessage());
         }
