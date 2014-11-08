@@ -638,20 +638,17 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
         }
         //monta expressao do arquivo de origem baseado no caminho e recupera o NODE
         String expressaoOrigem = manipuladorXML.montarExpressaoArquivo(caminhoOrigem);
+        System.out.println("ExpressaoOrigem: " + expressaoOrigem);
         Node arquivoOrigem = manipuladorXML.pegaUltimoNode(expressaoOrigem, xml);
 
         String expressaoDestino = manipuladorXML.montarExpressaoPasta(caminhoDestino);
+        System.out.println("ExpressaoDestino: " + expressaoDestino);
         Node pasta = manipuladorXML.pegaUltimoNode(expressaoDestino, xml);
 
         //carrega arquivo a ser copiado
         Arquivo arquivoCopiado = getArquivo(caminhoOrigem, nomeUsuario);
 
-        //cria uma cópia do arquivo
-        if (!criarArquivo(caminhoDestino, arquivoCopiado, nomeUsuario)) {
-            return false;//erro ao copiar o arquivo
-        }
-
-        String nomeArquivoServidor = manipuladorXML.getNomeArquivoFisico(caminhoDestino, xml);//nome do arquivo fisico copiado
+        String nomeArquivoServidor = GerenciadorArquivos.criarArquivo(arquivoCopiado);
         //clona o arquivo antigo e coloca o nome fantasia do arquivo origem no arquivo destino
         Node arquivoNovo = arquivoOrigem.cloneNode(false);
         //atualiza dataUltimaModificacao para 'agora'
@@ -669,7 +666,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
             Logger.getLogger(SistemaArquivo.class.getName()).log(Level.SEVERE, null, ex);
             return false;
         }
-        return GerenciadorArquivos.salvarArquivo(arquivoCopiado, nomeArquivoServidor);
+        return true;
     }
 
     @Override
