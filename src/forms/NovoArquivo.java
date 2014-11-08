@@ -5,9 +5,11 @@
  */
 package forms;
 
+import cliente.InterfaceUsuario;
 import java.rmi.RemoteException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import jtree.XMLTreePanel;
 import model.Arquivo;
 import utils.PainelDeControle;
@@ -116,7 +118,10 @@ public class NovoArquivo extends DefaultDialog {
         Arquivo arquivo = new Arquivo();
         arquivo.setConteudo(conteudo_arquivo);
         try {
-            PainelDeControle.middleware.criarArquivo(caminhoSelecionado, arquivo);
+            boolean resultado = PainelDeControle.middleware.criarArquivo(caminhoSelecionado, arquivo);
+            if (!resultado) {
+                JOptionPane.showMessageDialog(InterfaceUsuario.main, "Não foi possível criar o novo arquivo");
+            }
         } catch (RemoteException ex) {
             Logger.getLogger(NovoArquivo.class.getName()).log(Level.SEVERE, null, ex);
         }

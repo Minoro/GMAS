@@ -115,7 +115,7 @@ public class Renomear extends DefaultDialog {
             if (PainelDeControle.middleware.renomearArquivo(caminho, nome_digitado)) {
                 JOptionPane.showMessageDialog(InterfaceUsuario.main, "Arquivo/Pasta renomeado para " + nome_digitado);
             } else {
-                JOptionPane.showMessageDialog(InterfaceUsuario.main, "Arquivo para renomeação não existente");
+                JOptionPane.showMessageDialog(InterfaceUsuario.main, "Não foi possível renomear o arquivo");
             }
         } catch (RemoteException ex) {
             Logger.getLogger(Renomear.class.getName()).log(Level.SEVERE, null, ex);

@@ -5,9 +5,11 @@
  */
 package forms;
 
+import cliente.InterfaceUsuario;
 import java.rmi.RemoteException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import jtree.XMLTreePanel;
 import utils.PainelDeControle;
 
@@ -81,7 +83,10 @@ public class NovaPasta extends DefaultDialog {
         caminhoSelecionado += nome_pasta;
 
         try {
-            PainelDeControle.middleware.criarPasta(caminhoSelecionado);
+            boolean resultado = PainelDeControle.middleware.criarPasta(caminhoSelecionado);
+            if (!resultado) {
+                JOptionPane.showMessageDialog(InterfaceUsuario.main, "Não foi possível criar a nova pasta");
+            }
         } catch (RemoteException ex) {
             Logger.getLogger(NovaPasta.class.getName()).log(Level.SEVERE, null, ex);
         }

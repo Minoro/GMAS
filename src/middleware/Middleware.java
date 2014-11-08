@@ -158,7 +158,10 @@ public class Middleware {
     public boolean renomearArquivo(String caminho, String nome_digitado) throws RemoteException {
         try {
             for (SistemaArquivoInterface serverRemoto : servidoresRemotos) {
-                serverRemoto.renomearArquivo(caminho, nome_digitado, PainelDeControle.username);
+                boolean resultado = serverRemoto.renomearArquivo(caminho, nome_digitado, PainelDeControle.username);
+                if(!resultado){
+                    return false;
+                }
             }
             return true;
         } catch (XPathExpressionException ex) {
@@ -170,7 +173,10 @@ public class Middleware {
     public boolean criarArquivo(String caminhoSelecionado, Arquivo arquivo) throws RemoteException {
         try {
             for (SistemaArquivoInterface serverRemoto : servidoresRemotos) {
-                serverRemoto.criarArquivo(caminhoSelecionado, arquivo, PainelDeControle.username);
+                boolean resultado = serverRemoto.criarArquivo(caminhoSelecionado, arquivo, PainelDeControle.username);
+                if(!resultado){
+                    return false;
+                }
             }
             return true;
         } catch (XPathExpressionException ex) {
@@ -182,7 +188,10 @@ public class Middleware {
     public boolean criarPasta(String caminhoSelecionado) throws RemoteException {
         try {
             for (SistemaArquivoInterface serverRemoto : servidoresRemotos) {
-                serverRemoto.criarPasta(caminhoSelecionado, PainelDeControle.username);
+                boolean resultado = serverRemoto.criarPasta(caminhoSelecionado, PainelDeControle.username);
+                if(!resultado){
+                    return false;
+                }
             }
             return true;
 
@@ -193,13 +202,12 @@ public class Middleware {
     }
 
     public boolean copiarArquivo(String caminhoOrigem, String caminhoDestino) throws RemoteException {
-        caminhoOrigem = caminhoOrigem.substring(0, caminhoOrigem.length() - 1);
-        caminhoDestino = caminhoDestino.substring(0, caminhoDestino.length() - 1);
-        System.out.println("Origem: " + caminhoOrigem);
-        System.out.println("Destino: " + caminhoDestino);
         try {
             for (SistemaArquivoInterface serverRemoto : servidoresRemotos) {
-                serverRemoto.copiarArquivo(caminhoOrigem, caminhoDestino, PainelDeControle.username);
+                boolean resultado = serverRemoto.copiarArquivo(caminhoOrigem, caminhoDestino, PainelDeControle.username);
+                if(!resultado){
+                    return false;
+                }
             }
             return true;
         } catch (XPathExpressionException ex) {
@@ -211,7 +219,10 @@ public class Middleware {
     public boolean moverArquivo(String caminhoOrigem, String caminhoDestino) throws RemoteException {
         try {
             for (SistemaArquivoInterface serverRemoto : servidoresRemotos) {
-                serverRemoto.moverArquivo(caminhoOrigem, caminhoDestino, PainelDeControle.username);
+                boolean resultado = serverRemoto.moverArquivo(caminhoOrigem, caminhoDestino, PainelDeControle.username);
+                if(!resultado){
+                    return false;
+                }
             }
             return true;
         } catch (XPathExpressionException ex) {
@@ -223,7 +234,10 @@ public class Middleware {
     public boolean deletarArquivo(String caminhoOrigem) throws RemoteException {
         try {
             for (SistemaArquivoInterface serverRemoto : servidoresRemotos) {
-                serverRemoto.deletarArquivo(caminhoOrigem, PainelDeControle.username);
+                boolean resultado = serverRemoto.deletarArquivo(caminhoOrigem, PainelDeControle.username);
+                if(!resultado){
+                    return false;
+                }
             }
             return true;
         } catch (XPathExpressionException ex) {
@@ -235,7 +249,10 @@ public class Middleware {
     public boolean salvarArquivo(String caminho, String texto) throws RemoteException {
         try {
             for (SistemaArquivoInterface serverRemoto : servidoresRemotos) {
-                serverRemoto.escreverArquivo(caminho, texto, PainelDeControle.username);
+                boolean resultado = serverRemoto.escreverArquivo(caminho, texto, PainelDeControle.username);
+                if(!resultado){
+                    return false;
+                }
             }
             return true;
         } catch (XPathExpressionException ex) {

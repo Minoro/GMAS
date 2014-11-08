@@ -81,8 +81,13 @@ public class CopiarArquivo extends DefaultDialog {
         }
         String caminhoDestino = XMLTreePanel.getCaminhoSelecionado(false);
 
+        arquivoCopiado = arquivoCopiado.substring(0, arquivoCopiado.length() - 1);
+        caminhoDestino = caminhoDestino.substring(0, caminhoDestino.length() - 1);
         try {
-            PainelDeControle.middleware.copiarArquivo(arquivoCopiado, caminhoDestino);
+            boolean resultado = PainelDeControle.middleware.copiarArquivo(arquivoCopiado, caminhoDestino);
+            if (!resultado) {
+                JOptionPane.showMessageDialog(InterfaceUsuario.main, "Não foi possível copiar o arquivo");
+            }
         } catch (RemoteException ex) {
             Logger.getLogger(CopiarArquivo.class.getName()).log(Level.SEVERE, null, ex);
         }

@@ -84,7 +84,10 @@ public class MoverArquivo extends DefaultDialog {
         caminhoDestino = caminhoDestino.substring(0, caminhoDestino.length() - 1);
 
         try {
-            PainelDeControle.middleware.moverArquivo(arquivoCopiado, caminhoDestino);
+            boolean resultado = PainelDeControle.middleware.moverArquivo(arquivoCopiado, caminhoDestino);
+            if (!resultado) {
+                JOptionPane.showMessageDialog(InterfaceUsuario.main, "Não foi possível mover o arquivo");
+            }
         } catch (RemoteException ex) {
             Logger.getLogger(CopiarArquivo.class.getName()).log(Level.SEVERE, null, ex);
         }
