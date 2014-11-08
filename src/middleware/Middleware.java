@@ -101,8 +101,6 @@ public class Middleware {
                         //confirmação do servidor
                         servidoresArquivo.add(resp.getInetAddress());
                         i++;
-                    } catch (SocketTimeoutException e) {
-                        break;
                     }
                 }
             }
