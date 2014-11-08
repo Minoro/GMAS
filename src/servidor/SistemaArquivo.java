@@ -633,8 +633,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
 
         String novoCaminho = caminhoDestino + caminhoOrigem.substring(caminhoOrigem.lastIndexOf("/") + 1, caminhoOrigem.length());
         System.out.println("Caminho do novo arquivo =" + novoCaminho);
-        if (!manipuladorXML.existeArquivo(caminhoOrigem, xml)
-                || manipuladorXML.existeArquivo(novoCaminho, xml)) {
+        if (!manipuladorXML.existeArquivo(caminhoOrigem, xml)) {
             return false;
         }
         //monta expressao do arquivo de origem baseado no caminho e recupera o NODE
