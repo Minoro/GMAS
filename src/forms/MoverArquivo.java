@@ -29,10 +29,11 @@ public class MoverArquivo extends DefaultDialog {
 
         String tipoNoSelecionado = XMLTreePanel.node_selecionado.getNodeName();
         if (!tipoNoSelecionado.equals(PainelDeControle.TAG_ARQUIVO)) {
-            JOptionPane.showMessageDialog(InterfaceUsuario.main, "Não é possível copiar uma " + tipoNoSelecionado);
+            JOptionPane.showMessageDialog(InterfaceUsuario.main, "Não é possível mover uma " + tipoNoSelecionado);
             return;
         }
         arquivoCopiado = XMLTreePanel.getCaminhoSelecionado(false);
+        arquivoCopiado = arquivoCopiado.substring(0, arquivoCopiado.length() - 1);
         JOptionPane.showMessageDialog(InterfaceUsuario.main, "Selecione o destino da cópia do arquivo e clique em OK");
 
         initComponents();
@@ -74,7 +75,13 @@ public class MoverArquivo extends DefaultDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
+        String tipoNoSelecionado = XMLTreePanel.node_selecionado.getNodeName();
+        if (tipoNoSelecionado.equals(PainelDeControle.TAG_ARQUIVO)) {
+            JOptionPane.showMessageDialog(InterfaceUsuario.main, "Selecione uma pasta destino para copiar o arquivo!!");
+            return;
+        }
         String caminhoDestino = XMLTreePanel.getCaminhoSelecionado(false);
+        caminhoDestino = caminhoDestino.substring(0, caminhoDestino.length() - 1);
 
         try {
             PainelDeControle.middleware.moverArquivo(arquivoCopiado, caminhoDestino);

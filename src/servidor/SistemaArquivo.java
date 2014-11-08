@@ -589,10 +589,11 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
             throws RemoteException, XPathExpressionException {
         Document xml = pedirXML(nomeUsuario);
 
+        String novoArquivo = caminhoDestino + caminhoOrigem.substring(caminhoOrigem.lastIndexOf("/") + 1, caminhoOrigem.length());
         //verifica se o arquivo de origem existe e se não há arquivo com o mesmo
         //nome no destino
         if (!manipuladorXML.existeArquivo(caminhoOrigem, xml)
-                || manipuladorXML.existeArquivo(caminhoDestino, xml)) {
+                || manipuladorXML.existeArquivo(novoArquivo, xml)) {
             return false;
         }
 
@@ -600,12 +601,8 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
         String expressaoOrigem = manipuladorXML.montarExpressaoArquivo(caminhoOrigem);
         Node arquivoOrigem = manipuladorXML.pegaUltimoNode(expressaoOrigem, xml);
 
-        //caso o caminho destino termine com '.txt', retira-se o último elemento(arquivo) do caminho
-        if (caminhoDestino.endsWith(".txt")) {
-            caminhoDestino = caminhoDestino.substring(0, caminhoDestino.lastIndexOf("/"));
-        }
         String expressaoDestino = manipuladorXML.montarExpressaoPasta(caminhoDestino);
-        Node pasta = manipuladorXML.pegaUltimaPasta(expressaoDestino, xml);
+        Node pasta = manipuladorXML.pegaUltimoNode(expressaoDestino, xml);
         //atualiza dataUltimaModificacao para 'agora'
         SimpleDateFormat sdf = new SimpleDateFormat("dd-mm-YYYY HH:MM");
         String dataAgora = sdf.format(new Date());

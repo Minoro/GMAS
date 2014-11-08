@@ -96,6 +96,7 @@ public class XMLMenu extends JMenuBar {
             public void mousePressed(MouseEvent e) {
                 XMLTreeNode arquivo = XMLTreePanel.node_selecionado;
                 String caminho = XMLTreePanel.getCaminhoSelecionado(false);
+                caminho = caminho.substring(0, caminho.length() - 1);
                 int resposta = JOptionPane.showConfirmDialog(
                         InterfaceUsuario.main,
                         "Deseja realmente apagar este arquivo " + arquivo.toString() + "(" + caminho + ") ?",
