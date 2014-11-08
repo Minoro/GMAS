@@ -44,6 +44,7 @@ import model.Arquivo;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 import utils.ManipuladorXML;
 
@@ -569,7 +570,13 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
 
         Node node = manipuladorXML.pegaUltimoNode(expressao, xml);
 
+        NodeList filhos = node.getChildNodes();
         node.setTextContent(novoNome);
+        for (int i = 0; i < filhos.getLength(); i++) {
+            System.out.println(filhos.item(i).getNodeName() + filhos.item(i).toString());
+            node.appendChild(filhos.item(i));
+            
+        }
         //atualiza data de modificacao
         SimpleDateFormat sdf = new SimpleDateFormat("dd-mm-YYYY HH:MM");
         String dataAgora = sdf.format(new Date());
