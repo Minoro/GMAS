@@ -53,7 +53,7 @@ public class PainelDeControle {
      */
     public static int calibrarRede() {
         //TODO
-        return 10;
+        return 2;
     }
 
 }
