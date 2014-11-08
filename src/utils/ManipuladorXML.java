@@ -104,10 +104,10 @@ public class ManipuladorXML {
         //começa em 1 pois a primeira posição é a raiz e ela ja foi adicionada por padrao na expressao
         for (int i = 1; i < list.length; i++) {
             String string = list[i];
-            if (pasta || i != list.length - 1) {
-                expressao += "pasta[text()='" + string + "']/";
-            } else {
+            if (!pasta && i == list.length - 1) {
                 expressao += "arquivo[text()='" + string + "']";
+            } else {
+                expressao += "pasta[text()='" + string + "']/";
             }
         }
 
