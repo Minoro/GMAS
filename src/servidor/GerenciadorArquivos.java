@@ -109,7 +109,8 @@ public class GerenciadorArquivos {
                 conteudo = bufferedReader.readLine();
             }
             arquivo.setConteudo(atributo);
-
+            arquivo.setNome(nome);
+            
             bufferedReader.close();
         } catch (IOException e) {
             e.printStackTrace();

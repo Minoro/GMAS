@@ -204,6 +204,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
             respostas = new LinkedList<>();
             usuariosExistentes = new LinkedList<>();
             servidoresExistentes = new LinkedList<>();
+            servidor_X_usuario = new HashMap<>();
         }
 
         @Override
@@ -308,7 +309,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
                     try (Socket backup = new Socket(InetAddress.getByName(servidoresExistentes.get(indServidor)), PainelDeControle.PORTA_SERVIDORES)) {
                         byte[] solicitacao = msg.getBytes();
                         backup.getOutputStream().write(solicitacao); //requisita a execucao de backup
-                        System.out.println("Mensagem de backup enviada para " + InetAddress.getByName(servidoresExistentes.get(indServidor)) + new String(solicitacao));
+                        System.out.println("Mensagem de backup enviada para " + InetAddress.getByName(servidoresExistentes.get(indServidor) + new String(solicitacao)));
                     }
 
                     /*//envia para o middleware solicitante o IP do novo servidor deste
@@ -348,6 +349,8 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
                         }
                     } catch (NotBoundException | MalformedURLException | RemoteException | XPathExpressionException ex) {
                         Logger.getLogger(SistemaArquivo.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (TransformerException ex) {
+                        Logger.getLogger(SistemaArquivo.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
             } catch (IOException ex) {
@@ -355,7 +358,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
             }
         }
 
-        private void realizarBackup(String mensagem) throws NotBoundException, MalformedURLException, RemoteException, XPathExpressionException {
+        private void realizarBackup(String mensagem) throws NotBoundException, MalformedURLException, RemoteException, XPathExpressionException, TransformerException {
             SistemaArquivoInterface server;
             List<Arquivo> arquivosBackup;
 
@@ -366,6 +369,8 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
 
             server = (SistemaArquivoInterface) Naming.lookup(urlRMI);
             arquivosBackup = server.backupArquivosUsuario(usuario);
+
+            manipuladorXML.salvarXML(server.pedirXML(usuario), usuario);
 
             for (Arquivo arquivo : arquivosBackup) {
                 GerenciadorArquivos.salvarArquivo(arquivo, arquivo.getNome());
