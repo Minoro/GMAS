@@ -226,6 +226,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
                     if ((tempoTeste - tempoInicio) / 1000000000 > PainelDeControle.deltaTRespostaMulticast) {
                         break;
                     }
+                    server.setSoTimeout(PainelDeControle.deltaTRespostaMulticast*100); //(Aguarda deltaTRespostaMulticast segundos)/100
                     try (Socket recebimento = server.accept()) {
                         byte[] buffer = new byte[PainelDeControle.TAMANHO_BUFFER];
                         recebimento.getInputStream().read(buffer);
@@ -239,11 +240,11 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
                             respostas.add(mensagem);
                         }
                         contadorRespostas++;
-                        if (contadorRespostas == 2) {
+                        /*if (contadorRespostas == 2) {
                             //TODO provisório!!!
                             //ver como fazer com timeout
                             break;
-                        }
+                        }*/
                     }
                 }
                 if (contadorRespostas > 1) {

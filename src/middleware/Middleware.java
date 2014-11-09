@@ -1,6 +1,5 @@
 package middleware;
 
-import cliente.Cliente;
 import cliente.InterfaceUsuario;
 import java.io.IOException;
 import java.io.InputStream;
