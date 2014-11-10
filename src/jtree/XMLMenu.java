@@ -7,6 +7,7 @@ package jtree;
 
 import cliente.InterfaceUsuario;
 import forms.CopiarArquivo;
+import forms.CopiarPasta;
 import forms.MoverArquivo;
 import forms.NovaPasta;
 import forms.NovoArquivo;
@@ -20,7 +21,6 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JPopupMenu;
 import utils.PainelDeControle;
 
 /**
@@ -33,9 +33,20 @@ public class XMLMenu extends JMenuBar {
         JMenu menu;
         JMenuItem item;
 
-        menu = new JMenu("Ações");
+        menu = new JMenu("Arquivo");
+        
+        item = new JMenuItem("Criar");//arquivo
+        item.addMouseListener(new MouseAdapter() {
+            String nome_da_pasta = "Novo Arquivo";
 
-        item = new JMenuItem("Copiar Arquivo");
+            @Override
+            public void mousePressed(MouseEvent e) {
+                new NovoArquivo(InterfaceUsuario.main, true);
+            }
+        });
+        menu.add(item);
+
+        item = new JMenuItem("Copiar");//arquivo
         item.addMouseListener(new MouseAdapter() {
             String nome_da_pasta;
 
@@ -46,7 +57,7 @@ public class XMLMenu extends JMenuBar {
         });
         menu.add(item);
         
-        item = new JMenuItem("Mover Arquivo");
+        item = new JMenuItem("Mover");
         item.addMouseListener(new MouseAdapter() {
 
             @Override
@@ -66,30 +77,8 @@ public class XMLMenu extends JMenuBar {
             }
         });
         menu.add(item);
-
-        item = new JMenuItem("Novo Arquivo");
-        item.addMouseListener(new MouseAdapter() {
-            String nome_da_pasta = "Novo Arquivo";
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-                new NovoArquivo(InterfaceUsuario.main, true);
-            }
-        });
-        menu.add(item);
-
-        item = new JMenuItem("Nova Pasta");
-        item.addMouseListener(new MouseAdapter() {
-            String nome_da_pasta = "Nova Pasta";
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-                new NovaPasta(InterfaceUsuario.main, true);
-            }
-        });
-        menu.add(item);
-
-        item = new JMenuItem("Excluir Arquivo");
+        
+        item = new JMenuItem("Excluir");//arquivo
         item.addMouseListener(new MouseAdapter() {
 
             @Override
@@ -114,19 +103,34 @@ public class XMLMenu extends JMenuBar {
             }
         });
         menu.add(item);
+        
+        add(menu);//FIM OPÇÕES ARQUIVO
+        
+        menu = new JMenu("Pasta");
 
-        menu.add(new JPopupMenu.Separator());
-
-        item = new JMenuItem("Sair");
+        item = new JMenuItem("Criar");
         item.addMouseListener(new MouseAdapter() {
+            String nome_da_pasta = "Nova Pasta";
+
             @Override
             public void mousePressed(MouseEvent e) {
-                System.exit(0);
+                new NovaPasta(InterfaceUsuario.main, true);
             }
         });
         menu.add(item);
+        
+        item = new JMenuItem("Copiar");//arquivo
+        item.addMouseListener(new MouseAdapter() {
+            String nome_da_pasta;
 
+            @Override
+            public void mousePressed(MouseEvent e) {
+                new CopiarPasta(InterfaceUsuario.main, false);
+            }
+        });
+        menu.add(item);
         add(menu);
+
 
         menu = new JMenu("Atualizar Árvore");
         menu.addMouseListener(new MouseAdapter() {
@@ -134,6 +138,15 @@ public class XMLMenu extends JMenuBar {
             @Override
             public void mousePressed(MouseEvent e) {
                 XMLTreePanel.atualizaArvore();
+            }
+        });
+        add(menu);
+        
+        menu = new JMenu("Sair");
+        menu.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                System.exit(0);
             }
         });
         add(menu);

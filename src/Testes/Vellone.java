@@ -6,6 +6,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.rmi.RemoteException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFrame;
@@ -26,15 +27,22 @@ import utils.PainelDeControle;
  */
 public class Vellone extends JFrame {
 
+    public static SistemaArquivo teste;
+    public static String username = "vellone";
+
     public static void main(String[] args) {
+        teste = PainelDeControle.getTeste();
+        if (teste == null) {
+            System.err.println("Não foi possível pegar uma instância do SistemaArquivo para testar!");
+            System.exit(-1);
+        }
         new Vellone();
     }
 
     public Vellone() throws HeadlessException {
-        String usernameTeste = "vellone";
 
-        PainelDeControle.xml = pedirXML(usernameTeste);
-        PainelDeControle.username = usernameTeste;
+        PainelDeControle.xml = pedirXML(username);
+        PainelDeControle.username = username;
 
         Document document = PainelDeControle.xml;
         XMLTreePanel panel = new XMLTreePanel();
@@ -65,7 +73,7 @@ public class Vellone extends JFrame {
                 FileWriter fw;
                 fw = new FileWriter(file.getAbsoluteFile());
                 BufferedWriter bw = new BufferedWriter(fw);
-                bw.write("<raiz>" + nomeUsuario + "</raiz>");//salva as informações no arquivo no disco
+                bw.write("<raiz nomeFantasia='" + nomeUsuario + "'/>");//salva as informações no arquivo no disco
                 bw.close();
 
             } catch (IOException ex) {

@@ -104,6 +104,21 @@ public interface SistemaArquivoInterface extends Remote {
      * @throws javax.xml.xpath.XPathExpressionException
      */
     boolean copiarArquivo(String caminhoOrigem, String caminhoDestino, String nomeUsuario) throws RemoteException, XPathExpressionException;
+    
+    /**
+     * Copia uma pasta recursivamente, dado um caminho de origem, onde o ultimo nome após a
+     * "/" é a pasta a ser copiada, para o caminho de destino
+     *
+     * @param caminhoOrigem String - caminho de origem da pasta a ser copiada,
+     * concatenado com "/"
+     * @param caminhoDestino String - caminho de destino da pasta
+     * @param nomeUsuario String - nome do usuário para salvar o XML
+     * @return boolean - true caso seja possivel mover o arquivo ou false caso
+     * não seja possível
+     * @throws RemoteException
+     * @throws javax.xml.xpath.XPathExpressionException
+     */
+    boolean copiarPasta(String caminhoOrigem, String caminhoDestino, String nomeUsuario) throws RemoteException, XPathExpressionException;
 
     /**
      * Lê o conteudo do arquivo ao final do caminho

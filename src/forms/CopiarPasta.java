@@ -17,23 +17,23 @@ import utils.PainelDeControle;
  *
  * @author Matheus
  */
-public class CopiarArquivo extends DefaultDialog {
+public class CopiarPasta extends DefaultDialog {
 
-    String arquivoCopiado;
+    String pastaCopiado;
 
     /**
      * Creates new form CopiarArquivo
      */
-    public CopiarArquivo(java.awt.Frame parent, boolean modal) {
+    public CopiarPasta(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
 
         String tipoNoSelecionado = XMLTreePanel.node_selecionado.getNodeName();
-        if (!tipoNoSelecionado.equals(PainelDeControle.TAG_ARQUIVO)) {
-            JOptionPane.showMessageDialog(InterfaceUsuario.main, "Utilize esta opção apenas para copiar arquivos");
+        if (!tipoNoSelecionado.equals(PainelDeControle.TAG_PASTA)) {
+            JOptionPane.showMessageDialog(InterfaceUsuario.main, "Utilize esta opção apenas para copiar pastas");
             return;
         }
-        arquivoCopiado = XMLTreePanel.getCaminhoSelecionado(false);
-        JOptionPane.showMessageDialog(InterfaceUsuario.main, "Selecione o destino da cópia do arquivo e clique em OK");
+        pastaCopiado = XMLTreePanel.getCaminhoSelecionado(false);
+        JOptionPane.showMessageDialog(InterfaceUsuario.main, "Selecione o destino da cópia da pasta e clique em OK");
 
         initComponents();
         setVisible(true);
@@ -76,20 +76,20 @@ public class CopiarArquivo extends DefaultDialog {
     private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
         String tipoNoSelecionado = XMLTreePanel.node_selecionado.getNodeName();
         if (tipoNoSelecionado.equals(PainelDeControle.TAG_ARQUIVO)) {
-            JOptionPane.showMessageDialog(InterfaceUsuario.main, "Selecione uma pasta destino para copiar o arquivo!!");
+            JOptionPane.showMessageDialog(InterfaceUsuario.main, "Selecione uma pasta destino para copiar a pasta");
             return;
         }
         String caminhoDestino = XMLTreePanel.getCaminhoSelecionado(false);
 
-        arquivoCopiado = arquivoCopiado.substring(0, arquivoCopiado.length() - 1);
+        pastaCopiado = pastaCopiado.substring(0, pastaCopiado.length() - 1);
         caminhoDestino = caminhoDestino.substring(0, caminhoDestino.length() - 1);
         try {
-            boolean resultado = PainelDeControle.middleware.copiarArquivo(arquivoCopiado, caminhoDestino);
+            boolean resultado = PainelDeControle.middleware.copiarPasta(pastaCopiado, caminhoDestino);
             if (!resultado) {
-                JOptionPane.showMessageDialog(InterfaceUsuario.main, "Não foi possível copiar o arquivo");
+                JOptionPane.showMessageDialog(InterfaceUsuario.main, "Não foi possível copiar a pasta");
             }
         } catch (RemoteException ex) {
-            Logger.getLogger(CopiarArquivo.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CopiarPasta.class.getName()).log(Level.SEVERE, null, ex);
         }
         close();
     }//GEN-LAST:event_jButton1MouseClicked

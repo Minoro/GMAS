@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.util.UUID;
 
 import model.Arquivo;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * Classe para manipular arquivos no servidor
@@ -110,13 +112,29 @@ public class GerenciadorArquivos {
             }
             arquivo.setConteudo(atributo);
             arquivo.setNome(nome);
-            
+
             bufferedReader.close();
         } catch (IOException e) {
             e.printStackTrace();
             return null;
         }
         return arquivo;
+    }
+
+    static Node copiaArquivosDaPasta(Node pastaOrigem) {
+        NodeList filhos = pastaOrigem.getChildNodes();
+        for (int i = 0; i < filhos.getLength(); i++) {
+            Node filho = filhos.item(i);
+            if (filho.hasChildNodes()) {
+                filho = copiaArquivosDaPasta(filho);
+            } else {
+                String nomeArquivoFisico = filho.getAttributes().getNamedItem("nome").getTextContent();
+                Arquivo arquivo = abrirArquivo(nomeArquivoFisico);
+                String novoNome = criarArquivo(arquivo);
+                filho.getAttributes().getNamedItem("nome").setTextContent(novoNome);
+            }
+        }
+        return pastaOrigem;
     }
 
 }
