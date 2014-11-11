@@ -189,7 +189,7 @@ public interface SistemaArquivoInterface extends Remote {
 
     /**
      *
-     * @param usuario String -nome do usuario que se deseja realizar o backup
+     * @param nomeUsuario String -nome do usuario que se deseja realizar o backup
      * @return List<Arquivo> - retorna uma lista com objetos do tipo Arquivo,
      * com os arquivos do usuario
      * @throws RemoteException
@@ -205,4 +205,13 @@ public interface SistemaArquivoInterface extends Remote {
      * @throws XPathExpressionException
      */
     Document pedirXML(String nomeUsuario) throws RemoteException, XPathExpressionException;
+    
+    /**
+     * Destrava o arquivo representado pelo parâmetro caminho do usuário 
+     * @param caminho String - caminho do arquivo a ser destravado
+     * @param nomeUsuario String - nome do usuario que se deseja o xml
+     * @throws RemoteException
+     * @throws XPathExpressionException
+     */
+    void unlock(String caminho, String nomeUsuario) throws RemoteException, XPathExpressionException;
 }

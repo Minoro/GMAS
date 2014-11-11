@@ -35,6 +35,8 @@ public class PainelDeControle {
     public static String TAG_ARQUIVO = "arquivo";
     public static String TAG_PASTA = "pasta";
     public static String TAG_RAIZ = "raiz";
+    public static String TAG_DESTRAVADO = "0";
+    public static String TAG_TRAVADO = "1";
     public static final String PASTA_RAIZ = HOME + SEPARADOR + "raiz";
     public static String PASTA_XML = PASTA_RAIZ + SEPARADOR + "xml" + SEPARADOR;
     public static String PASTA_ICONES = PASTA_RAIZ + SEPARADOR + "icones" + SEPARADOR;

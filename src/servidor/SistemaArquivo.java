@@ -94,6 +94,26 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
     }
 
     /**
+     * Trava um arquivo para impedir que seja aberto por outro usuário. Caso o
+     * arquivo já esteja travado, uma exceção é lançada
+     *
+     * @param caminho String - caminho do arquivo a ser checado a trava
+     * @param xml Document - representando o xml do usuário
+     * @return se nao conseguir travar lança uma exceção
+     * @throws XPathExpressionException caso não consiga travar o arquivo
+     */
+    private void lock(String caminho, Document xml) throws XPathExpressionException {
+        String expressaoArquivo = manipuladorXML.montarExpressaoArquivo(caminho);
+        Node nodeArquivo = manipuladorXML.pegaUltimoNode(expressaoArquivo, xml);
+
+        if (nodeArquivo.getAttributes().getNamedItem("trava").getTextContent().equals(PainelDeControle.TAG_DESTRAVADO)) {
+            nodeArquivo.getAttributes().getNamedItem("trava").setTextContent(PainelDeControle.TAG_TRAVADO);
+            return;
+        }
+        throw new XPathExpressionException("Este arquivo já está sendo editado por outro usuário");
+    }
+
+    /**
      * @author mastelini
      *
      * Thread que escuta mensagens enviadas via multicast dos clientes,
@@ -461,6 +481,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
             String dataAgora = sdf.format(new Date());
             String tamanho = arquivo.getConteudo().length() + "";
             newelement.setAttribute("dataCriacao", dataAgora);
+            newelement.setAttribute("trava", PainelDeControle.TAG_DESTRAVADO);
             newelement.setAttribute("dataUltimaModificacao", dataAgora);
             newelement.setAttribute("tamanho", tamanho);
             newelement.setAttribute("nome", nomeArquivoServidor);
@@ -498,7 +519,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
             String dataAgora = sdf.format(new Date());
             newelement.setAttribute("dataCriacao", dataAgora);
             newelement.setAttribute("dataUltimaModificacao", dataAgora);
-            newelement.setAttribute("tamanho", "0");
+            newelement.setAttribute("tamanho", "-");
             newelement.setAttribute("nomeFantasia", nomePasta);
 
             ultima_pasta.appendChild(newelement);
@@ -794,6 +815,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
         if (!manipuladorXML.existeArquivo(caminho, xml)) {
             return null;
         }
+        lock(caminho, xml);
         String nomeArquivoServidor = manipuladorXML.getNomeArquivoFisico(caminho, xml);
 
         Arquivo arquivo = GerenciadorArquivos.abrirArquivo(nomeArquivoServidor);
@@ -863,6 +885,16 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
         }
 
         return backup;
+    }
+    
+    @Override
+    public void unlock(String caminho, String nomeUsuario) throws RemoteException, XPathExpressionException {
+        Document xml = pedirXML(nomeUsuario);
+        
+        String expressaoDestino = manipuladorXML.montarExpressaoArquivo(caminho);
+        Node nodeArquivo = manipuladorXML.pegaUltimoNode(expressaoDestino, xml);
+        
+        nodeArquivo.getAttributes().getNamedItem("trava").setTextContent(PainelDeControle.TAG_DESTRAVADO);
     }
 
     public List<String> getUsuarios() {

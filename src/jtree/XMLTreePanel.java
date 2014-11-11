@@ -68,25 +68,16 @@ public class XMLTreePanel extends JPanel {
                 TreePath selPath = tree.getPathForLocation(e.getX(), e.getY());
                 if (selRow != -1) {
                     if (e.getClickCount() == 2) {
-                        Object[] no = (Object[]) selPath.getPath();
-                        String caminho = "";
-                        //Monta a 'url' do elemento que recebeu o clique duplo
-                        for (Object obj : no) {
-                            caminho += obj.toString() + "/";
-                        }
-                        //Se deu 2 cliques em um arquivo, retira a última barra
                         if (((XMLTreeNode) selPath.getLastPathComponent()).getNodeName().equals(PainelDeControle.TAG_ARQUIVO)) {
-                            caminho = caminho.substring(0, caminho.length() - 1);
                             String conteudo;
                             try {
-                                conteudo = PainelDeControle.middleware.lerArquivo(getCaminhoSelecionado(false));
-                                new GMASEditor(conteudo);
+                                String caminho = getCaminhoSelecionado(false);
+                                conteudo = PainelDeControle.middleware.lerArquivo(caminho);
+                                new GMASEditor(conteudo, caminho);
                             } catch (RemoteException ex) {
                                 Logger.getLogger(XMLTreePanel.class.getName()).log(Level.SEVERE, null, ex);
                             }
                         }
-
-                        System.out.println("Double Click em " + caminho);
                     }
                 }
             }

@@ -1,11 +1,7 @@
 package utils;
 
-import cliente.InterfaceUsuario;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -19,9 +15,8 @@ import jtree.XMLTreePanel;
 public class GMASEditor extends JFrame {
 
     private JTextArea areaEdicao;
-    private JFileChooser selecaoArquivo = new JFileChooser();
 
-    public GMASEditor(String conteudo) {
+    public GMASEditor(String conteudo, String caminho) {
         areaEdicao = new JTextArea(30, 80);
         areaEdicao.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
         areaEdicao.setFont(new Font("monospaced", Font.PLAIN, 14));
@@ -58,6 +53,7 @@ public class GMASEditor extends JFrame {
         addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+                PainelDeControle.middleware.unlock(caminho);
                 dispose();
             }
         }
