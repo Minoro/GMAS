@@ -53,7 +53,11 @@ public class GMASEditor extends JFrame {
         addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-                PainelDeControle.middleware.unlock(caminho);
+                try {
+                    PainelDeControle.middleware.unlock(caminho);
+                } catch (RemoteException ex) {
+                    Logger.getLogger(GMASEditor.class.getName()).log(Level.SEVERE, null, ex);
+                }
                 dispose();
             }
         }
