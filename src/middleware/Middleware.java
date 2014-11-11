@@ -399,7 +399,14 @@ public class Middleware {
         }
         return false;
     }
-
+    
+    /**
+     * Salva as alterações feitas em um arquivo em todos os servidores que o armazenam
+     * @param caminho Caminho do arquivo.
+     * @param texto Conteúdo do arquivo.
+     * @return true em caso de sucesso, senão false.
+     * @throws RemoteException 
+     */
     public boolean salvarArquivo(String caminho, String texto) throws RemoteException {
         try {
             for (SistemaArquivoInterface serverRemoto : servidoresRemotos) {
@@ -414,7 +421,13 @@ public class Middleware {
         }
         return false;
     }
-
+    
+    /**
+     * Carrega o conteúdo de um arquivo.
+     * @param caminho Caminho do arquivo selecionado.
+     * @return Retorna o conteúdo do arquivo selecionado na forma de uma string.
+     * @throws RemoteException 
+     */
     public String lerArquivo(String caminho) throws RemoteException {
         try {
             return servidoresRemotos.get(0).lerArquivo(caminho, PainelDeControle.username);
@@ -423,7 +436,12 @@ public class Middleware {
         }
         return null;
     }
-
+    
+    /**
+     * Requisita o xml para os servidores, representado na forma de um objeto. 
+     * @return Retorna um objeto do tipo Document, representando o arquivo xml.
+     * @throws RemoteException 
+     */
     public Document pedirXML() throws RemoteException {
         Document r = null;
         try {
