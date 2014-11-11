@@ -1,0 +1,530 @@
+\hypertarget{interfaceservidor_1_1_sistema_arquivo_interface}{\section{servidor.\+Sistema\+Arquivo\+Interface Interface Reference}
+\label{interfaceservidor_1_1_sistema_arquivo_interface}\index{servidor.\+Sistema\+Arquivo\+Interface@{servidor.\+Sistema\+Arquivo\+Interface}}
+}
+Inheritance diagram for servidor.\+Sistema\+Arquivo\+Interface\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=3.000000cm]{interfaceservidor_1_1_sistema_arquivo_interface}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+boolean \hyperlink{interfaceservidor_1_1_sistema_arquivo_interface_a8668540815b2886b3816ac23e3e24740}{criar\+Arquivo} (String caminho, \hyperlink{classmodel_1_1_arquivo}{Arquivo} arquivo, String nome\+Usuario)  throws Remote\+Exception, X\+Path\+Expression\+Exception
+\item 
+boolean \hyperlink{interfaceservidor_1_1_sistema_arquivo_interface_a46a7a411f21d0db4cad12e07425a2259}{criar\+Pasta} (String caminho, String nome\+Usuario)  throws Remote\+Exception, X\+Path\+Expression\+Exception
+\item 
+boolean \hyperlink{interfaceservidor_1_1_sistema_arquivo_interface_afb7dfa9a67c813d586d9fbce4fb9e001}{deletar\+Arquivo} (String caminho, String nome\+Usuario)  throws Remote\+Exception, X\+Path\+Expression\+Exception
+\item 
+boolean \hyperlink{interfaceservidor_1_1_sistema_arquivo_interface_ad24ed755bdc26c9e6bcfab426d3649aa}{deletar\+Pasta} (String caminho, String nome\+Usuario)  throws Remote\+Exception, X\+Path\+Expression\+Exception
+\item 
+boolean \hyperlink{interfaceservidor_1_1_sistema_arquivo_interface_a38ac4858f2f0e0743dea54983b24b860}{renomear\+Arquivo} (String caminho\+Origem, String novo\+Nome, String nome\+Usuario)  throws Remote\+Exception, X\+Path\+Expression\+Exception
+\item 
+boolean \hyperlink{interfaceservidor_1_1_sistema_arquivo_interface_a187abef3707033620038ceaf7bf61862}{mover\+Arquivo} (String caminho\+Origem, String caminho\+Destino, String nome\+Usuario)  throws Remote\+Exception, X\+Path\+Expression\+Exception
+\item 
+boolean \hyperlink{interfaceservidor_1_1_sistema_arquivo_interface_a5cb77a26cf0c6ec0868473aca67b15ca}{mover\+Pasta} (String caminho\+Origem, String caminho\+Destino, String nome\+Usuario)  throws Remote\+Exception, X\+Path\+Expression\+Exception
+\item 
+boolean \hyperlink{interfaceservidor_1_1_sistema_arquivo_interface_a386c5f49538f37522be89af4ca35d245}{copiar\+Arquivo} (String caminho\+Origem, String caminho\+Destino, String nome\+Usuario)  throws Remote\+Exception, X\+Path\+Expression\+Exception
+\item 
+boolean \hyperlink{interfaceservidor_1_1_sistema_arquivo_interface_ab7818dbb84f0d389cfbf10f0f0bb9580}{copiar\+Pasta} (String caminho\+Origem, String caminho\+Destino, String nome\+Usuario)  throws Remote\+Exception, X\+Path\+Expression\+Exception
+\item 
+String \hyperlink{interfaceservidor_1_1_sistema_arquivo_interface_a528fb29aaa4b74c7cdfec5dad5803329}{ler\+Arquivo} (String caminho, String nome\+Usuario)  throws Remote\+Exception, X\+Path\+Expression\+Exception
+\item 
+boolean \hyperlink{interfaceservidor_1_1_sistema_arquivo_interface_a028895ffa088ee8eec9ee83768996b44}{escrever\+Arquivo} (String caminho, String texto, String nome\+Usuario)  throws Remote\+Exception, X\+Path\+Expression\+Exception
+\item 
+\hyperlink{classmodel_1_1_arquivo}{Arquivo} \hyperlink{interfaceservidor_1_1_sistema_arquivo_interface_aa8a1fa4f295b2f50f0b099182493e81e}{get\+Arquivo} (String caminho, String nome\+Usuario)  throws Remote\+Exception, X\+Path\+Expression\+Exception
+\item 
+List$<$ \hyperlink{classmodel_1_1_arquivo}{Arquivo} $>$ \hyperlink{interfaceservidor_1_1_sistema_arquivo_interface_a208daf85a9c8026080aa6b389d420339}{backup\+Arquivos\+Usuario} (String nome\+Usuario)  throws Remote\+Exception, X\+Path\+Expression\+Exception
+\item 
+Document \hyperlink{interfaceservidor_1_1_sistema_arquivo_interface_a7a35e15725ff21dbd8373742cc518b77}{pedir\+X\+M\+L} (String nome\+Usuario)  throws Remote\+Exception, X\+Path\+Expression\+Exception
+\item 
+void \hyperlink{interfaceservidor_1_1_sistema_arquivo_interface_a29ea9727745ef7e9f6d554ae3cad79cb}{unlock} (String caminho, String nome\+Usuario)  throws Remote\+Exception, X\+Path\+Expression\+Exception
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Interface para operações basicas sobre arquivos 
+
+\subsection{Member Function Documentation}
+\hypertarget{interfaceservidor_1_1_sistema_arquivo_interface_a208daf85a9c8026080aa6b389d420339}{\index{servidor\+::\+Sistema\+Arquivo\+Interface@{servidor\+::\+Sistema\+Arquivo\+Interface}!backup\+Arquivos\+Usuario@{backup\+Arquivos\+Usuario}}
+\index{backup\+Arquivos\+Usuario@{backup\+Arquivos\+Usuario}!servidor\+::\+Sistema\+Arquivo\+Interface@{servidor\+::\+Sistema\+Arquivo\+Interface}}
+\subsubsection[{backup\+Arquivos\+Usuario}]{\setlength{\rightskip}{0pt plus 5cm}List$<${\bf Arquivo}$>$ servidor.\+Sistema\+Arquivo\+Interface.\+backup\+Arquivos\+Usuario (
+\begin{DoxyParamCaption}
+\item[{String}]{nome\+Usuario}
+\end{DoxyParamCaption}
+) throws Remote\+Exception, X\+Path\+Expression\+Exception}}\label{interfaceservidor_1_1_sistema_arquivo_interface_a208daf85a9c8026080aa6b389d420339}
+
+\begin{DoxyParams}{Parameters}
+{\em nome\+Usuario} & String -\/nome do usuario que se deseja realizar o backup \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+List$<$\+Arquivo$>$ -\/ retorna uma lista com objetos do tipo Arquivo, com os arquivos do usuario 
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em Remote\+Exception} & \\
+\hline
+{\em X\+Path\+Expression\+Exception} & \\
+\hline
+\end{DoxyExceptions}
+
+
+Implemented in \hyperlink{classservidor_1_1_sistema_arquivo_a73d86137128b1cd630042742cc7f9192}{servidor.\+Sistema\+Arquivo}.
+
+\hypertarget{interfaceservidor_1_1_sistema_arquivo_interface_a386c5f49538f37522be89af4ca35d245}{\index{servidor\+::\+Sistema\+Arquivo\+Interface@{servidor\+::\+Sistema\+Arquivo\+Interface}!copiar\+Arquivo@{copiar\+Arquivo}}
+\index{copiar\+Arquivo@{copiar\+Arquivo}!servidor\+::\+Sistema\+Arquivo\+Interface@{servidor\+::\+Sistema\+Arquivo\+Interface}}
+\subsubsection[{copiar\+Arquivo}]{\setlength{\rightskip}{0pt plus 5cm}boolean servidor.\+Sistema\+Arquivo\+Interface.\+copiar\+Arquivo (
+\begin{DoxyParamCaption}
+\item[{String}]{caminho\+Origem, }
+\item[{String}]{caminho\+Destino, }
+\item[{String}]{nome\+Usuario}
+\end{DoxyParamCaption}
+) throws Remote\+Exception, X\+Path\+Expression\+Exception}}\label{interfaceservidor_1_1_sistema_arquivo_interface_a386c5f49538f37522be89af4ca35d245}
+Copia um arquivo, dado um caminho de origem, onde o ultimo nome após a \char`\"{}/\char`\"{} é o nome do arquivo, para o caminho de destino
+
+
+\begin{DoxyParams}{Parameters}
+{\em caminho\+Origem} & String -\/ caminho de origem do arquivo a ser copiado, concatenado com \char`\"{}/\char`\"{} e o nome do arquivo \\
+\hline
+{\em caminho\+Destino} & String -\/ caminho de destino do arquivo \\
+\hline
+{\em nome\+Usuario} & String -\/ nome do usuário para salvar o X\+M\+L \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+boolean -\/ true caso seja possivel mover o arquivo ou false caso não seja possível 
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em Remote\+Exception} & \\
+\hline
+{\em javax.\+xml.\+xpath.\+X\+Path\+Expression\+Exception} & \\
+\hline
+\end{DoxyExceptions}
+
+
+Implemented in \hyperlink{classservidor_1_1_sistema_arquivo_abe818245ebc8bfdef68e6216b0395d50}{servidor.\+Sistema\+Arquivo}.
+
+\hypertarget{interfaceservidor_1_1_sistema_arquivo_interface_ab7818dbb84f0d389cfbf10f0f0bb9580}{\index{servidor\+::\+Sistema\+Arquivo\+Interface@{servidor\+::\+Sistema\+Arquivo\+Interface}!copiar\+Pasta@{copiar\+Pasta}}
+\index{copiar\+Pasta@{copiar\+Pasta}!servidor\+::\+Sistema\+Arquivo\+Interface@{servidor\+::\+Sistema\+Arquivo\+Interface}}
+\subsubsection[{copiar\+Pasta}]{\setlength{\rightskip}{0pt plus 5cm}boolean servidor.\+Sistema\+Arquivo\+Interface.\+copiar\+Pasta (
+\begin{DoxyParamCaption}
+\item[{String}]{caminho\+Origem, }
+\item[{String}]{caminho\+Destino, }
+\item[{String}]{nome\+Usuario}
+\end{DoxyParamCaption}
+) throws Remote\+Exception, X\+Path\+Expression\+Exception}}\label{interfaceservidor_1_1_sistema_arquivo_interface_ab7818dbb84f0d389cfbf10f0f0bb9580}
+Copia uma pasta recursivamente, dado um caminho de origem, onde o ultimo nome após a \char`\"{}/\char`\"{} é a pasta a ser copiada, para o caminho de destino
+
+
+\begin{DoxyParams}{Parameters}
+{\em caminho\+Origem} & String -\/ caminho de origem da pasta a ser copiada, concatenado com \char`\"{}/\char`\"{} \\
+\hline
+{\em caminho\+Destino} & String -\/ caminho de destino da pasta \\
+\hline
+{\em nome\+Usuario} & String -\/ nome do usuário para salvar o X\+M\+L \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+boolean -\/ true caso seja possivel mover o arquivo ou false caso não seja possível 
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em Remote\+Exception} & \\
+\hline
+{\em javax.\+xml.\+xpath.\+X\+Path\+Expression\+Exception} & \\
+\hline
+\end{DoxyExceptions}
+
+
+Implemented in \hyperlink{classservidor_1_1_sistema_arquivo_ac33210e1f9a88aa0ac8dcfc0169838a6}{servidor.\+Sistema\+Arquivo}.
+
+\hypertarget{interfaceservidor_1_1_sistema_arquivo_interface_a8668540815b2886b3816ac23e3e24740}{\index{servidor\+::\+Sistema\+Arquivo\+Interface@{servidor\+::\+Sistema\+Arquivo\+Interface}!criar\+Arquivo@{criar\+Arquivo}}
+\index{criar\+Arquivo@{criar\+Arquivo}!servidor\+::\+Sistema\+Arquivo\+Interface@{servidor\+::\+Sistema\+Arquivo\+Interface}}
+\subsubsection[{criar\+Arquivo}]{\setlength{\rightskip}{0pt plus 5cm}boolean servidor.\+Sistema\+Arquivo\+Interface.\+criar\+Arquivo (
+\begin{DoxyParamCaption}
+\item[{String}]{caminho, }
+\item[{{\bf Arquivo}}]{arquivo, }
+\item[{String}]{nome\+Usuario}
+\end{DoxyParamCaption}
+) throws Remote\+Exception, X\+Path\+Expression\+Exception}}\label{interfaceservidor_1_1_sistema_arquivo_interface_a8668540815b2886b3816ac23e3e24740}
+Cria um arquivo passando o caminho do arquivo, separado por barra, onde o ultimo nome, após a ultima barra, corresponde ao nome do arquivo
+
+
+\begin{DoxyParams}{Parameters}
+{\em caminho} & String -\/ caminho onde será criado o arquivo, concatenado com \char`\"{}/\char`\"{} e o nome do arquivo \\
+\hline
+{\em arquivo} & Arquivo -\/ Objeto do arquivo a ser salvo no disco \\
+\hline
+{\em nome\+Usuario} & String -\/ nome do usuário para salvar o X\+M\+L \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+boolean -\/ true caso seja possivel criar o arquivo ou false caso já exista um arquivo com o nome 
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em Remote\+Exception} & \\
+\hline
+{\em javax.\+xml.\+xpath.\+X\+Path\+Expression\+Exception} & \\
+\hline
+\end{DoxyExceptions}
+
+
+Implemented in \hyperlink{classservidor_1_1_sistema_arquivo_afa7146862daa7c0f38a1694d3073a7fe}{servidor.\+Sistema\+Arquivo}.
+
+\hypertarget{interfaceservidor_1_1_sistema_arquivo_interface_a46a7a411f21d0db4cad12e07425a2259}{\index{servidor\+::\+Sistema\+Arquivo\+Interface@{servidor\+::\+Sistema\+Arquivo\+Interface}!criar\+Pasta@{criar\+Pasta}}
+\index{criar\+Pasta@{criar\+Pasta}!servidor\+::\+Sistema\+Arquivo\+Interface@{servidor\+::\+Sistema\+Arquivo\+Interface}}
+\subsubsection[{criar\+Pasta}]{\setlength{\rightskip}{0pt plus 5cm}boolean servidor.\+Sistema\+Arquivo\+Interface.\+criar\+Pasta (
+\begin{DoxyParamCaption}
+\item[{String}]{caminho, }
+\item[{String}]{nome\+Usuario}
+\end{DoxyParamCaption}
+) throws Remote\+Exception, X\+Path\+Expression\+Exception}}\label{interfaceservidor_1_1_sistema_arquivo_interface_a46a7a411f21d0db4cad12e07425a2259}
+Cria uma pasta dado um caminho, onde o último nome, após a última barra, corresponde ao nome da pasta
+
+
+\begin{DoxyParams}{Parameters}
+{\em caminho} & String -\/ caminho onde será criado a pasta, concatenado com \char`\"{}/\char`\"{} e o nome da pasta
+\begin{DoxyItemize}
+\item 
+\end{DoxyItemize}\\
+\hline
+{\em nome\+Usuario} & String -\/ nome do usuário para salvar o X\+M\+L \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+boolean -\/ true caso seja possivel criar a pasta ou false caso já exista uma pasta com o mesmo nome 
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em Remote\+Exception} & \\
+\hline
+{\em javax.\+xml.\+xpath.\+X\+Path\+Expression\+Exception} & \\
+\hline
+\end{DoxyExceptions}
+
+
+Implemented in \hyperlink{classservidor_1_1_sistema_arquivo_a54fff1b72f54a538c624c40f239d18f6}{servidor.\+Sistema\+Arquivo}.
+
+\hypertarget{interfaceservidor_1_1_sistema_arquivo_interface_afb7dfa9a67c813d586d9fbce4fb9e001}{\index{servidor\+::\+Sistema\+Arquivo\+Interface@{servidor\+::\+Sistema\+Arquivo\+Interface}!deletar\+Arquivo@{deletar\+Arquivo}}
+\index{deletar\+Arquivo@{deletar\+Arquivo}!servidor\+::\+Sistema\+Arquivo\+Interface@{servidor\+::\+Sistema\+Arquivo\+Interface}}
+\subsubsection[{deletar\+Arquivo}]{\setlength{\rightskip}{0pt plus 5cm}boolean servidor.\+Sistema\+Arquivo\+Interface.\+deletar\+Arquivo (
+\begin{DoxyParamCaption}
+\item[{String}]{caminho, }
+\item[{String}]{nome\+Usuario}
+\end{DoxyParamCaption}
+) throws Remote\+Exception, X\+Path\+Expression\+Exception}}\label{interfaceservidor_1_1_sistema_arquivo_interface_afb7dfa9a67c813d586d9fbce4fb9e001}
+Deleta um arquivo passando o caminho do arquivo, separado por barra, onde o ultimo nome, após a ultima barra, corresponde ao nome do arquivo
+
+
+\begin{DoxyParams}{Parameters}
+{\em caminho} & String -\/ caminho do arquivo a ser deletado, concatenado com \char`\"{}/\char`\"{} e o nome do arquivo
+\begin{DoxyItemize}
+\item 
+\end{DoxyItemize}\\
+\hline
+{\em nome\+Usuario} & String -\/ nome do usuário para salvar o X\+M\+L \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+boolean -\/ true caso seja possivel deletar o arquivo ou false caso não seja possível 
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em Remote\+Exception} & \\
+\hline
+{\em javax.\+xml.\+xpath.\+X\+Path\+Expression\+Exception} & \\
+\hline
+\end{DoxyExceptions}
+
+
+Implemented in \hyperlink{classservidor_1_1_sistema_arquivo_a66be9b03399b2765ade1f5c2d39877a2}{servidor.\+Sistema\+Arquivo}.
+
+\hypertarget{interfaceservidor_1_1_sistema_arquivo_interface_ad24ed755bdc26c9e6bcfab426d3649aa}{\index{servidor\+::\+Sistema\+Arquivo\+Interface@{servidor\+::\+Sistema\+Arquivo\+Interface}!deletar\+Pasta@{deletar\+Pasta}}
+\index{deletar\+Pasta@{deletar\+Pasta}!servidor\+::\+Sistema\+Arquivo\+Interface@{servidor\+::\+Sistema\+Arquivo\+Interface}}
+\subsubsection[{deletar\+Pasta}]{\setlength{\rightskip}{0pt plus 5cm}boolean servidor.\+Sistema\+Arquivo\+Interface.\+deletar\+Pasta (
+\begin{DoxyParamCaption}
+\item[{String}]{caminho, }
+\item[{String}]{nome\+Usuario}
+\end{DoxyParamCaption}
+) throws Remote\+Exception, X\+Path\+Expression\+Exception}}\label{interfaceservidor_1_1_sistema_arquivo_interface_ad24ed755bdc26c9e6bcfab426d3649aa}
+Deleta uma pasta dado seu caminho, separado por barra, onde o ultimo nome, após a ultima barra, corresponde ao nome da pasta
+
+
+\begin{DoxyParams}{Parameters}
+{\em caminho} & String -\/ caminho do arquivo a ser deletado, concatenado com \char`\"{}/\char`\"{} e o nome do arquivo \\
+\hline
+{\em nome\+Usuario} & String -\/ nome do usuário para salvar o X\+M\+L \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+boolean -\/ true caso seja possivel deletar o arquivo ou false caso não seja possível 
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em Remote\+Exception} & \\
+\hline
+{\em javax.\+xml.\+xpath.\+X\+Path\+Expression\+Exception} & \\
+\hline
+\end{DoxyExceptions}
+
+
+Implemented in \hyperlink{classservidor_1_1_sistema_arquivo_a9ca48ba1937eca40566d38aadb888b12}{servidor.\+Sistema\+Arquivo}.
+
+\hypertarget{interfaceservidor_1_1_sistema_arquivo_interface_a028895ffa088ee8eec9ee83768996b44}{\index{servidor\+::\+Sistema\+Arquivo\+Interface@{servidor\+::\+Sistema\+Arquivo\+Interface}!escrever\+Arquivo@{escrever\+Arquivo}}
+\index{escrever\+Arquivo@{escrever\+Arquivo}!servidor\+::\+Sistema\+Arquivo\+Interface@{servidor\+::\+Sistema\+Arquivo\+Interface}}
+\subsubsection[{escrever\+Arquivo}]{\setlength{\rightskip}{0pt plus 5cm}boolean servidor.\+Sistema\+Arquivo\+Interface.\+escrever\+Arquivo (
+\begin{DoxyParamCaption}
+\item[{String}]{caminho, }
+\item[{String}]{texto, }
+\item[{String}]{nome\+Usuario}
+\end{DoxyParamCaption}
+) throws Remote\+Exception, X\+Path\+Expression\+Exception}}\label{interfaceservidor_1_1_sistema_arquivo_interface_a028895ffa088ee8eec9ee83768996b44}
+Escreve no final do arquivo indicado ao final do caminho
+
+
+\begin{DoxyParams}{Parameters}
+{\em caminho} & String -\/ caminho para o arquivo \\
+\hline
+{\em texto} & String -\/ texto a ser escrito no final do arquivo \\
+\hline
+{\em nome\+Usuario} & String -\/ nome do usuário para salvar o X\+M\+L \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+boolean -\/ retorna true caso o arquivo seja alterado com sucesso, caso contrário retorna falso 
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em Remote\+Exception} & \\
+\hline
+{\em javax.\+xml.\+xpath.\+X\+Path\+Expression\+Exception} & \\
+\hline
+\end{DoxyExceptions}
+
+
+Implemented in \hyperlink{classservidor_1_1_sistema_arquivo_a88d924eb3b3fa3cb1978478a9593e3fb}{servidor.\+Sistema\+Arquivo}.
+
+\hypertarget{interfaceservidor_1_1_sistema_arquivo_interface_aa8a1fa4f295b2f50f0b099182493e81e}{\index{servidor\+::\+Sistema\+Arquivo\+Interface@{servidor\+::\+Sistema\+Arquivo\+Interface}!get\+Arquivo@{get\+Arquivo}}
+\index{get\+Arquivo@{get\+Arquivo}!servidor\+::\+Sistema\+Arquivo\+Interface@{servidor\+::\+Sistema\+Arquivo\+Interface}}
+\subsubsection[{get\+Arquivo}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Arquivo} servidor.\+Sistema\+Arquivo\+Interface.\+get\+Arquivo (
+\begin{DoxyParamCaption}
+\item[{String}]{caminho, }
+\item[{String}]{nome\+Usuario}
+\end{DoxyParamCaption}
+) throws Remote\+Exception, X\+Path\+Expression\+Exception}}\label{interfaceservidor_1_1_sistema_arquivo_interface_aa8a1fa4f295b2f50f0b099182493e81e}
+Retorna um objeto Arquivo com as informações referentes ao arquivo no final do caminho
+
+
+\begin{DoxyParams}{Parameters}
+{\em caminho} & String -\/ caminho para o arquivo que se deseja as informações \\
+\hline
+{\em nome\+Usuario} & String -\/ nome do usuario \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Arquivo -\/ retorna um objeto com as informações referentes ao arquivo 
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em Remote\+Exception} & \\
+\hline
+{\em javax.\+xml.\+xpath.\+X\+Path\+Expression\+Exception} & \\
+\hline
+\end{DoxyExceptions}
+
+
+Implemented in \hyperlink{classservidor_1_1_sistema_arquivo_acdc517b4cd0f061d0f2c6ed9ea2a2911}{servidor.\+Sistema\+Arquivo}.
+
+\hypertarget{interfaceservidor_1_1_sistema_arquivo_interface_a528fb29aaa4b74c7cdfec5dad5803329}{\index{servidor\+::\+Sistema\+Arquivo\+Interface@{servidor\+::\+Sistema\+Arquivo\+Interface}!ler\+Arquivo@{ler\+Arquivo}}
+\index{ler\+Arquivo@{ler\+Arquivo}!servidor\+::\+Sistema\+Arquivo\+Interface@{servidor\+::\+Sistema\+Arquivo\+Interface}}
+\subsubsection[{ler\+Arquivo}]{\setlength{\rightskip}{0pt plus 5cm}String servidor.\+Sistema\+Arquivo\+Interface.\+ler\+Arquivo (
+\begin{DoxyParamCaption}
+\item[{String}]{caminho, }
+\item[{String}]{nome\+Usuario}
+\end{DoxyParamCaption}
+) throws Remote\+Exception, X\+Path\+Expression\+Exception}}\label{interfaceservidor_1_1_sistema_arquivo_interface_a528fb29aaa4b74c7cdfec5dad5803329}
+Lê o conteudo do arquivo ao final do caminho
+
+
+\begin{DoxyParams}{Parameters}
+{\em caminho} & String -\/ caminho para o arquivo \\
+\hline
+{\em nome\+Usuario} & String -\/ nome do usuario \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+String -\/ retorna o conteudo do arquivo em forma de texto 
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em Remote\+Exception} & \\
+\hline
+{\em javax.\+xml.\+xpath.\+X\+Path\+Expression\+Exception} & \\
+\hline
+\end{DoxyExceptions}
+
+
+Implemented in \hyperlink{classservidor_1_1_sistema_arquivo_a71a3848f1d40dbcdf0625fd066435a73}{servidor.\+Sistema\+Arquivo}.
+
+\hypertarget{interfaceservidor_1_1_sistema_arquivo_interface_a187abef3707033620038ceaf7bf61862}{\index{servidor\+::\+Sistema\+Arquivo\+Interface@{servidor\+::\+Sistema\+Arquivo\+Interface}!mover\+Arquivo@{mover\+Arquivo}}
+\index{mover\+Arquivo@{mover\+Arquivo}!servidor\+::\+Sistema\+Arquivo\+Interface@{servidor\+::\+Sistema\+Arquivo\+Interface}}
+\subsubsection[{mover\+Arquivo}]{\setlength{\rightskip}{0pt plus 5cm}boolean servidor.\+Sistema\+Arquivo\+Interface.\+mover\+Arquivo (
+\begin{DoxyParamCaption}
+\item[{String}]{caminho\+Origem, }
+\item[{String}]{caminho\+Destino, }
+\item[{String}]{nome\+Usuario}
+\end{DoxyParamCaption}
+) throws Remote\+Exception, X\+Path\+Expression\+Exception}}\label{interfaceservidor_1_1_sistema_arquivo_interface_a187abef3707033620038ceaf7bf61862}
+Move um arquivo, dado um caminho de origem, onde o ultimo nome após a \char`\"{}/\char`\"{} é o nome do arquivo, para o caminho de destino
+
+
+\begin{DoxyParams}{Parameters}
+{\em caminho\+Origem} & String -\/ caminho de origem do arquivo a ser movido, concatenado com \char`\"{}/\char`\"{} e o nome do arquivo \\
+\hline
+{\em caminho\+Destino} & -\/ caminho de destino do arquivo. \\
+\hline
+{\em nome\+Usuario} & String -\/ nome do usuário para salvar o X\+M\+L \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+boolean -\/ true caso seja possivel mover o arquivo ou false caso não seja possível 
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em Remote\+Exception} & \\
+\hline
+{\em javax.\+xml.\+xpath.\+X\+Path\+Expression\+Exception} & \\
+\hline
+\end{DoxyExceptions}
+
+
+Implemented in \hyperlink{classservidor_1_1_sistema_arquivo_a323b2d7c1e5c7c364029bb6557a6f444}{servidor.\+Sistema\+Arquivo}.
+
+\hypertarget{interfaceservidor_1_1_sistema_arquivo_interface_a5cb77a26cf0c6ec0868473aca67b15ca}{\index{servidor\+::\+Sistema\+Arquivo\+Interface@{servidor\+::\+Sistema\+Arquivo\+Interface}!mover\+Pasta@{mover\+Pasta}}
+\index{mover\+Pasta@{mover\+Pasta}!servidor\+::\+Sistema\+Arquivo\+Interface@{servidor\+::\+Sistema\+Arquivo\+Interface}}
+\subsubsection[{mover\+Pasta}]{\setlength{\rightskip}{0pt plus 5cm}boolean servidor.\+Sistema\+Arquivo\+Interface.\+mover\+Pasta (
+\begin{DoxyParamCaption}
+\item[{String}]{caminho\+Origem, }
+\item[{String}]{caminho\+Destino, }
+\item[{String}]{nome\+Usuario}
+\end{DoxyParamCaption}
+) throws Remote\+Exception, X\+Path\+Expression\+Exception}}\label{interfaceservidor_1_1_sistema_arquivo_interface_a5cb77a26cf0c6ec0868473aca67b15ca}
+Move uma pasta, dado um caminho de origem, onde o ultimo nome após a \char`\"{}/\char`\"{} é o nome da pasta, para o caminho de destino
+
+
+\begin{DoxyParams}{Parameters}
+{\em caminho\+Origem} & String -\/ caminho de origem da pasta a ser movida, concatenado com \char`\"{}/\char`\"{} \\
+\hline
+{\em caminho\+Destino} & -\/ caminho de destino do arquivo. \\
+\hline
+{\em nome\+Usuario} & String -\/ nome do usuário para salvar o X\+M\+L \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+boolean -\/ true caso seja possivel mover a pasta ou false caso não seja possível 
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em Remote\+Exception} & \\
+\hline
+{\em javax.\+xml.\+xpath.\+X\+Path\+Expression\+Exception} & \\
+\hline
+\end{DoxyExceptions}
+
+
+Implemented in \hyperlink{classservidor_1_1_sistema_arquivo_a52d97f440af51e6e7a8673627c9c99a1}{servidor.\+Sistema\+Arquivo}.
+
+\hypertarget{interfaceservidor_1_1_sistema_arquivo_interface_a7a35e15725ff21dbd8373742cc518b77}{\index{servidor\+::\+Sistema\+Arquivo\+Interface@{servidor\+::\+Sistema\+Arquivo\+Interface}!pedir\+X\+M\+L@{pedir\+X\+M\+L}}
+\index{pedir\+X\+M\+L@{pedir\+X\+M\+L}!servidor\+::\+Sistema\+Arquivo\+Interface@{servidor\+::\+Sistema\+Arquivo\+Interface}}
+\subsubsection[{pedir\+X\+M\+L}]{\setlength{\rightskip}{0pt plus 5cm}Document servidor.\+Sistema\+Arquivo\+Interface.\+pedir\+X\+M\+L (
+\begin{DoxyParamCaption}
+\item[{String}]{nome\+Usuario}
+\end{DoxyParamCaption}
+) throws Remote\+Exception, X\+Path\+Expression\+Exception}}\label{interfaceservidor_1_1_sistema_arquivo_interface_a7a35e15725ff21dbd8373742cc518b77}
+
+\begin{DoxyParams}{Parameters}
+{\em nome\+Usuario} & String -\/ nome do usuario que se deseja o xml \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Document -\/ xml com a arvore de arquivos do usuario 
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em Remote\+Exception} & \\
+\hline
+{\em X\+Path\+Expression\+Exception} & \\
+\hline
+\end{DoxyExceptions}
+
+
+Implemented in \hyperlink{classservidor_1_1_sistema_arquivo_abcead514a91516e7db1b794afe5fdf14}{servidor.\+Sistema\+Arquivo}.
+
+\hypertarget{interfaceservidor_1_1_sistema_arquivo_interface_a38ac4858f2f0e0743dea54983b24b860}{\index{servidor\+::\+Sistema\+Arquivo\+Interface@{servidor\+::\+Sistema\+Arquivo\+Interface}!renomear\+Arquivo@{renomear\+Arquivo}}
+\index{renomear\+Arquivo@{renomear\+Arquivo}!servidor\+::\+Sistema\+Arquivo\+Interface@{servidor\+::\+Sistema\+Arquivo\+Interface}}
+\subsubsection[{renomear\+Arquivo}]{\setlength{\rightskip}{0pt plus 5cm}boolean servidor.\+Sistema\+Arquivo\+Interface.\+renomear\+Arquivo (
+\begin{DoxyParamCaption}
+\item[{String}]{caminho\+Origem, }
+\item[{String}]{novo\+Nome, }
+\item[{String}]{nome\+Usuario}
+\end{DoxyParamCaption}
+) throws Remote\+Exception, X\+Path\+Expression\+Exception}}\label{interfaceservidor_1_1_sistema_arquivo_interface_a38ac4858f2f0e0743dea54983b24b860}
+Renomeia um arquivo passando o caminho de origem do arquivo, separado por barra, onde o ultimo nome, após a ultima barra, corresponde ao nome do arquivo. O caminho de destino corresponde ao caminho do arquivo, separado por barra, onde o ultimo nome é o novo nome do arquivo
+
+
+\begin{DoxyParams}{Parameters}
+{\em caminho\+Origem} & String -\/ caminho do arquivo/pasta a ser renomeado, concatenado com \char`\"{}/\char`\"{} e o nome do arquivo \\
+\hline
+{\em novo\+Nome} & String -\/ novo nome do arquivo/pasta \\
+\hline
+{\em nome\+Usuario} & String -\/ nome do usuário para salvar o X\+M\+L \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+boolean -\/ true caso seja possivel renomear o arquivo ou false caso não seja possível 
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em Remote\+Exception} & \\
+\hline
+{\em javax.\+xml.\+xpath.\+X\+Path\+Expression\+Exception} & \\
+\hline
+\end{DoxyExceptions}
+
+
+Implemented in \hyperlink{classservidor_1_1_sistema_arquivo_ae0423e77b2ed7e597c8eeb292210631f}{servidor.\+Sistema\+Arquivo}.
+
+\hypertarget{interfaceservidor_1_1_sistema_arquivo_interface_a29ea9727745ef7e9f6d554ae3cad79cb}{\index{servidor\+::\+Sistema\+Arquivo\+Interface@{servidor\+::\+Sistema\+Arquivo\+Interface}!unlock@{unlock}}
+\index{unlock@{unlock}!servidor\+::\+Sistema\+Arquivo\+Interface@{servidor\+::\+Sistema\+Arquivo\+Interface}}
+\subsubsection[{unlock}]{\setlength{\rightskip}{0pt plus 5cm}void servidor.\+Sistema\+Arquivo\+Interface.\+unlock (
+\begin{DoxyParamCaption}
+\item[{String}]{caminho, }
+\item[{String}]{nome\+Usuario}
+\end{DoxyParamCaption}
+) throws Remote\+Exception, X\+Path\+Expression\+Exception}}\label{interfaceservidor_1_1_sistema_arquivo_interface_a29ea9727745ef7e9f6d554ae3cad79cb}
+Destrava o arquivo representado pelo parâmetro caminho do usuário 
+\begin{DoxyParams}{Parameters}
+{\em caminho} & String -\/ caminho do arquivo a ser destravado \\
+\hline
+{\em nome\+Usuario} & String -\/ nome do usuario que se deseja o xml \\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em Remote\+Exception} & \\
+\hline
+{\em X\+Path\+Expression\+Exception} & \\
+\hline
+\end{DoxyExceptions}
+
+
+Implemented in \hyperlink{classservidor_1_1_sistema_arquivo_a9665a2e279240dac472a74fe3446851d}{servidor.\+Sistema\+Arquivo}.
+
+
+
+The documentation for this interface was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/servidor/Sistema\+Arquivo\+Interface.\+java\end{DoxyCompactItemize}

@@ -1,0 +1,154 @@
+\hypertarget{classutils_1_1_manipulador_x_m_l}{\section{utils.\+Manipulador\+X\+M\+L Class Reference}
+\label{classutils_1_1_manipulador_x_m_l}\index{utils.\+Manipulador\+X\+M\+L@{utils.\+Manipulador\+X\+M\+L}}
+}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classutils_1_1_manipulador_x_m_l_a16a656452f4175f6429248f48e9e287f}{boolean {\bfseries existe\+Arquivo} (String caminho, Document xml)  throws X\+Path\+Expression\+Exception }\label{classutils_1_1_manipulador_x_m_l_a16a656452f4175f6429248f48e9e287f}
+
+\item 
+\hypertarget{classutils_1_1_manipulador_x_m_l_ad6c6eea5fc2af5a388ba9dc89c5ac58d}{boolean {\bfseries existe\+Pasta} (String caminho, Document xml)  throws X\+Path\+Expression\+Exception }\label{classutils_1_1_manipulador_x_m_l_ad6c6eea5fc2af5a388ba9dc89c5ac58d}
+
+\item 
+String \hyperlink{classutils_1_1_manipulador_x_m_l_abe6e542a9eaaae635a8a170b82440386}{montar\+Expressao\+Arquivo} (String caminho)
+\item 
+String \hyperlink{classutils_1_1_manipulador_x_m_l_a0c3294fa3f4ac2d40a6f544528acef53}{montar\+Expressao\+Pasta} (String caminho)
+\item 
+Node \hyperlink{classutils_1_1_manipulador_x_m_l_a0f077a38689257b4531ffc9068c9fe72}{pega\+Ultima\+Pasta} (String expressao, Document xml)  throws X\+Path\+Expression\+Exception 
+\item 
+Node \hyperlink{classutils_1_1_manipulador_x_m_l_a3722abbe1d67ed059d767625f145890c}{pega\+Ultimo\+Node} (String expressao, Document xml)  throws X\+Path\+Expression\+Exception 
+\item 
+boolean \hyperlink{classutils_1_1_manipulador_x_m_l_a8313756ee8243de3d89c2cb3ec3136ed}{salvar\+X\+M\+L} (Document xml, String nome\+Usuario)  throws Transformer\+Configuration\+Exception, Transformer\+Exception 
+\item 
+\hypertarget{classutils_1_1_manipulador_x_m_l_a508d4e44cb77093a9674a23aa47070f4}{String {\bfseries get\+Nome\+Arquivo\+Fisico} (String caminho, Document xml)  throws X\+Path\+Expression\+Exception }\label{classutils_1_1_manipulador_x_m_l_a508d4e44cb77093a9674a23aa47070f4}
+
+\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classutils_1_1_manipulador_x_m_l_ae359111e2e86584c59068ea934dfd90a}{static List$<$ String $>$ {\bfseries get\+Nomes\+Arquivos\+Fisicos} (Document xml)  throws X\+Path\+Expression\+Exception }\label{classutils_1_1_manipulador_x_m_l_ae359111e2e86584c59068ea934dfd90a}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Implementa operações simples para manipulação do X\+M\+L
+
+\begin{DoxyAuthor}{Author}
+minoro 
+\end{DoxyAuthor}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classutils_1_1_manipulador_x_m_l_abe6e542a9eaaae635a8a170b82440386}{\index{utils\+::\+Manipulador\+X\+M\+L@{utils\+::\+Manipulador\+X\+M\+L}!montar\+Expressao\+Arquivo@{montar\+Expressao\+Arquivo}}
+\index{montar\+Expressao\+Arquivo@{montar\+Expressao\+Arquivo}!utils\+::\+Manipulador\+X\+M\+L@{utils\+::\+Manipulador\+X\+M\+L}}
+\subsubsection[{montar\+Expressao\+Arquivo}]{\setlength{\rightskip}{0pt plus 5cm}String utils.\+Manipulador\+X\+M\+L.\+montar\+Expressao\+Arquivo (
+\begin{DoxyParamCaption}
+\item[{String}]{caminho}
+\end{DoxyParamCaption}
+)}}\label{classutils_1_1_manipulador_x_m_l_abe6e542a9eaaae635a8a170b82440386}
+Monta uma expressão para arquivo o X\+Path compilar
+
+
+\begin{DoxyParams}{Parameters}
+{\em caminho} & String -\/ caminho a ser gerado a expressao \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+String -\/ retorna uma String representando a expressão do caminho do parâmetro 
+\end{DoxyReturn}
+\hypertarget{classutils_1_1_manipulador_x_m_l_a0c3294fa3f4ac2d40a6f544528acef53}{\index{utils\+::\+Manipulador\+X\+M\+L@{utils\+::\+Manipulador\+X\+M\+L}!montar\+Expressao\+Pasta@{montar\+Expressao\+Pasta}}
+\index{montar\+Expressao\+Pasta@{montar\+Expressao\+Pasta}!utils\+::\+Manipulador\+X\+M\+L@{utils\+::\+Manipulador\+X\+M\+L}}
+\subsubsection[{montar\+Expressao\+Pasta}]{\setlength{\rightskip}{0pt plus 5cm}String utils.\+Manipulador\+X\+M\+L.\+montar\+Expressao\+Pasta (
+\begin{DoxyParamCaption}
+\item[{String}]{caminho}
+\end{DoxyParamCaption}
+)}}\label{classutils_1_1_manipulador_x_m_l_a0c3294fa3f4ac2d40a6f544528acef53}
+Monta uma expressão para pasta o X\+Path compilar
+
+
+\begin{DoxyParams}{Parameters}
+{\em caminho} & String -\/ caminho a ser gerado a expressao \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+String -\/ retorna uma String representando a expressão do caminho do parâmetro 
+\end{DoxyReturn}
+\hypertarget{classutils_1_1_manipulador_x_m_l_a0f077a38689257b4531ffc9068c9fe72}{\index{utils\+::\+Manipulador\+X\+M\+L@{utils\+::\+Manipulador\+X\+M\+L}!pega\+Ultima\+Pasta@{pega\+Ultima\+Pasta}}
+\index{pega\+Ultima\+Pasta@{pega\+Ultima\+Pasta}!utils\+::\+Manipulador\+X\+M\+L@{utils\+::\+Manipulador\+X\+M\+L}}
+\subsubsection[{pega\+Ultima\+Pasta}]{\setlength{\rightskip}{0pt plus 5cm}Node utils.\+Manipulador\+X\+M\+L.\+pega\+Ultima\+Pasta (
+\begin{DoxyParamCaption}
+\item[{String}]{expressao, }
+\item[{Document}]{xml}
+\end{DoxyParamCaption}
+) throws X\+Path\+Expression\+Exception}}\label{classutils_1_1_manipulador_x_m_l_a0f077a38689257b4531ffc9068c9fe72}
+Dada uma expressão, retorna a última pasta dela. Utilizado para dar append\+Child.
+
+
+\begin{DoxyParams}{Parameters}
+{\em expressao} & String -\/ expressao X\+M\+L \\
+\hline
+{\em xml} & -\/ Document -\/ xml para ser pesquisado \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Node -\/ o nó da última pasta da expressão 
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em X\+Path\+Expression\+Exception} & \\
+\hline
+\end{DoxyExceptions}
+\hypertarget{classutils_1_1_manipulador_x_m_l_a3722abbe1d67ed059d767625f145890c}{\index{utils\+::\+Manipulador\+X\+M\+L@{utils\+::\+Manipulador\+X\+M\+L}!pega\+Ultimo\+Node@{pega\+Ultimo\+Node}}
+\index{pega\+Ultimo\+Node@{pega\+Ultimo\+Node}!utils\+::\+Manipulador\+X\+M\+L@{utils\+::\+Manipulador\+X\+M\+L}}
+\subsubsection[{pega\+Ultimo\+Node}]{\setlength{\rightskip}{0pt plus 5cm}Node utils.\+Manipulador\+X\+M\+L.\+pega\+Ultimo\+Node (
+\begin{DoxyParamCaption}
+\item[{String}]{expressao, }
+\item[{Document}]{xml}
+\end{DoxyParamCaption}
+) throws X\+Path\+Expression\+Exception}}\label{classutils_1_1_manipulador_x_m_l_a3722abbe1d67ed059d767625f145890c}
+
+\begin{DoxyParams}{Parameters}
+{\em expressao} & String -\/ expressao X\+M\+L \\
+\hline
+{\em xml} & -\/ Document -\/ xml a ser pesquisado \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Node -\/ o ultimo nó da expressão 
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em X\+Path\+Expression\+Exception} & \\
+\hline
+\end{DoxyExceptions}
+\hypertarget{classutils_1_1_manipulador_x_m_l_a8313756ee8243de3d89c2cb3ec3136ed}{\index{utils\+::\+Manipulador\+X\+M\+L@{utils\+::\+Manipulador\+X\+M\+L}!salvar\+X\+M\+L@{salvar\+X\+M\+L}}
+\index{salvar\+X\+M\+L@{salvar\+X\+M\+L}!utils\+::\+Manipulador\+X\+M\+L@{utils\+::\+Manipulador\+X\+M\+L}}
+\subsubsection[{salvar\+X\+M\+L}]{\setlength{\rightskip}{0pt plus 5cm}boolean utils.\+Manipulador\+X\+M\+L.\+salvar\+X\+M\+L (
+\begin{DoxyParamCaption}
+\item[{Document}]{xml, }
+\item[{String}]{nome\+Usuario}
+\end{DoxyParamCaption}
+) throws Transformer\+Configuration\+Exception, Transformer\+Exception}}\label{classutils_1_1_manipulador_x_m_l_a8313756ee8243de3d89c2cb3ec3136ed}
+Salva o xml do parâmetro no arquivo físico
+
+
+\begin{DoxyParams}{Parameters}
+{\em nome\+Usuario} & String -\/ nome do usuário para ser salvo o arquivo X\+M\+L \\
+\hline
+{\em xml} & Document -\/ Objeto representando o arquivo xml \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+boolean -\/ true caso salve o arquivo, false caso haja algum erro 
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em Transformer\+Configuration\+Exception} & \\
+\hline
+\end{DoxyExceptions}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/utils/Manipulador\+X\+M\+L.\+java\end{DoxyCompactItemize}

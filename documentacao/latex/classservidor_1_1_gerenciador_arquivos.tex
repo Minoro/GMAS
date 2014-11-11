@@ -1,0 +1,96 @@
+\hypertarget{classservidor_1_1_gerenciador_arquivos}{\section{servidor.\+Gerenciador\+Arquivos Class Reference}
+\label{classservidor_1_1_gerenciador_arquivos}\index{servidor.\+Gerenciador\+Arquivos@{servidor.\+Gerenciador\+Arquivos}}
+}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static String \hyperlink{classservidor_1_1_gerenciador_arquivos_a986e89c4c8c481eff09b7418c50ba69e}{criar\+Arquivo} (\hyperlink{classmodel_1_1_arquivo}{Arquivo} arquivo)
+\item 
+static boolean \hyperlink{classservidor_1_1_gerenciador_arquivos_a80c02193564d7e59ad81af60021a62ce}{apagar\+Arquivo} (String nome)
+\item 
+static boolean \hyperlink{classservidor_1_1_gerenciador_arquivos_a6252ba0a3ef659ea4d6082ea496be15a}{salvar\+Arquivo} (\hyperlink{classmodel_1_1_arquivo}{Arquivo} arquivo, String nome)
+\item 
+static \hyperlink{classmodel_1_1_arquivo}{Arquivo} \hyperlink{classservidor_1_1_gerenciador_arquivos_ac7505735f05bafbbd913db3ac3e858e8}{abrir\+Arquivo} (String nome)
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Classe para manipular arquivos no servidor 
+
+\subsection{Member Function Documentation}
+\hypertarget{classservidor_1_1_gerenciador_arquivos_ac7505735f05bafbbd913db3ac3e858e8}{\index{servidor\+::\+Gerenciador\+Arquivos@{servidor\+::\+Gerenciador\+Arquivos}!abrir\+Arquivo@{abrir\+Arquivo}}
+\index{abrir\+Arquivo@{abrir\+Arquivo}!servidor\+::\+Gerenciador\+Arquivos@{servidor\+::\+Gerenciador\+Arquivos}}
+\subsubsection[{abrir\+Arquivo}]{\setlength{\rightskip}{0pt plus 5cm}static {\bf Arquivo} servidor.\+Gerenciador\+Arquivos.\+abrir\+Arquivo (
+\begin{DoxyParamCaption}
+\item[{String}]{nome}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}}}\label{classservidor_1_1_gerenciador_arquivos_ac7505735f05bafbbd913db3ac3e858e8}
+Retorna um objeto Arquivo dado o nome aleatório de um arquivo persistido
+
+
+\begin{DoxyParams}{Parameters}
+{\em nome} & String -\/ nome aleatório do arquivo \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Arquivo -\/ retorna o objeto com seus atributos 
+\end{DoxyReturn}
+\hypertarget{classservidor_1_1_gerenciador_arquivos_a80c02193564d7e59ad81af60021a62ce}{\index{servidor\+::\+Gerenciador\+Arquivos@{servidor\+::\+Gerenciador\+Arquivos}!apagar\+Arquivo@{apagar\+Arquivo}}
+\index{apagar\+Arquivo@{apagar\+Arquivo}!servidor\+::\+Gerenciador\+Arquivos@{servidor\+::\+Gerenciador\+Arquivos}}
+\subsubsection[{apagar\+Arquivo}]{\setlength{\rightskip}{0pt plus 5cm}static boolean servidor.\+Gerenciador\+Arquivos.\+apagar\+Arquivo (
+\begin{DoxyParamCaption}
+\item[{String}]{nome}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}}}\label{classservidor_1_1_gerenciador_arquivos_a80c02193564d7e59ad81af60021a62ce}
+Apaga um arquivo no disco do servidor
+
+
+\begin{DoxyParams}{Parameters}
+{\em nome} & String -\/ nome aleatório referente ao arquivo em disco \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+boolean -\/ retorna true caso seja possível apagar o arquivo, falso caso não seja possível 
+\end{DoxyReturn}
+\hypertarget{classservidor_1_1_gerenciador_arquivos_a986e89c4c8c481eff09b7418c50ba69e}{\index{servidor\+::\+Gerenciador\+Arquivos@{servidor\+::\+Gerenciador\+Arquivos}!criar\+Arquivo@{criar\+Arquivo}}
+\index{criar\+Arquivo@{criar\+Arquivo}!servidor\+::\+Gerenciador\+Arquivos@{servidor\+::\+Gerenciador\+Arquivos}}
+\subsubsection[{criar\+Arquivo}]{\setlength{\rightskip}{0pt plus 5cm}static String servidor.\+Gerenciador\+Arquivos.\+criar\+Arquivo (
+\begin{DoxyParamCaption}
+\item[{{\bf Arquivo}}]{arquivo}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}}}\label{classservidor_1_1_gerenciador_arquivos_a986e89c4c8c481eff09b7418c50ba69e}
+Cria um arquivo em disco caso não exista nenhum com o nome
+
+
+\begin{DoxyParams}{Parameters}
+{\em arquivo} & Arquivo -\/ Objeto do arquivo a ser salvo fisicamente \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+String -\/ retorna um nome aleatório referente ao arquivo em disco caso seja possível criar o arquivo caso contrário retorna uma string vazia 
+\end{DoxyReturn}
+\hypertarget{classservidor_1_1_gerenciador_arquivos_a6252ba0a3ef659ea4d6082ea496be15a}{\index{servidor\+::\+Gerenciador\+Arquivos@{servidor\+::\+Gerenciador\+Arquivos}!salvar\+Arquivo@{salvar\+Arquivo}}
+\index{salvar\+Arquivo@{salvar\+Arquivo}!servidor\+::\+Gerenciador\+Arquivos@{servidor\+::\+Gerenciador\+Arquivos}}
+\subsubsection[{salvar\+Arquivo}]{\setlength{\rightskip}{0pt plus 5cm}static boolean servidor.\+Gerenciador\+Arquivos.\+salvar\+Arquivo (
+\begin{DoxyParamCaption}
+\item[{{\bf Arquivo}}]{arquivo, }
+\item[{String}]{nome}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}}}\label{classservidor_1_1_gerenciador_arquivos_a6252ba0a3ef659ea4d6082ea496be15a}
+Persiste o conteúdo de um objeto Arquivo em disco
+
+
+\begin{DoxyParams}{Parameters}
+{\em arquivo} & Arquivo -\/ objeto a ser persistido em disco \\
+\hline
+{\em nome} & String -\/ nome aleátorio gerado quando o arquivo é criado \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+boolean -\/ retorna true caso seja possível salvar o arquivo ou false caso contrário 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/servidor/Gerenciador\+Arquivos.\+java\end{DoxyCompactItemize}

@@ -1,0 +1,1 @@
+<raiz nomeFantasia='vellone'><pasta nomeFantasia='uma'><arquivo nomeFantasia='saulo.txt' trava='1'></arquivo></pasta><arquivo nomeFantasia='saulo.txt' trava='0'></arquivo></raiz>

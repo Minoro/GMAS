@@ -1,0 +1,391 @@
+\hypertarget{classmiddleware_1_1_middleware}{\section{middleware.\+Middleware Class Reference}
+\label{classmiddleware_1_1_middleware}\index{middleware.\+Middleware@{middleware.\+Middleware}}
+}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classmiddleware_1_1_middleware_a2d7a099e82706c91ad5d5355c1959359}{Middleware} (String multicast\+Group, String nome\+Usuario, Boolean novo\+Usuario)  throws I\+O\+Exception, Unknown\+Host\+Exception, Remote\+Exception, X\+Path\+Expression\+Exception, Not\+Bound\+Exception 
+\item 
+String \hyperlink{classmiddleware_1_1_middleware_a3e838354f2f062385660c1c04681185e}{get\+U\+R\+L\+Servidor\+R\+M\+I} (int indice\+Servidor)
+\item 
+boolean \hyperlink{classmiddleware_1_1_middleware_a5f164a846ad486428469c7cdb79d985a}{renomear\+Arquivo} (String caminho, String nome\+\_\+digitado)  throws Remote\+Exception 
+\item 
+boolean \hyperlink{classmiddleware_1_1_middleware_a1ccaadf844107f004660ee209286dcd0}{criar\+Arquivo} (String caminho\+Selecionado, \hyperlink{classmodel_1_1_arquivo}{Arquivo} arquivo)  throws Remote\+Exception 
+\item 
+boolean \hyperlink{classmiddleware_1_1_middleware_a457ec4259716b0360c0ea38b5d30f86f}{criar\+Pasta} (String caminho\+Selecionado)  throws Remote\+Exception 
+\item 
+boolean \hyperlink{classmiddleware_1_1_middleware_a5656da24daf0e3e1ab472708a9ad3833}{copiar\+Arquivo} (String caminho\+Origem, String caminho\+Destino)  throws Remote\+Exception 
+\item 
+boolean \hyperlink{classmiddleware_1_1_middleware_ae299002971f601e9b4fcb7427c808f37}{copiar\+Pasta} (String caminho\+Origem, String caminho\+Destino)  throws Remote\+Exception 
+\item 
+void \hyperlink{classmiddleware_1_1_middleware_afac57d6d69b6fb3abf14bd8ec6d62737}{unlock} (String caminho)  throws Remote\+Exception 
+\item 
+boolean \hyperlink{classmiddleware_1_1_middleware_ae89884186ded30327bd4b02b781531b3}{mover\+Arquivo} (String caminho\+Origem, String caminho\+Destino)  throws Remote\+Exception 
+\item 
+boolean \hyperlink{classmiddleware_1_1_middleware_a258024d89a854e48edd71ce1dff7561f}{mover\+Pasta} (String caminho\+Origem, String caminho\+Destino)  throws Remote\+Exception 
+\item 
+boolean \hyperlink{classmiddleware_1_1_middleware_a91032b272523105aacae765b8d08d02b}{deletar\+Arquivo} (String caminho\+Origem)  throws Remote\+Exception 
+\item 
+boolean \hyperlink{classmiddleware_1_1_middleware_abd255ccfbaa4d1bf0344e4b4ddb79309}{deletar\+Pasta} (String caminho\+Origem)  throws Remote\+Exception 
+\item 
+boolean \hyperlink{classmiddleware_1_1_middleware_a3ce87937da7125149daf5b7838cbcdc7}{salvar\+Arquivo} (String caminho, String texto)  throws Remote\+Exception 
+\item 
+String \hyperlink{classmiddleware_1_1_middleware_a964d56555a150528a80f3ed4b892133f}{ler\+Arquivo} (String caminho)  throws Remote\+Exception 
+\item 
+Document \hyperlink{classmiddleware_1_1_middleware_a68f1d49902be780c30c4e44689f6b888}{pedir\+X\+M\+L} ()  throws Remote\+Exception 
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classmiddleware_1_1_middleware_a6e83b6c280f87d8dc499b70297d76182}{List$<$ \hyperlink{interfaceservidor_1_1_sistema_arquivo_interface}{Sistema\+Arquivo\+Interface} $>$ {\bfseries servidores\+Remotos}}\label{classmiddleware_1_1_middleware_a6e83b6c280f87d8dc499b70297d76182}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Classe que realiza a comunicação entre a aplicação do cliente e os servidores de arquivo.
+
+A comunicação é realizada através de chamadas R\+M\+I. Detecta falha de servidores e notifica um servidor desse fato, desencadeando um processo de recuperação de falhas 
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classmiddleware_1_1_middleware_a2d7a099e82706c91ad5d5355c1959359}{\index{middleware\+::\+Middleware@{middleware\+::\+Middleware}!Middleware@{Middleware}}
+\index{Middleware@{Middleware}!middleware\+::\+Middleware@{middleware\+::\+Middleware}}
+\subsubsection[{Middleware}]{\setlength{\rightskip}{0pt plus 5cm}middleware.\+Middleware.\+Middleware (
+\begin{DoxyParamCaption}
+\item[{String}]{multicast\+Group, }
+\item[{String}]{nome\+Usuario, }
+\item[{Boolean}]{novo\+Usuario}
+\end{DoxyParamCaption}
+) throws I\+O\+Exception, Unknown\+Host\+Exception, Remote\+Exception, X\+Path\+Expression\+Exception, Not\+Bound\+Exception}}\label{classmiddleware_1_1_middleware_a2d7a099e82706c91ad5d5355c1959359}
+Construtor da Classe de \hyperlink{classmiddleware_1_1_middleware}{Middleware}. A partir do endereço de um grupo Multicast passado por parametro envia uma solicitação para todos os servidores de arquivos remotos e, armazena na lista de servidores os dois primeiros que responderem a solicitação.
+
+
+\begin{DoxyParams}{Parameters}
+{\em multicast\+Group} & Endereço do grupo de multicast \\
+\hline
+{\em nome\+Usuario} & Nome do usuário \\
+\hline
+{\em novo\+Usuario} & Boolean que representa se é novo usuário ou não \\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em I\+O\+Exception} & \\
+\hline
+{\em java.\+net.\+Unknown\+Host\+Exception} & \\
+\hline
+{\em java.\+rmi.\+Remote\+Exception} & \\
+\hline
+{\em javax.\+xml.\+xpath.\+X\+Path\+Expression\+Exception} & \\
+\hline
+{\em java.\+rmi.\+Not\+Bound\+Exception} & \\
+\hline
+\end{DoxyExceptions}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classmiddleware_1_1_middleware_a5656da24daf0e3e1ab472708a9ad3833}{\index{middleware\+::\+Middleware@{middleware\+::\+Middleware}!copiar\+Arquivo@{copiar\+Arquivo}}
+\index{copiar\+Arquivo@{copiar\+Arquivo}!middleware\+::\+Middleware@{middleware\+::\+Middleware}}
+\subsubsection[{copiar\+Arquivo}]{\setlength{\rightskip}{0pt plus 5cm}boolean middleware.\+Middleware.\+copiar\+Arquivo (
+\begin{DoxyParamCaption}
+\item[{String}]{caminho\+Origem, }
+\item[{String}]{caminho\+Destino}
+\end{DoxyParamCaption}
+) throws Remote\+Exception}}\label{classmiddleware_1_1_middleware_a5656da24daf0e3e1ab472708a9ad3833}
+Realiza uma cópia de um arquivo no servidores
+
+
+\begin{DoxyParams}{Parameters}
+{\em caminho\+Origem} & Caminho de origem do arquivo \\
+\hline
+{\em caminho\+Destino} & Caminho de destino para a cópia \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true em caso de sucesso, senão false. 
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em Remote\+Exception} & \\
+\hline
+\end{DoxyExceptions}
+\hypertarget{classmiddleware_1_1_middleware_ae299002971f601e9b4fcb7427c808f37}{\index{middleware\+::\+Middleware@{middleware\+::\+Middleware}!copiar\+Pasta@{copiar\+Pasta}}
+\index{copiar\+Pasta@{copiar\+Pasta}!middleware\+::\+Middleware@{middleware\+::\+Middleware}}
+\subsubsection[{copiar\+Pasta}]{\setlength{\rightskip}{0pt plus 5cm}boolean middleware.\+Middleware.\+copiar\+Pasta (
+\begin{DoxyParamCaption}
+\item[{String}]{caminho\+Origem, }
+\item[{String}]{caminho\+Destino}
+\end{DoxyParamCaption}
+) throws Remote\+Exception}}\label{classmiddleware_1_1_middleware_ae299002971f601e9b4fcb7427c808f37}
+Realiza a cópia de uma pasta nos servidores.
+
+
+\begin{DoxyParams}{Parameters}
+{\em caminho\+Origem} & Caminho de origem da pasta. \\
+\hline
+{\em caminho\+Destino} & Caminho de destino para a nova pasta. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true em caso de sucesso, senão false. 
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em Remote\+Exception} & \\
+\hline
+\end{DoxyExceptions}
+\hypertarget{classmiddleware_1_1_middleware_a1ccaadf844107f004660ee209286dcd0}{\index{middleware\+::\+Middleware@{middleware\+::\+Middleware}!criar\+Arquivo@{criar\+Arquivo}}
+\index{criar\+Arquivo@{criar\+Arquivo}!middleware\+::\+Middleware@{middleware\+::\+Middleware}}
+\subsubsection[{criar\+Arquivo}]{\setlength{\rightskip}{0pt plus 5cm}boolean middleware.\+Middleware.\+criar\+Arquivo (
+\begin{DoxyParamCaption}
+\item[{String}]{caminho\+Selecionado, }
+\item[{{\bf Arquivo}}]{arquivo}
+\end{DoxyParamCaption}
+) throws Remote\+Exception}}\label{classmiddleware_1_1_middleware_a1ccaadf844107f004660ee209286dcd0}
+Cria um novo arquivo nos servidores de armazenamento
+
+
+\begin{DoxyParams}{Parameters}
+{\em caminho\+Selecionado} & Caminho do arquivo \\
+\hline
+{\em arquivo} & Objeto representativo de arquivo (Model) \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+True, se o arquivo foi criado com sucesso. False, em caso de falhas na criação.
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em Remote\+Exception} & \\
+\hline
+\end{DoxyExceptions}
+\hypertarget{classmiddleware_1_1_middleware_a457ec4259716b0360c0ea38b5d30f86f}{\index{middleware\+::\+Middleware@{middleware\+::\+Middleware}!criar\+Pasta@{criar\+Pasta}}
+\index{criar\+Pasta@{criar\+Pasta}!middleware\+::\+Middleware@{middleware\+::\+Middleware}}
+\subsubsection[{criar\+Pasta}]{\setlength{\rightskip}{0pt plus 5cm}boolean middleware.\+Middleware.\+criar\+Pasta (
+\begin{DoxyParamCaption}
+\item[{String}]{caminho\+Selecionado}
+\end{DoxyParamCaption}
+) throws Remote\+Exception}}\label{classmiddleware_1_1_middleware_a457ec4259716b0360c0ea38b5d30f86f}
+Cria uma nova pasta nos servidores de arquivos
+
+
+\begin{DoxyParams}{Parameters}
+{\em caminho\+Selecionado} & Caminho da nova pasta \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true em caso de sucesso, senão false. 
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em Remote\+Exception} & \\
+\hline
+\end{DoxyExceptions}
+\hypertarget{classmiddleware_1_1_middleware_a91032b272523105aacae765b8d08d02b}{\index{middleware\+::\+Middleware@{middleware\+::\+Middleware}!deletar\+Arquivo@{deletar\+Arquivo}}
+\index{deletar\+Arquivo@{deletar\+Arquivo}!middleware\+::\+Middleware@{middleware\+::\+Middleware}}
+\subsubsection[{deletar\+Arquivo}]{\setlength{\rightskip}{0pt plus 5cm}boolean middleware.\+Middleware.\+deletar\+Arquivo (
+\begin{DoxyParamCaption}
+\item[{String}]{caminho\+Origem}
+\end{DoxyParamCaption}
+) throws Remote\+Exception}}\label{classmiddleware_1_1_middleware_a91032b272523105aacae765b8d08d02b}
+Deleta um arquivo em todos os servidores relacionados a um cliente. 
+\begin{DoxyParams}{Parameters}
+{\em caminho\+Origem} & Caminho do arquivo. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true em caso de sucesso, senão false. 
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em Remote\+Exception} & \\
+\hline
+\end{DoxyExceptions}
+\hypertarget{classmiddleware_1_1_middleware_abd255ccfbaa4d1bf0344e4b4ddb79309}{\index{middleware\+::\+Middleware@{middleware\+::\+Middleware}!deletar\+Pasta@{deletar\+Pasta}}
+\index{deletar\+Pasta@{deletar\+Pasta}!middleware\+::\+Middleware@{middleware\+::\+Middleware}}
+\subsubsection[{deletar\+Pasta}]{\setlength{\rightskip}{0pt plus 5cm}boolean middleware.\+Middleware.\+deletar\+Pasta (
+\begin{DoxyParamCaption}
+\item[{String}]{caminho\+Origem}
+\end{DoxyParamCaption}
+) throws Remote\+Exception}}\label{classmiddleware_1_1_middleware_abd255ccfbaa4d1bf0344e4b4ddb79309}
+Deleta uma pasta em todos os servidores de um determinado cliente. 
+\begin{DoxyParams}{Parameters}
+{\em caminho\+Origem} & Caminho do arquivo \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true em caso de sucesso, senão false. 
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em Remote\+Exception} & \\
+\hline
+\end{DoxyExceptions}
+\hypertarget{classmiddleware_1_1_middleware_a3e838354f2f062385660c1c04681185e}{\index{middleware\+::\+Middleware@{middleware\+::\+Middleware}!get\+U\+R\+L\+Servidor\+R\+M\+I@{get\+U\+R\+L\+Servidor\+R\+M\+I}}
+\index{get\+U\+R\+L\+Servidor\+R\+M\+I@{get\+U\+R\+L\+Servidor\+R\+M\+I}!middleware\+::\+Middleware@{middleware\+::\+Middleware}}
+\subsubsection[{get\+U\+R\+L\+Servidor\+R\+M\+I}]{\setlength{\rightskip}{0pt plus 5cm}String middleware.\+Middleware.\+get\+U\+R\+L\+Servidor\+R\+M\+I (
+\begin{DoxyParamCaption}
+\item[{int}]{indice\+Servidor}
+\end{DoxyParamCaption}
+)}}\label{classmiddleware_1_1_middleware_a3e838354f2f062385660c1c04681185e}
+Retorna a U\+R\+L R\+M\+I de um dos servidores relacionados ao cliente em questão.
+
+
+\begin{DoxyParams}{Parameters}
+{\em indice\+Servidor} & int -\/ indice do servidor para recuperação de I\+P \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+U\+R\+L R\+M\+I do servidor de arquivo de índice \char`\"{}indice\+Servidor\char`\"{} 
+\end{DoxyReturn}
+\hypertarget{classmiddleware_1_1_middleware_a964d56555a150528a80f3ed4b892133f}{\index{middleware\+::\+Middleware@{middleware\+::\+Middleware}!ler\+Arquivo@{ler\+Arquivo}}
+\index{ler\+Arquivo@{ler\+Arquivo}!middleware\+::\+Middleware@{middleware\+::\+Middleware}}
+\subsubsection[{ler\+Arquivo}]{\setlength{\rightskip}{0pt plus 5cm}String middleware.\+Middleware.\+ler\+Arquivo (
+\begin{DoxyParamCaption}
+\item[{String}]{caminho}
+\end{DoxyParamCaption}
+) throws Remote\+Exception}}\label{classmiddleware_1_1_middleware_a964d56555a150528a80f3ed4b892133f}
+Carrega o conteúdo de um arquivo. 
+\begin{DoxyParams}{Parameters}
+{\em caminho} & Caminho do arquivo selecionado. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Retorna o conteúdo do arquivo selecionado na forma de uma string. 
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em Remote\+Exception} & \\
+\hline
+\end{DoxyExceptions}
+\hypertarget{classmiddleware_1_1_middleware_ae89884186ded30327bd4b02b781531b3}{\index{middleware\+::\+Middleware@{middleware\+::\+Middleware}!mover\+Arquivo@{mover\+Arquivo}}
+\index{mover\+Arquivo@{mover\+Arquivo}!middleware\+::\+Middleware@{middleware\+::\+Middleware}}
+\subsubsection[{mover\+Arquivo}]{\setlength{\rightskip}{0pt plus 5cm}boolean middleware.\+Middleware.\+mover\+Arquivo (
+\begin{DoxyParamCaption}
+\item[{String}]{caminho\+Origem, }
+\item[{String}]{caminho\+Destino}
+\end{DoxyParamCaption}
+) throws Remote\+Exception}}\label{classmiddleware_1_1_middleware_ae89884186ded30327bd4b02b781531b3}
+Move um arquivo em todos os servidores do cliente em questão. 
+\begin{DoxyParams}{Parameters}
+{\em caminho\+Origem} & Caminho de origem do arquivo a ser movido. \\
+\hline
+{\em caminho\+Destino} & Caminho de destino para o arquivo. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true em caso de sucesso, senão false. 
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em Remote\+Exception} & \\
+\hline
+\end{DoxyExceptions}
+\hypertarget{classmiddleware_1_1_middleware_a258024d89a854e48edd71ce1dff7561f}{\index{middleware\+::\+Middleware@{middleware\+::\+Middleware}!mover\+Pasta@{mover\+Pasta}}
+\index{mover\+Pasta@{mover\+Pasta}!middleware\+::\+Middleware@{middleware\+::\+Middleware}}
+\subsubsection[{mover\+Pasta}]{\setlength{\rightskip}{0pt plus 5cm}boolean middleware.\+Middleware.\+mover\+Pasta (
+\begin{DoxyParamCaption}
+\item[{String}]{caminho\+Origem, }
+\item[{String}]{caminho\+Destino}
+\end{DoxyParamCaption}
+) throws Remote\+Exception}}\label{classmiddleware_1_1_middleware_a258024d89a854e48edd71ce1dff7561f}
+Move uma pasta em todos os servidores de arquivo de um determinado cliente. 
+\begin{DoxyParams}{Parameters}
+{\em caminho\+Origem} & Caminho de origem do arquivo. \\
+\hline
+{\em caminho\+Destino} & Caminho de destino para mover a pasta. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true em caso de sucesso, senão false. 
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em Remote\+Exception} & \\
+\hline
+\end{DoxyExceptions}
+\hypertarget{classmiddleware_1_1_middleware_a68f1d49902be780c30c4e44689f6b888}{\index{middleware\+::\+Middleware@{middleware\+::\+Middleware}!pedir\+X\+M\+L@{pedir\+X\+M\+L}}
+\index{pedir\+X\+M\+L@{pedir\+X\+M\+L}!middleware\+::\+Middleware@{middleware\+::\+Middleware}}
+\subsubsection[{pedir\+X\+M\+L}]{\setlength{\rightskip}{0pt plus 5cm}Document middleware.\+Middleware.\+pedir\+X\+M\+L (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) throws Remote\+Exception}}\label{classmiddleware_1_1_middleware_a68f1d49902be780c30c4e44689f6b888}
+Requisita o xml para os servidores, representado na forma de um objeto. \begin{DoxyReturn}{Returns}
+Retorna um objeto do tipo Document, representando o arquivo xml. 
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em Remote\+Exception} & \\
+\hline
+\end{DoxyExceptions}
+\hypertarget{classmiddleware_1_1_middleware_a5f164a846ad486428469c7cdb79d985a}{\index{middleware\+::\+Middleware@{middleware\+::\+Middleware}!renomear\+Arquivo@{renomear\+Arquivo}}
+\index{renomear\+Arquivo@{renomear\+Arquivo}!middleware\+::\+Middleware@{middleware\+::\+Middleware}}
+\subsubsection[{renomear\+Arquivo}]{\setlength{\rightskip}{0pt plus 5cm}boolean middleware.\+Middleware.\+renomear\+Arquivo (
+\begin{DoxyParamCaption}
+\item[{String}]{caminho, }
+\item[{String}]{nome\+\_\+digitado}
+\end{DoxyParamCaption}
+) throws Remote\+Exception}}\label{classmiddleware_1_1_middleware_a5f164a846ad486428469c7cdb79d985a}
+Método intermediário entre a aplicação cliente e as chamadas R\+M\+I para os servidores.
+
+Renomeia um arquivo em todos servidores que o armazenam. 
+\begin{DoxyParams}{Parameters}
+{\em caminho} & Caminho teórico do arquivo armazenado. \\
+\hline
+{\em nome\+\_\+digitado} & Novo nome para renomeação. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+True, se o arquivo foi renomeado com sucesso. False, em caso de falhas na renomeação. 
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em Remote\+Exception} & \\
+\hline
+\end{DoxyExceptions}
+\hypertarget{classmiddleware_1_1_middleware_a3ce87937da7125149daf5b7838cbcdc7}{\index{middleware\+::\+Middleware@{middleware\+::\+Middleware}!salvar\+Arquivo@{salvar\+Arquivo}}
+\index{salvar\+Arquivo@{salvar\+Arquivo}!middleware\+::\+Middleware@{middleware\+::\+Middleware}}
+\subsubsection[{salvar\+Arquivo}]{\setlength{\rightskip}{0pt plus 5cm}boolean middleware.\+Middleware.\+salvar\+Arquivo (
+\begin{DoxyParamCaption}
+\item[{String}]{caminho, }
+\item[{String}]{texto}
+\end{DoxyParamCaption}
+) throws Remote\+Exception}}\label{classmiddleware_1_1_middleware_a3ce87937da7125149daf5b7838cbcdc7}
+Salva as alterações feitas em um arquivo em todos os servidores que o armazenam 
+\begin{DoxyParams}{Parameters}
+{\em caminho} & Caminho do arquivo. \\
+\hline
+{\em texto} & Conteúdo do arquivo. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true em caso de sucesso, senão false. 
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em Remote\+Exception} & \\
+\hline
+\end{DoxyExceptions}
+\hypertarget{classmiddleware_1_1_middleware_afac57d6d69b6fb3abf14bd8ec6d62737}{\index{middleware\+::\+Middleware@{middleware\+::\+Middleware}!unlock@{unlock}}
+\index{unlock@{unlock}!middleware\+::\+Middleware@{middleware\+::\+Middleware}}
+\subsubsection[{unlock}]{\setlength{\rightskip}{0pt plus 5cm}void middleware.\+Middleware.\+unlock (
+\begin{DoxyParamCaption}
+\item[{String}]{caminho}
+\end{DoxyParamCaption}
+) throws Remote\+Exception}}\label{classmiddleware_1_1_middleware_afac57d6d69b6fb3abf14bd8ec6d62737}
+Desbloqueia um arquivo para edição por outras conexões de um mesmo usuário (conexões simultâneas). 
+\begin{DoxyParams}{Parameters}
+{\em caminho} & Caminho do arquivo para desbloqueio. \\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em Remote\+Exception} & \\
+\hline
+\end{DoxyExceptions}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/middleware/Middleware.\+java\end{DoxyCompactItemize}
