@@ -5,8 +5,10 @@
  */
 package jtree;
 
+import java.awt.Color;
 import java.awt.Component;
 import javax.swing.ImageIcon;
+import javax.swing.JComponent;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import utils.PainelDeControle;
@@ -17,7 +19,7 @@ import utils.PainelDeControle;
  */
 class XMLTreeCellRenderer extends DefaultTreeCellRenderer {
 
-    private ImageIcon[] XMLTreeIcons
+    private final ImageIcon[] XMLTreeIcons
             = {
                 new ImageIcon(PainelDeControle.PASTA_ICONES + "pasta.jpg"),
                 new ImageIcon(PainelDeControle.PASTA_ICONES + "arquivo.jpg"),
@@ -33,14 +35,18 @@ class XMLTreeCellRenderer extends DefaultTreeCellRenderer {
             boolean leaf,
             int row,
             boolean hasFocus) {
-        super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
-        String tag = ((XMLTreeNode) value).getNodeName();
+        JComponent comp = (JComponent) super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
+        XMLTreeNode node = (XMLTreeNode) value;
+        String tag = node.getNodeName();
         if (tag.equals(PainelDeControle.TAG_ARQUIVO)) {
             setIcon(XMLTreeIcons[1]);
         } else if (tag.equals(PainelDeControle.TAG_PASTA)) {
             setIcon(XMLTreeIcons[0]);
         } else {
             setIcon(XMLTreeIcons[2]);
+        }
+        if (node.getElement().getAttribute("trava").equals(PainelDeControle.TAG_TRAVADO)) {
+            comp.setForeground(Color.red);
         }
         return this;
     }
