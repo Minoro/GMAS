@@ -31,7 +31,8 @@ import utils.PainelDeControle;
  * Classe que realiza a comunicação entre a aplicação do cliente e os servidores
  * de arquivo.
  *
- * A comunicação é realizada através de chamadas RMI.
+ * A comunicação é realizada através de chamadas RMI. Detecta falha de servidores e notifica um servidor desse fato,
+ * desencadeando um processo de recuperação de falhas
  */
 public class Middleware {
 
@@ -65,7 +66,23 @@ public class Middleware {
         carregaServidoresRMI();
         PainelDeControle.xml = pedirXML();
     }
-
+    
+    /**
+     * Realiza a comunicação inicial de conexão. Envia uma solicitação via multicast para todos os servidores.
+     * 
+     * Se o cliente é um usuário novo, coleta as duas primeiras respostas de boas vindas dos servidores, e inicia a comunicação.
+     * Se o cliente é um usuário já "cadastrado", coleta as respostas dos servidores de arquivo desse cliente em questão. Se apenas um servidor responder,
+     * um procedimento de tratamento de erros é iniciado.
+     * 
+     * Se nenhum servidor responder a solicitação, o cliente é notificado e a aplicação é encerrada.
+     * 
+     * @param multicastGroup endereço de multicast utilizado para contatar os servidores
+     * @param novoUsuario variável boleana que a ocorrência ou não de um novo usuário.
+     * @throws UnknownHostException
+     * @throws IOException
+     * @throws RemoteException
+     * @throws XPathExpressionException 
+     */
     private void mergeUsuario(String multicastGroup, Boolean novoUsuario) throws UnknownHostException, IOException, RemoteException, XPathExpressionException {
         InetAddress group = InetAddress.getByName(multicastGroup);
         try (MulticastSocket mSckt = new MulticastSocket();) { //usuario "escuta" na mesma porta do multicast
@@ -128,6 +145,12 @@ public class Middleware {
         }
     }
 
+    /**
+     * Realiza o lookup (necessário para chamadas RMI) no servidores disponíveis para o usuário em
+     * questão.
+     * 
+     * @throws NotBoundException 
+     */
     private void carregaServidoresRMI() throws NotBoundException {
         servidoresRemotos = new ArrayList<>();
         for (int i = 0; i < servidoresArquivo.size(); i++) {
@@ -159,6 +182,15 @@ public class Middleware {
         return "rmi://" + servidoresArquivo.get(indiceServidor).getHostAddress() + ":/teste";
     }
 
+    /**
+     * Método intermediário entre a aplicação cliente e as chamadas RMI para os servidores.
+     * 
+     * Renomeia um arquivo em todos servidores que o armazenam.
+     * @param caminho Caminho teórico do arquivo armazenado.
+     * @param nome_digitado Novo nome para renomeação.
+     * @return True, se o arquivo foi renomeado com sucesso. False, em caso de falhas na renomeação.
+     * @throws RemoteException 
+     */
     public boolean renomearArquivo(String caminho, String nome_digitado) throws RemoteException {
         try {
             for (SistemaArquivoInterface serverRemoto : servidoresRemotos) {
@@ -174,6 +206,15 @@ public class Middleware {
         return false;
     }
 
+    /**
+     * Cria um novo arquivo nos servidores de armazenamento
+     * 
+     * @param caminhoSelecionado Caminho do arquivo
+     * @param arquivo Objeto representativo de arquivo (Model)
+     * @return True, se o arquivo foi criado com sucesso. False, em caso de falhas na criação.
+     * 
+     * @throws RemoteException 
+     */
     public boolean criarArquivo(String caminhoSelecionado, Arquivo arquivo) throws RemoteException {
         try {
             for (SistemaArquivoInterface serverRemoto : servidoresRemotos) {
@@ -189,6 +230,13 @@ public class Middleware {
         return false;
     }
 
+    /**
+     * Cria uma nova pasta nos servidores de arquivos
+     * 
+     * @param caminhoSelecionado Caminho da nova pasta
+     * @return true em caso de sucesso, senão false.
+     * @throws RemoteException 
+     */
     public boolean criarPasta(String caminhoSelecionado) throws RemoteException {
         try {
             for (SistemaArquivoInterface serverRemoto : servidoresRemotos) {
@@ -204,7 +252,15 @@ public class Middleware {
         }
         return false;
     }
-
+    
+    /**
+     * Realiza uma cópia de um arquivo no servidores
+     * 
+     * @param caminhoOrigem Caminho de origem do arquivo
+     * @param caminhoDestino Caminho de destino para a cópia
+     * @return true em caso de sucesso, senão false.
+     * @throws RemoteException 
+     */
     public boolean copiarArquivo(String caminhoOrigem, String caminhoDestino) throws RemoteException {
         try {
             for (SistemaArquivoInterface serverRemoto : servidoresRemotos) {
@@ -220,6 +276,14 @@ public class Middleware {
         return false;
     }
     
+    /**
+     * Realiza a cópia de uma pasta nos servidores.
+     * 
+     * @param caminhoOrigem Caminho de origem da pasta.
+     * @param caminhoDestino Caminho de destino para a nova pasta.
+     * @return true em caso de sucesso, senão false.
+     * @throws RemoteException 
+     */
     public boolean copiarPasta(String caminhoOrigem, String caminhoDestino) throws RemoteException {
         try {
             for (SistemaArquivoInterface serverRemoto : servidoresRemotos) {
@@ -234,7 +298,29 @@ public class Middleware {
         }
         return false;
     }
-
+    
+    /**
+     * Desbloqueia um arquivo para edição por outras conexões de um mesmo usuário (conexões simultâneas).
+     * @param caminho Caminho do arquivo para desbloqueio.
+     * @throws RemoteException 
+     */
+    public void unlock(String caminho) throws RemoteException {
+        try {
+            for (SistemaArquivoInterface serverRemoto : servidoresRemotos) {
+                serverRemoto.unlock(caminho, PainelDeControle.username);
+            }
+        } catch (XPathExpressionException ex) {
+            JOptionPane.showMessageDialog(InterfaceUsuario.main, ex.getMessage());
+        }
+    }
+    
+    /**
+     * Move um arquivo em todos os servidores do cliente em questão.
+     * @param caminhoOrigem Caminho de origem do arquivo a ser movido.
+     * @param caminhoDestino Caminho de destino para o arquivo.
+     * @return true em caso de sucesso, senão false.
+     * @throws RemoteException 
+     */
     public boolean moverArquivo(String caminhoOrigem, String caminhoDestino) throws RemoteException {
         try {
             for (SistemaArquivoInterface serverRemoto : servidoresRemotos) {
@@ -250,6 +336,13 @@ public class Middleware {
         return false;
     }
     
+    /**
+     * Move uma pasta em todos os servidores de arquivo de um determinado cliente.
+     * @param caminhoOrigem Caminho de origem do arquivo.
+     * @param caminhoDestino Caminho de destino para mover a pasta.
+     * @return true em caso de sucesso, senão false.
+     * @throws RemoteException 
+     */
     public boolean moverPasta(String caminhoOrigem, String caminhoDestino) throws RemoteException {
         try {
             for (SistemaArquivoInterface serverRemoto : servidoresRemotos) {
@@ -264,7 +357,13 @@ public class Middleware {
         }
         return false;
     }
-
+    
+    /**
+     * Deleta um arquivo em todos os servidores relacionados a um cliente.
+     * @param caminhoOrigem Caminho do arquivo.
+     * @return true em caso de sucesso, senão false.
+     * @throws RemoteException 
+     */
     public boolean deletarArquivo(String caminhoOrigem) throws RemoteException {
         try {
             for (SistemaArquivoInterface serverRemoto : servidoresRemotos) {
@@ -280,6 +379,12 @@ public class Middleware {
         return false;
     }
     
+    /**
+     * Deleta uma pasta em todos os servidores de um determinado cliente.
+     * @param caminhoOrigem Caminho do arquivo
+     * @return true em caso de sucesso, senão false.
+     * @throws RemoteException 
+     */
     public boolean deletarPasta(String caminhoOrigem) throws RemoteException {
         try {
             for (SistemaArquivoInterface serverRemoto : servidoresRemotos) {
