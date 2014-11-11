@@ -16,7 +16,7 @@ public class GMASEditor extends JFrame {
 
     private JTextArea areaEdicao;
 
-    public GMASEditor(String conteudo, String caminho) {
+    public GMASEditor(String conteudo, final String caminho) {
         areaEdicao = new JTextArea(30, 80);
         areaEdicao.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
         areaEdicao.setFont(new Font("monospaced", Font.PLAIN, 14));
