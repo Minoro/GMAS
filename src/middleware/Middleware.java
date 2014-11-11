@@ -249,11 +249,41 @@ public class Middleware {
         }
         return false;
     }
+    
+    public boolean moverPasta(String caminhoOrigem, String caminhoDestino) throws RemoteException {
+        try {
+            for (SistemaArquivoInterface serverRemoto : servidoresRemotos) {
+                boolean resultado = serverRemoto.moverPasta(caminhoOrigem, caminhoDestino, PainelDeControle.username);
+                if (!resultado) {
+                    return false;
+                }
+            }
+            return true;
+        } catch (XPathExpressionException ex) {
+            JOptionPane.showMessageDialog(InterfaceUsuario.main, ex.getMessage());
+        }
+        return false;
+    }
 
     public boolean deletarArquivo(String caminhoOrigem) throws RemoteException {
         try {
             for (SistemaArquivoInterface serverRemoto : servidoresRemotos) {
                 boolean resultado = serverRemoto.deletarArquivo(caminhoOrigem, PainelDeControle.username);
+                if (!resultado) {
+                    return false;
+                }
+            }
+            return true;
+        } catch (XPathExpressionException ex) {
+            JOptionPane.showMessageDialog(InterfaceUsuario.main, ex.getMessage());
+        }
+        return false;
+    }
+    
+    public boolean deletarPasta(String caminhoOrigem) throws RemoteException {
+        try {
+            for (SistemaArquivoInterface serverRemoto : servidoresRemotos) {
+                boolean resultado = serverRemoto.deletarPasta(caminhoOrigem, PainelDeControle.username);
                 if (!resultado) {
                     return false;
                 }

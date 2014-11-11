@@ -57,6 +57,20 @@ public interface SistemaArquivoInterface extends Remote {
      * @throws javax.xml.xpath.XPathExpressionException
      */
     boolean deletarArquivo(String caminho, String nomeUsuario) throws RemoteException, XPathExpressionException;
+    
+    /**
+     * Deleta uma pasta dado seu caminho, separado por barra, onde
+     * o ultimo nome, após a ultima barra, corresponde ao nome da pasta
+     *
+     * @param caminho String - caminho do arquivo a ser deletado, concatenado
+     * com "/" e o nome do arquivo
+     * @param nomeUsuario String - nome do usuário para salvar o XML
+     * @return boolean - true caso seja possivel deletar o arquivo ou false caso
+     * não seja possível
+     * @throws RemoteException
+     * @throws javax.xml.xpath.XPathExpressionException
+     */
+    boolean deletarPasta(String caminho, String nomeUsuario) throws RemoteException, XPathExpressionException;
 
     /**
      * Renomeia um arquivo passando o caminho de origem do arquivo, separado por
@@ -88,7 +102,22 @@ public interface SistemaArquivoInterface extends Remote {
      * @throws RemoteException
      * @throws javax.xml.xpath.XPathExpressionException
      */
+    
     boolean moverArquivo(String caminhoOrigem, String caminhoDestino, String nomeUsuario) throws RemoteException, XPathExpressionException;
+    /**
+     * Move uma pasta, dado um caminho de origem, onde o ultimo nome após a "/"
+     * é o nome da pasta, para o caminho de destino
+     *
+     * @param caminhoOrigem String - caminho de origem da pasta a ser movida,
+     * concatenado com "/"
+     * @param caminhoDestino - caminho de destino do arquivo.
+     * @param nomeUsuario String - nome do usuário para salvar o XML
+     * @return boolean - true caso seja possivel mover a pasta ou false caso
+     * não seja possível
+     * @throws RemoteException
+     * @throws javax.xml.xpath.XPathExpressionException
+     */
+    boolean moverPasta(String caminhoOrigem, String caminhoDestino, String nomeUsuario) throws RemoteException, XPathExpressionException;
 
     /**
      * Copia um arquivo, dado um caminho de origem, onde o ultimo nome após a

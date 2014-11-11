@@ -145,5 +145,7 @@ public class XMLTreePanel extends JPanel {
             Logger.getLogger(XMLTreePanel.class.getName()).log(Level.SEVERE, null, ex);
         }
         InterfaceUsuario.panel.setDocument(PainelDeControle.xml);
+//        PainelDeControle.xml = Vellone.pedirXML(Vellone.username);
+//        Vellone.panel.setDocument(PainelDeControle.xml);
     }
 }

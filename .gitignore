@@ -72,3 +72,7 @@ dist/
 nbdist/
 nbactions.xml
 nb-configuration.xml
+
+### Arquivos de Conteudo ###
+raiz/*.xml
+raiz/*.gemas

@@ -29,7 +29,8 @@ public class Vellone extends JFrame {
 
     public static SistemaArquivo teste;
     public static String username = "vellone";
-
+    public static XMLTreePanel panel;
+    
     public static void main(String[] args) {
         teste = PainelDeControle.getTeste();
         if (teste == null) {
@@ -39,13 +40,13 @@ public class Vellone extends JFrame {
         new Vellone();
     }
 
-    public Vellone() throws HeadlessException {
+    public Vellone() {
 
         PainelDeControle.xml = pedirXML(username);
         PainelDeControle.username = username;
 
         Document document = PainelDeControle.xml;
-        XMLTreePanel panel = new XMLTreePanel();
+        panel = new XMLTreePanel();
         XMLInfoPanel info = new XMLInfoPanel();
         XMLMenu menu = new XMLMenu();
 
@@ -61,7 +62,7 @@ public class Vellone extends JFrame {
         setVisible(true);
     }
 
-    public Document pedirXML(String nomeUsuario) {
+    public static Document pedirXML(String nomeUsuario) {
         System.out.println("PEDINDO XML LOCAL!!");
         Document retorno;
         String caminho = PainelDeControle.PASTA_XML + nomeUsuario + ".xml";

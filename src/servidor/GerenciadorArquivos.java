@@ -137,4 +137,17 @@ public class GerenciadorArquivos {
         return pastaOrigem;
     }
 
+    static void apagarPasta(Node arquivo) {
+        NodeList filhos = arquivo.getChildNodes();
+        for (int i = 0; i < filhos.getLength(); i++) {
+            Node filho = filhos.item(i);
+            if (filho.hasChildNodes()) {
+                apagarPasta(filho);
+            } else {
+                String nomeArquivoFisico = filho.getAttributes().getNamedItem("nome").getTextContent();
+                apagarArquivo(nomeArquivoFisico);
+            }
+        }
+    }
+
 }

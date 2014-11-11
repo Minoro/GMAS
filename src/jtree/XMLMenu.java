@@ -5,10 +5,12 @@
  */
 package jtree;
 
+import Testes.Vellone;
 import cliente.InterfaceUsuario;
 import forms.CopiarArquivo;
 import forms.CopiarPasta;
 import forms.MoverArquivo;
+import forms.MoverPasta;
 import forms.NovaPasta;
 import forms.NovoArquivo;
 import forms.Renomear;
@@ -21,6 +23,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.xml.xpath.XPathExpressionException;
 import utils.PainelDeControle;
 
 /**
@@ -34,7 +37,7 @@ public class XMLMenu extends JMenuBar {
         JMenuItem item;
 
         menu = new JMenu("Arquivo");
-        
+
         item = new JMenuItem("Criar");//arquivo
         item.addMouseListener(new MouseAdapter() {
             String nome_da_pasta = "Novo Arquivo";
@@ -56,7 +59,7 @@ public class XMLMenu extends JMenuBar {
             }
         });
         menu.add(item);
-        
+
         item = new JMenuItem("Mover");
         item.addMouseListener(new MouseAdapter() {
 
@@ -77,7 +80,7 @@ public class XMLMenu extends JMenuBar {
             }
         });
         menu.add(item);
-        
+
         item = new JMenuItem("Excluir");//arquivo
         item.addMouseListener(new MouseAdapter() {
 
@@ -88,7 +91,7 @@ public class XMLMenu extends JMenuBar {
                 caminho = caminho.substring(0, caminho.length() - 1);
                 int resposta = JOptionPane.showConfirmDialog(
                         InterfaceUsuario.main,
-                        "Deseja realmente apagar este arquivo " + arquivo.toString() + "(" + caminho + ") ?",
+                        "Deseja realmente apagar este arquivo " + arquivo.toString() + " (" + caminho + ") ?",
                         "Confirmação",
                         JOptionPane.YES_NO_OPTION
                 );
@@ -103,9 +106,9 @@ public class XMLMenu extends JMenuBar {
             }
         });
         menu.add(item);
-        
+
         add(menu);//FIM OPÇÕES ARQUIVO
-        
+
         menu = new JMenu("Pasta");
 
         item = new JMenuItem("Criar");
@@ -118,7 +121,7 @@ public class XMLMenu extends JMenuBar {
             }
         });
         menu.add(item);
-        
+
         item = new JMenuItem("Copiar");//arquivo
         item.addMouseListener(new MouseAdapter() {
             String nome_da_pasta;
@@ -129,8 +132,45 @@ public class XMLMenu extends JMenuBar {
             }
         });
         menu.add(item);
-        add(menu);
 
+        item = new JMenuItem("Mover");//arquivo
+        item.addMouseListener(new MouseAdapter() {
+            String nome_da_pasta;
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                new MoverPasta(InterfaceUsuario.main, false);
+            }
+        });
+        menu.add(item);
+
+        item = new JMenuItem("Excluir");//arquivo
+        item.addMouseListener(new MouseAdapter() {
+            String nome_da_pasta;
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                XMLTreeNode pasta = XMLTreePanel.node_selecionado;
+                String caminho = XMLTreePanel.getCaminhoSelecionado(false);
+                caminho = caminho.substring(0, caminho.length() - 1);
+                int resposta = JOptionPane.showConfirmDialog(
+                        InterfaceUsuario.main,
+                        "Deseja realmente apagar esta pasta " + pasta.toString() + " (" + caminho + ") ?",
+                        "Confirmação",
+                        JOptionPane.YES_NO_OPTION
+                );
+                if (resposta == JOptionPane.YES_OPTION) {
+                    try {
+                        PainelDeControle.middleware.deletarPasta(caminho);
+                    } catch (RemoteException ex) {
+                        Logger.getLogger(XMLMenu.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+                XMLTreePanel.atualizaArvore();
+            }
+        });
+        menu.add(item);
+        add(menu);
 
         menu = new JMenu("Atualizar Árvore");
         menu.addMouseListener(new MouseAdapter() {
@@ -141,7 +181,7 @@ public class XMLMenu extends JMenuBar {
             }
         });
         add(menu);
-        
+
         menu = new JMenu("Sair");
         menu.addMouseListener(new MouseAdapter() {
             @Override

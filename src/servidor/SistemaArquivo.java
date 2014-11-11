@@ -71,8 +71,8 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
             Logger.getLogger(SistemaArquivo.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    public SistemaArquivo(String string) throws RemoteException{
+
+    public SistemaArquivo(String string) throws RemoteException {
         System.out.println("Inicializando 'SERVIDOR' para testes");
         manipuladorXML = new ManipuladorXML();
         group = null;
@@ -234,7 +234,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
                     if ((tempoTeste - tempoInicio) / 1000000000 > PainelDeControle.deltaTRespostaMulticast) {
                         break;
                     }
-                    server.setSoTimeout(PainelDeControle.deltaTRespostaMulticast*100); //(Aguarda deltaTRespostaMulticast segundos)/100
+                    server.setSoTimeout(PainelDeControle.deltaTRespostaMulticast * 100); //(Aguarda deltaTRespostaMulticast segundos)/100
                     try (Socket recebimento = server.accept()) {
                         byte[] buffer = new byte[PainelDeControle.TAMANHO_BUFFER];
                         recebimento.getInputStream().read(buffer);
@@ -249,10 +249,10 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
                         }
                         contadorRespostas++;
                         /*if (contadorRespostas == 2) {
-                            //TODO provisório!!!
-                            //ver como fazer com timeout
-                            break;
-                        }*/
+                         //TODO provisório!!!
+                         //ver como fazer com timeout
+                         break;
+                         }*/
                     }
                 }
                 if (contadorRespostas > 1) {
@@ -503,7 +503,6 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
 
             ultima_pasta.appendChild(newelement);
             manipuladorXML.salvarXML(xml, nomeUsuario);
-            //verifica se o caminho existe no XML, se não existir retorna falso (vellone pergunta: ?)
 
         } catch (TransformerException ex) {
             Logger.getLogger(InterfaceUsuario.class
@@ -563,6 +562,28 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
         Node arquivo = manipuladorXML.pegaUltimoNode(expressao, xml);
         Node pastaPai = arquivo.getParentNode();
         pastaPai.removeChild(arquivo);
+
+        try {
+            manipuladorXML.salvarXML(xml, nomeUsuario);
+        } catch (TransformerException ex) {
+            Logger.getLogger(SistemaArquivo.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public boolean deletarPasta(String caminho, String nomeUsuario)
+            throws RemoteException, XPathExpressionException {
+        Document xml = pedirXML(nomeUsuario);
+        if (!manipuladorXML.existePasta(caminho, xml)) {
+            return false;
+        }
+        String expressao = manipuladorXML.montarExpressaoPasta(caminho);
+        Node pasta = manipuladorXML.pegaUltimoNode(expressao, xml);
+        GerenciadorArquivos.apagarPasta(pasta);
+        Node pastaPai = pasta.getParentNode();
+        pastaPai.removeChild(pasta);
 
         try {
             manipuladorXML.salvarXML(xml, nomeUsuario);
@@ -651,6 +672,41 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
     }
 
     @Override
+    public boolean moverPasta(String caminhoOrigem, String caminhoDestino, String nomeUsuario)
+            throws RemoteException, XPathExpressionException {
+        Document xml = pedirXML(nomeUsuario);
+
+        String novaPasta = caminhoDestino + caminhoOrigem.substring(caminhoOrigem.lastIndexOf("/") + 1, caminhoOrigem.length());
+        //verifica se o arquivo de origem existe e se não há arquivo com o mesmo
+        //nome no destino
+        if (!manipuladorXML.existePasta(caminhoOrigem, xml)
+                || manipuladorXML.existePasta(novaPasta, xml)) {
+            return false;
+        }
+
+        //monta expressao do arquivo de origem baseado no caminho e recupera o NODE
+        String expressaoOrigem = manipuladorXML.montarExpressaoPasta(caminhoOrigem);
+        Node pastaOrigem = manipuladorXML.pegaUltimoNode(expressaoOrigem, xml);
+
+        String expressaoDestino = manipuladorXML.montarExpressaoPasta(caminhoDestino);
+        Node pasta = manipuladorXML.pegaUltimoNode(expressaoDestino, xml);
+        //atualiza dataUltimaModificacao para 'agora'
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-mm-YYYY HH:MM");
+        String dataAgora = sdf.format(new Date());
+        pastaOrigem.getAttributes().getNamedItem("dataUltimaModificacao").setTextContent(dataAgora);
+        pasta.appendChild(pastaOrigem);
+
+        try {
+            manipuladorXML.salvarXML(xml, nomeUsuario);
+        } catch (TransformerException ex) {
+            Logger.getLogger(SistemaArquivo.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
     public boolean copiarArquivo(String caminhoOrigem, String caminhoDestino, String nomeUsuario)
             throws RemoteException, XPathExpressionException {
         Document xml = pedirXML(nomeUsuario);
@@ -690,7 +746,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
         }
         return true;
     }
-    
+
     @Override
     public boolean copiarPasta(String caminhoOrigem, String caminhoDestino, String nomeUsuario)
             throws RemoteException, XPathExpressionException {
@@ -709,7 +765,7 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
         Node pasta = manipuladorXML.pegaUltimoNode(expressaoDestino, xml);
 
         pastaOrigem = GerenciadorArquivos.copiaArquivosDaPasta(pastaOrigem);
-        
+
         //clona o arquivo antigo e coloca o nome fantasia do arquivo origem no arquivo destino
         Node pastaNova = pastaOrigem.cloneNode(true);
         //atualiza dataUltimaModificacao para 'agora'
