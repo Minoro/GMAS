@@ -35,6 +35,7 @@ import cliente.InterfaceUsuario;
 import java.net.MalformedURLException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.rmi.NotBoundException;
 import java.rmi.registry.LocateRegistry;
 import java.text.SimpleDateFormat;
@@ -273,6 +274,9 @@ public class SistemaArquivo extends UnicastRemoteObject implements SistemaArquiv
                          //ver como fazer com timeout
                          break;
                          }*/
+                    }
+                    catch(SocketTimeoutException ste) {
+                        //DO NOTHING
                     }
                 }
                 if (contadorRespostas > 1) {
